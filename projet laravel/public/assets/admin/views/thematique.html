@@ -1,0 +1,1230 @@
+<div id="page-wrapper" style="    position: relative;">
+    <div class="container-fluid" >
+        <div class="row bg-title">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 " style="z-index:99999">
+                <span ng-if="mode_modification_couche == false && mode_droit_couche == false && mode_ajout_couches == false">
+                        <a class="page-title black pointer col-md-6" ng-if="mode_sous_thematique || mode_modification_thematique || mode_ajout_thematique " ng-click="close_modification_thematique()">
+                                <i class="fa fa-arrow-left" style="font-size:larger"></i> Thématiques
+                        </a>
+                </span>
+
+                <a class="page-title black pointer col-md-6" ng-if="mode_modification_couche || mode_droit_couche || mode_ajout_couches"
+                    ng-click="close_modification_sous_thematique()">
+                    <i class="fa fa-arrow-left" style="font-size:larger"></i> Sous-thématiques
+                </a>
+
+                <a class="page-title black col-md-6 text-center" ng-if="mode_droit_couche">
+                    {{sous_thematique_couche.nom}}
+                </a>
+
+                <a class="page-title black col-md-6 " ng-if="mode_ajout_couches && thematique_couche.sous_thematiques != false">
+                    {{sous_thematique_active.nom }}
+                </a>
+
+                <a class="page-title black col-md-6 " ng-if="mode_ajout_couches && thematique_couche.sous_thematiques == false">
+                    {{ thematique_couche.nom}}
+                </a>
+
+                <a class="page-title black col-md-6 text-center" ng-if="mode_modification_couche">
+                    Modification de couches
+                </a>
+
+                <a class="page-title black col-md-6 text-center" ng-if="mode_modification_thematique">
+                    Modification de thématiques
+                </a>
+
+                <a class="page-title black col-md-6 text-center" ng-if="mode_ajout_thematique">
+                    Ajout d'une thématique
+                </a>
+
+
+                <a class="page-title black col-md-6 text-center" ng-if="mode_sous_thematique && mode_modification_couche == false && mode_droit_couche == false && mode_ajout_couches == false && thematique_couche.sous_thematiques != false">
+                    Gestion des sous thématiques
+                </a>
+
+                <a class="page-title black col-md-6 text-center" ng-if="mode_sous_thematique && mode_modification_couche == false && mode_droit_couche == false && mode_ajout_couches == false && thematique_couche.sous_thematiques == false">
+                    {{thematique_couche.nom}}
+                </a>
+
+                <a class="page-title black" ng-hide="mode_sous_thematique || mode_modification_thematique || mode_ajout_thematique || mode_droit_couche">
+                    Gestion des thématiques
+                </a>
+
+
+            </div>
+            <div class="col-lg-6 col-sm-6 col-md-6 col-xs-12">
+                <a class="page-title black" ng-if="mode_ajout_couches">
+                    Ajout de couches
+                </a>
+                <ul class="nav navbar-top-links navbar-left m-l-20 hidden-xs pull-right" ng-hide="mode_sous_thematique || mode_modification_thematique || mode_ajout_thematique">
+                    <li>
+                        <label class="black page-title col-lg-6 col-sm-6 col-md-6 col-xs-12" style="margin-top: 6px;">
+                         <a  class="page-title black">Rechercher une thématique</a>
+                        </label>
+                        <form role="search" class="app-search hidden-xs col-lg-6 col-sm-6 col-md-6 col-xs-12">
+                            <input type="text" placeholder="Rechercher une thématique" ng-model="filtre_thematique" class="form-control black" style="margin:0px">
+                            <a href=""><i class="fa fa-search"></i></a>
+                        </form>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-top-links navbar-left m-l-20 hidden-xs pull-right" ng-show="mode_sous_thematique && mode_modification_couche == false && mode_droit_couche == false && mode_ajout_couches == false">
+                    <li>
+                        <label class="black col-lg-5 col-sm-5 col-md-5 col-xs-12" style="margin-top: 6px;">Rechercher une couche</label>
+                        <form role="search" class="app-search hidden-xs col-lg-7 col-sm-7 col-md-7 col-xs-12">
+                            <input type="text" placeholder="Rechercher une couche" ng-model="filtre_couche" class="form-control black" style="margin:0px">
+                            <a href=""><i class="fa fa-search"></i></a>
+                        </form>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-top-links navbar-left m-l-20 hidden-xs pull-right" ng-show="mode_droit_couche">
+                    <li>
+                        <label class="black col-lg-5 col-sm-5 col-md-5 col-xs-12" style="margin-top: 6px;">Rechercher un utilisateur</label>
+                        <form role="search" class="app-search hidden-xs col-lg-7 col-sm-7 col-md-7 col-xs-12">
+                            <input type="text" placeholder="Rechercher un utilisateur" ng-model="filtre_utilisateur" class="form-control black" style="margin:0px">
+                            <a href=""><i class="fa fa-search"></i></a>
+                        </form>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+        <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - 
+                       Présentation des thématiques 
+- - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
+        <div class="row" ng-if="mode_modification_thematique == false && mode_sous_thematique == false && mode_ajout_thematique ==false">
+            <div class="wrapper " style="padding-left: calc(50% - 500px)">
+                <div class="clash-card barbarian " ng-repeat="thematique in thematiques | filter:{nom :filtre_thematique}">
+                    <div class="clash-card__image clash-card__image--barbarian">
+                        <img src="{{thematique.img}}" alt="barbarian" class="" />
+                    </div>
+                    <div class="clash-card__unit-name" style="font-size:16px">{{thematique.nom}}</div>
+                    <div class="clash-card__unit-stats clash-card__unit-stats--barbarian clearfix back_white pointer" style="border-radius:0px">
+                        <div class="one-third border_black" ng-click="function_thematique($index,'couche')" style="padding-top:13px">
+                            <!-- fa-flash -->
+                            <i class="fa fa-database red " style="font-size:x-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Couches</div>
+                        </div>
+                        <div class="one-third border_black" ng-click="function_thematique($index,'modification')">
+                            <i class="fa fa-pencil red " style="font-size:xx-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Modifier</div>
+                        </div>
+                        <div class="one-third no-border " type="button"  ng-click="toogle_confirmation('thematique',thematique)">
+                            <i class="fa fa-trash-o red" style="font-size:xx-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Supprimer</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="back_red white ajouter_utilisateur text-center pointer" ng-click="function_thematique('undefined','ajout')">
+                <i class="fa fa-plus white"></i>
+            </div>
+
+        </div>
+        <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - - - - 
+                       Présentation des sous - thématiques 
+- - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
+        <div class="" ng-if="mode_sous_thematique && mode_modification_couche == false && mode_droit_couche == false && mode_ajout_couches == false" >
+            <div class="sous_thematique back_white" ng-show="thematique_couche.sous_thematiques" >
+                <h3 class="black text-center">{{thematique_couche.nom}}</h3>
+                <ul class="nav" id="side-menu" >
+                    <li style="padding: 10px 0 0;" ng-repeat="sous_thematique in thematique_couche.sous_thematiques" ng-click="sous_themmatique_onglet(sous_thematique.key)" ng-init="sous_thematique.mode_edition = false">
+                        <a ng-class="{'waves-effect back_white black': !sous_thematique.onglet,'waves-effect back_gray black':sous_thematique.onglet}" style="padding-right: 10px;" ng-show="sous_thematique.mode_edition == false">
+
+                            <span class="hide-menu">{{sous_thematique.nom}}</span>
+                            <i class="fa fa-trash-o pull-right" ng-click="toogle_confirmation('supprimer_sous_thematique',sous_thematique,thematique_couche.id_thematique)" ></i>
+                            <i class="fa fa-plus pull-right" ng-click="ajout_couches(sous_thematique.key)"></i>
+                            <i class="fa fa-pencil pull-right" ng-click="edition_sous_thematique(thematique_couche.sous_thematiques,sous_thematique.key)"></i>
+                        </a>
+
+                        <a ng-class="{'waves-effect back_white black': !sous_thematique.onglet,'waves-effect back_gray black':sous_thematique.onglet}" style="padding-right: 10px;" ng-hide="sous_thematique.mode_edition == false">
+
+                            <input class="form-control" style="width: 180px;margin-left: 10px;  display: -webkit-inline-box;height: 30px" ng-value="sous_thematique.nom" ng-model="sousthematique_modifier.nom">
+                            <i class="fa fa-check pointer" style="font-size:large;color: #434343;" ng-click="modification_sous_thematique(sous_thematique)"></i>
+                             <i class="fa fa-times pointer" style="font-size:large;margin-left:10px;color: #F10E29;" ng-click="sous_thematique.mode_edition = false"></i>
+                        </a>
+                    </li>
+                    <li style="padding: 10px 0 0;" ng-hide="mode_menu_ajout_sous_thematique == false" ng-init="nouvelle_sous_thematique.id_thematique = thematique_couche.id_thematique">
+                        <input class="form-control" style="width: 180px;margin-left: 10px;  display: -webkit-inline-box;" ng-model="nouvelle_sous_thematique.nom">
+                        <i class="fa fa-check pointer" style="font-size:large;color: #434343;" ng-click="ajouter_sous_thematique()"></i>
+                         <i class="fa fa-times pointer" style="font-size:large;margin-left:10px;color: #F10E29;" ng-click="ajouter_sous_thematique_toogle(false)"></i>
+                    </li>
+                </ul>
+
+                <div class="back_black white ajouter_utilisateur text-center pointer" 
+                ng-click="ajouter_sous_thematique_toogle(true)" ng-show="mode_menu_ajout_sous_thematique == false" style="position:absolute;right:15px">
+                    <i class="fa fa-plus white"></i>
+                </div>
+            </div>
+
+            <div class="sous_thematique_couche" >
+                <div class="clash-card barbarian " ng-repeat="couche in sous_thematique_active.couches | filter:{nom :filtre_couche}">
+                 <span style="position: absolute;top: 0px;right: 0px;padding: 2.5px;font-weight: bold;" class="back_black white">
+                    {{couche.type_couche}}
+                    <!--<span style="font-weight: normal;">({{couche.geom}})</span> -->
+                </span>
+                    <div class="clash-card__image clash-card__image--barbarian" ng-init="couche.rang_thema=thematique_couche.id;couche.rang_sous=sous_thematique_active.id;couche.shema=thematique_couche.shema;couche.sous_thematiques=true">
+                        <img src="{{couche.img}}" ng-if='couche.geom=="point"' style="height: 87px;width: 87px"/>
+                        
+                        <div ng-if='couche.geom=="Polygon" && ( couche.img == "" || couche.img == null ) '  ng-style="{'width':'87px','height': '87px','background':'{{couche.remplir_couleur}}','opacity':'{{couche.opacity}}','border':'3px solid black','display': 'inline-block'}"></div>
+
+                           <div ng-if='couche.geom=="Polygon" && couche.img != "" && couche.img!=null  ' ng-style="{'height': '87px','width': '87px','border':'3px solid black','display': 'inline-block','background-size': '32px','margin-bottom': '5px','background-image': 'url('+ couche.img + ')'}" >
+                                 <!-- <img  ng-src="{{couche.img}}" style="width: 25px;height: 25px;" /> -->
+                           </div>
+
+                           <hr ng-if='couche.geom=="LineString"' ng-style="{'border':'2px solid ','margin-left': '10px','margin-right': '10px','margin-top': '60px','border-color':couche.contour_couleur}">
+                    </div>
+                    <div class="clash-card__unit-name" style="font-size:16px">{{couche.nom}}</div>
+                    <div class="clash-card__unit-stats clash-card__unit-stats--barbarian clearfix back_white pointer" style="border-radius:0px">
+                        <div class="one-third border_black" ng-click="function_couche($index,'droit');droits_sur_couche(couche.key_couche,true)">
+                            <!-- fa-flash -->
+                            <i class="fa fa-flash red " style="font-size:xx-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Droits</div>
+                        </div>
+                        <div class="one-third border_black" ng-click="function_couche($index,'modification')">
+                            <i class="fa fa-pencil red " style="font-size:xx-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Modifier</div>
+                        </div>
+                        <div class="one-third no-border " type="button" ng-init="couche.id=$index" ng-click="toogle_confirmation('couche_supprimer',couche)">
+                            <i class="fa fa-trash-o red" style="font-size:xx-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Supprimer</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sous_thematique_couche" ng-hide="thematique_couche.sous_thematiques" style="margin-left:23px;padding-right: 0px">
+                <div class="clash-card barbarian " ng-repeat="couche in thematique_couche.couches | filter:{nom :filtre_couche}">
+                 <span style="position: absolute;top: 0px;right: 0px;padding: 2.5px;font-weight: bold;" class="back_black white">
+                    {{couche.type_couche}}
+                     <!--<span style="font-weight: normal;">({{couche.geom}})</span> -->
+                </span>
+                    <div class="clash-card__image clash-card__image--barbarian" ng-init="couche.rang_thema=thematique_couche.id;couche.shema=thematique_couche.shema;couche.sous_thematiques=false">
+                        <img src="{{couche.img}}" ng-if='couche.geom=="point"' class="" />
+
+                        <div ng-if='couche.geom=="Polygon" && couche.img==null'  ng-style="{'width':'87px','height': '87px','background':'{{couche.remplir_couleur}}','opacity':'{{couche.opacity}}','border':'3px solid black','display': 'inline-block'}"></div>
+
+                          <div ng-if='couche.geom=="Polygon" && couche.img!=null' ng-style="{'height': '87px','width': '87px','border':'3px solid black','display': 'inline-block','margin-bottom': '5px','background-image': 'url('+ couche.img + ')'}" >
+                                 <!-- <img  ng-src="{{couche.img}}" style="width: 25px;height: 25px;" /> -->
+                           </div>
+
+                          <hr ng-if='couche.geom=="LineString"' ng-style="{'border':'2px solid ','margin-left': '10px','margin-right': '10px','margin-top': '60px','border-color':couche.contour_couleur}">
+
+                    </div>
+                    <div class="clash-card__unit-name" style="font-size:20px">{{couche.nom}}</div>
+                    <div class="clash-card__unit-stats clash-card__unit-stats--barbarian clearfix back_white pointer" style="border-radius:0px">
+                        <div class="one-third border_black" ng-click="function_couche($index,'droit');droits_sur_couche(couche.key_couche,false)">
+                            <!-- fa-flash -->
+                            <i class="fa fa-flash red " style="font-size:xx-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Droits</div>
+                        </div>
+                        <div class="one-third border_black" ng-click="function_couche($index,'modification')">
+                            <i class="fa fa-pencil red " style="font-size:xx-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Modifier</div>
+                        </div>
+                        <div class="one-third no-border " type="button" ng-init="couche.id=$index"  ng-click="toogle_confirmation('couche_supprimer',couche)">
+                            <i class="fa fa-trash-o red" style="font-size:xx-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Supprimer</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="back_red white ajouter_utilisateur text-center pointer" ng-click="ajout_couches(thematique_couche.id)">
+                    <i class="fa fa-plus white"></i>
+                </div>
+            </div>
+        </div>
+        <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - - - - 
+                       Modification des  thématiques 
+- - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
+        <div class="row" ng-if="mode_modification_thematique" ng-init="thematique_en_modif.id_thematique = thematique_couche.id_thematique;thematique_en_modif.id = thematique_couche.id;thematique_en_modif.nom = thematique_couche.nom;thematique_en_modif.img_temp = thematique_couche.img">
+            <div class="col-md-12 col-xs-12 white-box" >
+                <div class="col-md-3 col-xs-12">
+                    <div class="user-bg">
+                        <div class="overlay-box">
+                            <div class="user-content" ng-init="thematique_en_modif.img = thematique_couche.img">
+                                <img src="{{thematique_en_modif.img_temp}}" class="thumb-lg" alt="img">
+                                <div class="col-sm-12" style="margin-top:15px">
+                                    <button class="btn btn-primary"  ng-click="file('img_modification_thematique',thematique_en_modif,'img_temp')" >Changer l'icone</button>
+                                    <input type="file" ng-files="setTheFiles($files,thematique_en_modif)" id="img_modification_thematique" style="display: none;" accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9 col-xs-12">
+                    <form class="form-horizontal form-material" ng-submit="modification_thematique(thematique_en_modif)" >
+                        <div class="form-group">
+                            <label class="col-md-12">Nom :</label>
+                            <div class="col-md-12">
+                                <input type="text" placeholder="Nom" class="form-control form-control-line" ng-model="thematique_en_modif.nom" ng-value="thematique_couche.nom">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-12 text-center" style="margin-top:45px">
+                                <button class="btn btn-primary" type="submit" >Sauvegarder les modification </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - - - - 
+                       Modification des  couches  
+- - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
+        <div class="row" ng-if="mode_modification_couche  ">
+            <div class="col-md-3 col-xs-12" ng-if="sous_thematique_couche.type_couche == 'couche' ">
+                <div class="white-box" style="padding: 25px 0px;">
+                    <div class="user-bg" style="height: 190px">
+                        <div class="overlay-box" >
+                            <div class="user-content" style="margin-top: 15px;"  > 
+                                <img src="assets/admin/images/database_ajouter.svg" class="thumb-lg" alt="img">
+                                <div class="col-sm-12" ng-if='!sous_thematique_couche.colonnes || sous_thematique_couche.colonnes.length == 0' style="margin-top:15px">
+                                 <input type="file" ng-files="setTheFiles($files,sous_thematique_couche)" id="couche_importation" style="display: none;" accept=".rar, .geojson,.zip,.json ">
+                                    <button class="btn btn-primary"  ng-click="file('couche_importation',sous_thematique_couche,'couche_importation')" >Ajouter des données</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-class="{'col-md-9 col-xs-12':sous_thematique_couche.type_couche == 'couche','col-md-12 col-xs-12':sous_thematique_couche.type_couche != 'couche'}"> 
+                <div class="white-box" style="padding: 25px 0px;height: 190px">
+                    <div class="col-md-4 col-xs-12">
+                       
+                            <div class="user-bg" style="">
+                                <div class="overlay-box">
+                                    <div class="user-content" style="margin-top: 15px;" ng-init="sous_thematique_couche.img_temp = sous_thematique_couche.img">
+
+                                        <!-- <img src="{{sous_thematique_couche.img_temp}}" class="thumb-lg" alt="img"> -->
+                                        <img src="{{sous_thematique_couche.img_temp}}" class="thumb-lg" ng-if='sous_thematique_couche.geom=="point"' style="height: 87px;width: 87px"/>
+                                        
+                        
+                                        <div ng-init="getColor(sous_thematique_couche.remplir_couleur,sous_thematique_couche.opacity)" ng-if='sous_thematique_couche.geom=="Polygon" && ( sous_thematique_couche.img_temp == "" || sous_thematique_couche.img_temp == null ) '  ng-style="{'width':'87px','height': '87px','background':color,'border':'3px solid black','display': 'inline-block'}">
+                                        </div>
+
+
+                                         <div ng-if='sous_thematique_couche.geom=="Polygon" && sous_thematique_couche.img_temp != "" && sous_thematique_couche.img_temp!=null' ng-style="{'height': '87px','width': '87px','border':'3px solid black','display': 'inline-block','background-size': '32px','margin-bottom': '5px','background-image': 'url('+ sous_thematique_couche.img_temp + ')'}" >
+                                        </div>
+                                           <hr ng-init="getColor(sous_thematique_couche.contour_couleur,1)" ng-if='sous_thematique_couche.geom=="LineString"'
+                                            ng-style="{'border':'2px solid ','margin-left': '20px','margin-right': '20px','margin-top': '60px','border-color':color}">
+
+                                        <input type="file" ng-files="setTheFiles($files,sous_thematique_couche)" id="img_modifier_couche" style="display: none;" accept="image/*">
+                                        
+                                        <div class="col-md-12 text-center" style="margin-top:15px" ng-if='sous_thematique_couche.geom=="Polygon"'>
+                                            <button class="btn btn-primary col-md-4 col-md-offset-2" style="margin-right: 20px"  ng-click="file('img_modifier_couche',sous_thematique_couche,'img_temp')">Icone</button>
+                                           <button class="btn btn-primary col-md-4 " ng-click="changeColor(sous_thematique_couche)" > Couleur </button>
+                                        </div>
+                                        <!-- <span class="black" >{{color}}</span> -->
+                                        <div class="col-md-12 text-center" style="margin-top:15px" ng-if='sous_thematique_couche.geom == "point"'>
+                                            <button class="btn btn-primary" ng-click="file('img_modifier_couche',sous_thematique_couche,'img_temp')">Changer d'icone</button>
+                                        </div>
+
+                                         <div class="col-md-12 text-center" style="margin-top:15px" ng-if='sous_thematique_couche.geom == "LineString"'>
+                                            <button class="btn btn-primary" ng-click="changeColor(sous_thematique_couche)">Changer la Couleur</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    
+                    <div class="col-md-5 col-xs-12">
+                            <form class="form-horizontal form-material">
+                                <div class="form-group">
+                                    <label class="col-md-12">Nom :</label>
+                                    <div class="col-md-12">
+                                        <input type="text" placeholder="Nom" class="form-control form-control-line" ng-value="sous_thematique_couche.nom" ng-model="sous_thematique_couche.nom_modifier">
+                                    </div>
+                                    <div class="col-sm-12 text-center" style="margin-top:45px"> 
+                                            <button class="btn btn-primary" ng-click="modifier_nom_couche(sous_thematique_couche)">Sauvegarder toutes vos modifications</button>
+                                             <!-- <button class="btn btn-primary" ng-click="emptyTable(sous_thematique_couche)">Vider la couche</button> -->
+                                        </div>
+                                </div>
+                                
+                            </form>
+                    </div>
+
+                    <div>
+                        <div class="col-md-3 form-group" ng-if="sous_thematique_couche.type_couche === 'wms'" >
+                                <label class="text-center col-md-12" > Servir la couche en :</label>
+                                <div class="text-center col-md-12">
+                                        <label>WMS </label> <input type="radio"  ng-checked="sous_thematique_couche.service_wms || sous_thematique_couche.service_wms == null "  name="nom" ng-click="define_service('wms',sous_thematique_couche)"  />
+                                        <br>
+                                        <label>WFS </label> <input type="radio"  ng-checked="sous_thematique_couche.service_wms == false" name="nom"  ng-click="define_service('wfs',sous_thematique_couche)"  />
+                                </div>
+                               
+                        </div>  
+                           
+                            
+                    </div>
+                    <div  style="position: absolute;bottom:25px;right:15px;padding: 2.5px;">
+
+                        <label class="text-center" style="width: 100%;" >--Choisissez une action--</label>
+                        <div >
+                            <select name="Actions" ng-model="submitSelectedItem" ng-change="submitActions(submitSelectedItem,sous_thematique_couche)">
+                                <option value=""></option>
+                                <option value="fiche" ng-click="openMetadata_thematiques(sous_thematique_couche)" >Fiche descriptive</option>
+                                <option ng-if="displayTestMap(sous_thematique_couche) && sous_thematique_couche.wms_type =='osm'" ng-click="file('style_importation',sous_thematique_couche,'style_importation')" value="style">Charger une feuille de style QGIS</option>
+                                <option ng-if="displayTestMap(sous_thematique_couche) && sous_thematique_couche.wms_type =='osm'" ng-click="getFileNode(sous_thematique_couche)" value="telechargez"> Telechargez la donnée</option>
+                                <option ng-if="displayTestMap(sous_thematique_couche)" ng-click="testCarte(sous_thematique_couche)" value="tester">Tester</option>
+                            </select>
+                        </div>
+                         <!-- <form class="text-center">
+                             <button class="btn btn-primary text-center" style="margin-top: 105px;" ng-click="openMetadata_thematiques(sous_thematique_couche)">Fiche descriptive </button>
+                         </form>
+  -->
+                     </div>
+
+                     
+                     <span ng-if="displayTestMap(sous_thematique_couche)">
+                        
+                            <!-- <button style="position: absolute;bottom:15px;right:8px;padding: 2.5px;font-weight: bold;" class="back_red white" ng-click="testCarte(sous_thematique_couche)"  >Tester</button> -->
+                            <!-- <button ng-if="sous_thematique_couche.wms_type =='osm'" style="position: absolute;top:15px;right:8px;padding: 2.5px;font-weight: bold;" class="back_red white" ng-click="file('style_importation',sous_thematique_couche,'style_importation')"  >Charger une feuille de style QGIS</button> -->
+                            <!-- <button ng-if="sous_thematique_couche.wms_type =='osm'" style="position: absolute;top:15px;left:8px;padding: 2.5px;font-weight: bold;" class="back_red white" ng-click="getFileNode(sous_thematique_couche)"  > Telechargez le SHP </button> -->
+
+                            <input type="file" ng-files="setTheFiles($files,sous_thematique_couche)" id="style_importation" style="display: none;" accept=".qml">
+                            <!-- <button class="btn btn-primary"  ng-click="file('style_importation',sous_thematique_couche,'style_importation')" >Ajouter des données</button> -->
+
+                    </span>
+                </div> 
+            </div> 
+            
+            <div style="margin-bottom: 15px;padding: 5px; background: red;text-align: justify;font-weight: bold;" ng-if="sous_thematique_couche.status == false && sous_thematique_couche.type_couche == 'requete' " class="col-md-offset-4 col-md-4 white">
+                                
+                Impossible de representer {{sous_thematique_couche.number}} donnees, Veiller créer une couche wms avec cette requette  ;
+                Le nombre max representable est de : 
+                <span ng-if="sous_thematique_couche.geom == 'point' " > 20 000 Points</span>
+                <span ng-if="sous_thematique_couche.geom == 'Polygon' || sous_thematique_couche.geom == 'LineString' " > 20 000 noeuds </span>
+                                    
+            </div>
+
+            <div style="margin-bottom: 15px;padding: 5px; background:#BDACAC;text-align: center;font-weight: bold;" ng-if="(sous_thematique_couche.type_couche == 'requete' && sous_thematique_couche.status == true) || (  sous_thematique_couche.wms_type =='osm' && sous_thematique_couche.type_couche == 'wms' && sous_thematique_couche.status == false) " class="col-md-offset-4 col-md-4 white">
+                {{sous_thematique_couche.number}} entité(e)s
+                <p ng-if="sous_thematique_couche.geom == 'Polygon' " > {{sous_thematique_couche.surface_totale}} Km*Km </p>
+                <p ng-if="sous_thematique_couche.geom == 'LineString' " > {{sous_thematique_couche.distance_totale}} Km </p>
+            </div>
+
+            <div style="margin-bottom: 15px;padding: 5px; background:#BDACAC;text-align: center;font-weight: bold;" ng-if="sous_thematique_couche.type_couche == 'couche' && sous_thematique_couche.number != null " class="col-md-offset-4 col-md-4 white">
+                {{sous_thematique_couche.number}} entité(e)s
+            </div>
+
+            <div class="col-md-12 back_white" style="position:relative" ng-if="sous_thematique_couche.type_couche == 'couche' ">
+                <table class="table table_colonne">
+                    <thead>
+                        <tr>
+                            <th class="col-md-1">Champ principal</th>
+                            <th class="col-md-7 text-center">Nom des champs</th> 
+                            <th class="col-md-4 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="colonne in sous_thematique_couche.colonnes" class="black" ng-if="colonne.nom != 'id' && colonne.nom != 'geom'" ng-init="colonne.id_theme = sous_thematique_couche.key_couche;colonne.sous_thematiques = sous_thematique_couche.sous_thematiques;colonne.id=$index;">
+                            <td class="col-md-1 text-center">
+                                <input type="radio" id="radio{{colonne.nom}}" ng-model="$parent.nom" name="nom" value="{{colonne.champ_principal}}" ng-click="definir_champ_principal(colonne,sous_thematique_couche)"   ng-checked="colonne.champ_principal == 'true' "  />
+                            </td>
+                            <td class="col-md-7 text-center" >
+                                <span ng-if="!colonne.edition" > 
+                                    {{colonne.nom}}
+                                    <i class="fa fa-pencil pointer" ng-click="colonne.edition =true" ></i>
+                                </span>
+
+                                <span ng-if="colonne.edition">
+                                    
+                                
+                                <input type="text" ng-model="colonne.nom_editer">
+
+                                <i class="fa fa-check pointer black" style="font-size:large;margin-left:10px" ng-click="modifier_colomne(colonne)"></i>
+
+                                <i class="fa fa-times pointer red" style="font-size:large;margin-left:10px" ng-click="colonne.edition =false;colonne.nom_editer = '' "></i>
+                                
+
+                                </span>
+
+                            </td>
+                           
+                            <td class="col-md-4 text-center">
+                                <button class="btn back_red white border_red" ng-click="toogle_confirmation('supprimer_colomne',colonne,sous_thematique_couche)" >Supprimer</button>
+                            </td>
+                        </tr>
+
+                        <tr ng-repeat="nouvelle_colonne in nouvelles_colonnes">
+
+                            <td class=" col-md-1">
+                                
+                            </td>
+
+                            <td class=" col-md-7 text-center">
+                                <input type="text" ng-model="nouvelle_colonne.nom " class="">
+                            </td>
+                            
+                            <td class="col-md-4 text-center">
+                                <button class="btn back_red white " ng-click="nouvelles_colonnes.splice($index,1)">Supprimer</button>
+                            </td>
+
+                        </tr>
+
+                        <tr style="height:50px">
+                            <td colspan="4"></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div class="back_black white ajouter_colonne text-center pointer" ng-click="nouvelles_colonnes.push({})">
+                    <i class="fa fa-plus white"></i>
+                </div>
+                <div class="back_red white ajouter_colonne text-center pointer save_couche" ng-click="add_colomnes(nouvelles_colonnes,thematique_couche.shema,sous_thematique_couche.key_couche,sous_thematique_couche.id_couche,sous_thematique_couche.colonnes,sous_thematique_couche.nom,thematique_couche.sous_thematiques)" ng-if="nouvelles_colonnes.length">
+                    <i class="fa fa-floppy-o white"></i>
+                </div>
+            </div>
+            
+            <div class="col-md-12 back_white" style="position:relative"  ng-if="sous_thematique_couche.type_couche === 'wms'" >
+
+                <div style="margin-bottom: 15px;padding: 5px; background:#000;text-align: center;font-weight: bold;" ng-if="sous_thematique_couche.wms_type == null " class="col-md-offset-4 col-md-4 white">
+                    <p> Voulez vous un WMS à base des données OSM ? </p>
+
+                    <form ng-submit="chooseTypeWms(sous_thematique_couche,wms_type)" style="color:#000">
+
+                        <select ng-model="wms_type" required style="    width: 100%;margin-bottom: 20px;">
+                            <option value="osm" > Oui </option>
+                            <option value="wms" > Non </option>
+                        </select>
+                        
+                        <button class="btn btn-primary"  type="submit" >Sauvegarder</button>
+
+                    </form>
+                    
+                </div>
+
+                <div ng-if="sous_thematique_couche.wms_type == 'osm' " style="position:relative">
+
+                    <table class="table table_colonne">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-1 text-center">Condition</th>
+                                        <th class="col-md-4 text-center">Cle OSM</th>
+                                        <th class="col-md-1 text-center">Operateur</th>
+                                        <th class="col-md-4 text-center">Valeur</th> 
+                                        <th class="col-md-2 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="cle_val_osm in sous_thematique_couche.cles_vals_osm" class="black" >
+            
+                                        <td class="col-md-1 text-center">
+                                          <span>{{cle_val_osm.condition}}</span>  
+            
+                                        </td>
+            
+                                        <td class="col-md-4 text-center">
+                                          <span>{{cle_val_osm.action}}</span>  
+            
+                                        </td>
+            
+                                        <td class="col-md-1 text-center" >
+                                            <span ng-if="cle_val_osm.operateur == 0" > = </span>
+                                            <span ng-if="cle_val_osm.operateur == 1"> # </span>
+                                            <span ng-if="cle_val_osm.operateur == 2"> IS NOT NULL </span>
+                                            <span ng-if="cle_val_osm.operateur == 3"> IS NULL </span>
+            
+                                        </td>
+            
+                                        <td class="col-md-4 text-center" >
+                                            <span > 
+                                                {{cle_val_osm.nom}}
+                                            </span>
+            
+                                        </td>
+                                                                  
+                                        <td class="col-md-2 text-center">
+                                            <button class="btn back_red white border_red" ng-click="toogle_confirmation('delete_cles_vals_osm',cle_val_osm,sous_thematique_couche)" >Supprimer</button>
+                                        </td>
+                                    </tr>
+            
+                                    <tr ng-repeat="nouvelle_cle_val_osm in nouvelles_cles_vals_osm">
+            
+                                        <td class="col-md-1 text-center">
+                                          
+                                            <select ng-model="nouvelle_cle_val_osm.condition" required >
+                                                <option value="OR" > OR </option>
+                                                <option value="AND" > AND </option>
+                                            </select>
+            
+                                        </td>
+            
+                                        <td class=" col-md-4 text-center" ng-init="nouvelle_cle_val_osm.cle = 'amenity'">
+                                            
+                                            <input type="text" ng-model="nouvelle_cle_val_osm.action " required>
+            
+                                        </td>
+            
+                                        <td class=" col-md-1 text-center" ng-init="nouvelle_cle_val_osm.operateur = 0">
+                                            
+                                            <select ng-model="nouvelle_cle_val_osm.operateur" required >
+                                                <option value="0" > = </option>
+                                                <option value="1" > # </option>
+                                                <option value="2" > IS NOT NULL </option>
+                                                <option value="3" > IS NULL</option>
+                                            </select>
+            
+                                        </td>
+            
+                                        <td class=" col-md-4 text-center" ng-init="nouvelle_cle_val_osm.nom = '' ">
+                                            <input type="text" ng-model="nouvelle_cle_val_osm.nom " required ng-if="nouvelle_cle_val_osm.operateur !=2 && nouvelle_cle_val_osm.operateur !=3" >
+                                        </td>
+                                        
+                                        <td class="col-md-2 text-center">
+                                            <button class="btn back_red white " ng-click="nouvelles_cles_vals_osm.splice($index,1)">Supprimer</button>
+                                        </td>
+            
+                                    </tr>
+            
+                                    <tr style="height:50px">
+                                        <td colspan="4"></td>
+                                    </tr>
+            
+                                </tbody>
+                    </table>
+
+                    <div class="back_black white ajouter_colonne text-center pointer" ng-click="nouvelles_cles_vals_osm.push({})">
+                       <i class="fa fa-plus white"></i>
+                    </div>
+                    
+                    <div class="back_red white ajouter_colonne text-center pointer save_couche" ng-click="add_cles_vals_osm(sous_thematique_couche)" ng-if="nouvelles_cles_vals_osm.length">
+                        <i class="fa fa-floppy-o white"></i>
+                    </div>
+
+                </div>
+
+                <div ng-if="sous_thematique_couche.wms_type == 'wms' || (sous_thematique_couche.wms_type == 'osm' && sous_thematique_couche.cles_vals_osm.length > 0) " style="border-top: 5px solid;position:relative" >
+                    <table class="table table_colonne">
+                        <thead>
+                            <tr>
+                                <th class="col-md-4">Proprietes</th>
+                                <th class="col-md-8 text-center">Valeur</th>
+                            
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td>URL</td>
+                                <td class="text-center"> 
+                                    <span ng-if="sous_thematique_couche.url && !sous_thematique_couche_modifier.active"> {{sous_thematique_couche.url}} </span>
+                                    <span ng-if="!sous_thematique_couche.url && !sous_thematique_couche_modifier.active">Indefini</span>
+                                    <input type="text" ng-value="sous_thematique_couche.url" ng-model="sous_thematique_couche_modifier.url" ng-if="sous_thematique_couche_modifier.active">
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Identifiant (nom)</td>
+                                <td class="text-center" > 
+                                    <span ng-if="sous_thematique_couche.identifiant && !sous_thematique_couche_modifier.active"> {{sous_thematique_couche.identifiant}} </span>
+                                    <span ng-if="!sous_thematique_couche.identifiant && !sous_thematique_couche_modifier.active"> Indefini </span>
+                                    <input type="text" ng-value="sous_thematique_couche.identifiant" ng-model="sous_thematique_couche_modifier.identifiant" ng-if="sous_thematique_couche_modifier.active">
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>BBOX</td>
+                                <td class="text-center" > 
+                                    <span ng-if="sous_thematique_couche.bbox && !sous_thematique_couche_modifier.active"> {{sous_thematique_couche.bbox}} </span>
+                                    <span ng-if="!sous_thematique_couche.bbox && !sous_thematique_couche_modifier.active"> Indefini </span>
+                                    <input type="text" ng-value="sous_thematique_couche.bbox" ng-model="sous_thematique_couche_modifier.bbox" ng-if="sous_thematique_couche_modifier.active"> 
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Projection</td>
+                                <td class="text-center" >
+                                    <span ng-if="sous_thematique_couche.projection && !sous_thematique_couche_modifier.active"> {{sous_thematique_couche.projection}} </span>
+                                    <span ng-if="!sous_thematique_couche.projection && !sous_thematique_couche_modifier.active"> Indefini </span>
+                                    <input type="text" ng-value="sous_thematique_couche.projection" ng-model="sous_thematique_couche_modifier.projection" ng-if="sous_thematique_couche_modifier.active"> 
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Z max</td>
+                                <td class="text-center" > 
+                                    <span ng-if="sous_thematique_couche.zmax&& !sous_thematique_couche_modifier.active"> {{sous_thematique_couche.zmax}} </span>
+                                    <span ng-if="!sous_thematique_couche.zmax && !sous_thematique_couche_modifier.active"> Indefini </span>
+                                    <select ng-model="sous_thematique_couche_modifier.zmax" ng-init="sous_thematique_couche_modifier.zmax = sous_thematique_couche.zmax" ng-if="sous_thematique_couche_modifier.active">
+                                    <option ng-repeat="zoom in zooms" ng-value="zoom" ng-if="zoom > sous_thematique_couche_modifier.zmin || sous_thematique_couche_modifier.zmin == undefined" >{{zoom}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Z min</td>
+                                <td class="text-center" >
+                                    <span ng-if="sous_thematique_couche.zmin && !sous_thematique_couche_modifier.active"> {{sous_thematique_couche.zmin}} </span>
+                                    <span ng-if="!sous_thematique_couche.zmin && !sous_thematique_couche_modifier.active"> Indefini </span>
+                                    
+                                    <span ng-init="sous_thematique_couche_modifier.zmin = sous_thematique_couche.zmin" ng-if="sous_thematique_couche_modifier.active">
+                                    
+                                    <select ng-model="sous_thematique_couche_modifier.zmin"   >
+                                            <option ng-repeat="zoom in zooms" value="{{zoom}}" ng-if="zoom < sous_thematique_couche_modifier.zmax || sous_thematique_couche_modifier.zmax == undefined" >{{zoom}}</option>
+                                        </select>
+
+                                    </span>
+
+                                    
+                                </td>
+                            </tr>
+
+
+                            <tr style="height:50px">
+                                <td colspan="4"></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                    <div ng-if="!sous_thematique_couche_modifier.active" class="back_black white ajouter_colonne text-center pointer" ng-click="sous_thematique_couche_modifier.active = !sous_thematique_couche_modifier.active" style="right: 50%;">
+                        <i class="fa fa-pencil white"></i>
+                    </div>
+
+                    <div ng-if="sous_thematique_couche_modifier.active" class="back_black white ajouter_colonne text-center pointer" style="background: red !important" ng-click="sous_thematique_couche_modifier.active = !sous_thematique_couche_modifier.active">
+                        <i class="fa fa-times white"></i>
+                    </div>
+
+                    <div ng-if="sous_thematique_couche_modifier.active" class="back_red white ajouter_colonne text-center pointer save_couche" ng-click="save_properties_couche(sous_thematique_couche,'wms')" >
+                        <i class="fa fa-floppy-o white"></i>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-12 back_white" style="position:relative" ng-if="sous_thematique_couche.type_couche == 'requete' ">
+                <table class="table table_colonne">
+                    <thead>
+                        <tr>
+                            <th class="col-md-1 text-center">Condition</th>
+                            <th class="col-md-4 text-center">Cle OSM</th>
+                            <th class="col-md-1 text-center">Operateur</th>
+                            <th class="col-md-4 text-center">Valeur</th> 
+                            <th class="col-md-2 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="cle_val_osm in sous_thematique_couche.cles_vals_osm" class="black" >
+
+                            <td class="col-md-1 text-center">
+                              <span>{{cle_val_osm.condition}}</span>  
+
+                            </td>
+
+                            <td class="col-md-4 text-center">
+                              <span>{{cle_val_osm.action}}</span>  
+
+                            </td>
+
+                            <td class="col-md-1 text-center" >
+                                <span ng-if="cle_val_osm.operateur == 0" > = </span>
+                                <span ng-if="cle_val_osm.operateur == 1"> # </span>
+                                <span ng-if="cle_val_osm.operateur == 2"> IS NOT NULL </span>
+                                <span ng-if="cle_val_osm.operateur == 3"> IS NULL </span>
+
+                            </td>
+
+                            <td class="col-md-4 text-center" >
+                                <span > 
+                                    {{cle_val_osm.nom}}
+                                </span>
+
+                            </td>
+                                                      
+                            <td class="col-md-2 text-center">
+                                <button class="btn back_red white border_red" ng-click="toogle_confirmation('delete_cles_vals_osm',cle_val_osm,sous_thematique_couche)" >Supprimer</button>
+                            </td>
+                        </tr>
+
+                        <tr ng-repeat="nouvelle_cle_val_osm in nouvelles_cles_vals_osm">
+
+                            <td class="col-md-1 text-center">
+                              
+                                <select ng-model="nouvelle_cle_val_osm.condition" required >
+                                    <option value="OR" > OR </option>
+                                    <option value="AND" > AND </option>
+                                </select>
+
+                            </td>
+
+                            <td class=" col-md-4 text-center" ng-init="nouvelle_cle_val_osm.cle = 'amenity'">
+                                
+                                <input type="text" ng-model="nouvelle_cle_val_osm.action " required>
+
+                            </td>
+
+                            <td class=" col-md-1 text-center" ng-init="nouvelle_cle_val_osm.operateur = 0">
+                                
+                                <select ng-model="nouvelle_cle_val_osm.operateur" required >
+                                    <option value="0" > = </option>
+                                    <option value="1" > # </option>
+                                    <option value="2" > IS NOT NULL </option>
+                                    <option value="3" > IS NULL</option>
+                                </select>
+
+                            </td>
+
+                            <td class=" col-md-4 text-center" ng-init="nouvelle_cle_val_osm.nom = '' ">
+                                <input type="text" ng-model="nouvelle_cle_val_osm.nom " required ng-if="nouvelle_cle_val_osm.operateur !=2 && nouvelle_cle_val_osm.operateur !=3" >
+                            </td>
+                            
+                            <td class="col-md-2 text-center">
+                                <button class="btn back_red white " ng-click="nouvelles_cles_vals_osm.splice($index,1)">Supprimer</button>
+                            </td>
+
+                        </tr>
+
+                        <tr style="height:50px">
+                            <td colspan="4"></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div class="back_black white ajouter_colonne text-center pointer" ng-click="nouvelles_cles_vals_osm.push({})">
+                    <i class="fa fa-plus white"></i>
+                </div>
+                <div class="back_red white ajouter_colonne text-center pointer save_couche" ng-click="add_cles_vals_osm(sous_thematique_couche)" ng-if="nouvelles_cles_vals_osm.length">
+                    <i class="fa fa-floppy-o white"></i>
+                </div>
+            </div>
+
+            <div class="col-md-12 back_white" style="position:relative" ng-if="sous_thematique_couche.type_couche == 'api' ">
+
+                <table class="table table_colonne">
+                    <thead>
+                        <tr>
+                            <th class="col-md-4">Proprietes</th>
+                            <th class="col-md-8 text-center">Valeur</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td>URL</td>
+                            <td class="text-center"> 
+                                <span ng-if="sous_thematique_couche.url && !sous_thematique_couche_modifier.active"> {{sous_thematique_couche.url}} </span>
+                                <span ng-if="!sous_thematique_couche.url && !sous_thematique_couche_modifier.active">Indefini</span>
+                                <input type="text" ng-value="sous_thematique_couche.url" ng-model="sous_thematique_couche_modifier.url" ng-if="sous_thematique_couche_modifier.active">
+                            </td>
+                        </tr>
+
+                         <tr style="height:50px">
+                            <td colspan="4"></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <div ng-if="!sous_thematique_couche_modifier.active" class="back_black white ajouter_colonne text-center pointer" ng-click="sous_thematique_couche_modifier.active = !sous_thematique_couche_modifier.active" style="right: 50%;">
+                    <i class="fa fa-pencil white"></i>
+                </div>
+
+                <div ng-if="sous_thematique_couche_modifier.active" class="back_black white ajouter_colonne text-center pointer" style="background: red !important" ng-click="sous_thematique_couche_modifier.active = !sous_thematique_couche_modifier.active">
+                    <i class="fa fa-times white"></i>
+                </div>
+
+                <div ng-if="sous_thematique_couche_modifier.active" class="back_red white ajouter_colonne text-center pointer save_couche" ng-click="save_properties_couche(sous_thematique_couche,'api')" >
+                    <i class="fa fa-floppy-o white"></i>
+                </div>
+                
+                <!-- <table class="table table_colonne">
+                    <thead>
+                        <tr>
+                            <th class="col-md-1">Champ principal</th>
+                            <th class="col-md-7 text-center">Nom des champs</th> 
+                            <th class="col-md-4 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="colonne in sous_thematique_couche.colonnes" class="black" ng-if="colonne.nom != 'id' && colonne.nom != 'geom'" ng-init="colonne.id_theme = sous_thematique_couche.key_couche;colonne.sous_thematiques = sous_thematique_couche.sous_thematiques;colonne.id=$index;">
+                            <td class="col-md-1 text-center">
+                                <input type="radio" id="radio{{colonne.nom}}" ng-model="$parent.nom" name="nom" value="{{colonne.champ_principal}}" ng-click="definir_champ_principal(colonne,sous_thematique_couche)"   ng-checked="colonne.champ_principal == 'true' "  />
+                            </td>
+                            <td class="col-md-7 text-center" >
+                                <span ng-if="!colonne.edition" > 
+                                    {{colonne.nom}}
+                                    <i class="fa fa-pencil pointer" ng-click="colonne.edition =true" ></i>
+                                </span>
+
+                                <span ng-if="colonne.edition">
+                                    
+                                
+                                <input type="text" ng-model="colonne.nom_editer">
+
+                                <i class="fa fa-check pointer black" style="font-size:large;margin-left:10px" ng-click="modifier_colomne(colonne)"></i>
+
+                                <i class="fa fa-times pointer red" style="font-size:large;margin-left:10px" ng-click="colonne.edition =false;colonne.nom_editer = '' "></i>
+                                
+
+                                </span>
+
+                            </td>
+                           
+                            <td class="col-md-4 text-center">
+                                <button class="btn back_red white border_red" ng-click="toogle_confirmation('supprimer_colomne',colonne,sous_thematique_couche)"" >Supprimer</button>
+                            </td>
+                        </tr>
+
+                        <tr ng-repeat="nouvelle_colonne in nouvelles_colonnes">
+
+                            <td class=" col-md-1">
+                                
+                            </td>
+
+                            <td class=" col-md-7 text-center">
+                                <input type="text" ng-model="nouvelle_colonne.nom " class="">
+                            </td>
+                            
+                            <td class="col-md-4 text-center">
+                                <button class="btn back_red white " ng-click="nouvelles_colonnes.splice($index,1)">Supprimer</button>
+                            </td>
+
+                        </tr>
+
+                        <tr style="height:50px">
+                            <td colspan="4"></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div class="back_black white ajouter_colonne text-center pointer" ng-click="nouvelles_colonnes.push({})">
+                    <i class="fa fa-plus white"></i>
+                </div>
+                <div class="back_red white ajouter_colonne text-center pointer save_couche" ng-click="add_colomnes(nouvelles_colonnes,thematique_couche.shema,sous_thematique_couche.key_couche,sous_thematique_couche.id_couche,sous_thematique_couche.colonnes,sous_thematique_couche.nom,thematique_couche.sous_thematiques)" ng-if="nouvelles_colonnes.length">
+                    <i class="fa fa-floppy-o white"></i>
+                </div> -->
+            </div>
+
+
+
+
+        </div>
+
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - - - - 
+                       Presentation des droits 
+- - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
+        <div ng-show="mode_droit_couche">
+            <div class="col-md-2 col-xs-12" ng-repeat="role in utilisateur_droits_sur_couche">
+                <div class="white-box">
+                    <div class="user-bg">
+                        <div class="overlay-box" >
+                            <div class="user-content" style="margin-top:10px">
+                                <img src="{{utilisateurs[role.index].img}}" class="thumb-lg" alt="img">
+                                <h4 class="black">{{utilisateurs[role.index].nom}}</h4>
+                                <div class="col-sm-12" style="margin-top:15px">
+                                    <button class="btn btn-primary back_black white" ng-click="toogle_confirmation('utilisateur_droits_sur_couche_supprimer',role)">Supprimer
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - - - - 
+                       Ajout de thematiques 
+- - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
+
+        <div ng-show="mode_ajout_thematique">
+        <form ng-submit="sous_ou_pas_ajouter_thematique(nouvelle_thematique,nouvelles_sous_thematique)" class="form-horizontal form-material">
+            <div class="col-md-12 col-xs-12 white-box">
+                <div class="">
+                    <div class="col-md-4 col-xs-12">
+                        <div class="user-bg">
+                            <div class="overlay-box">
+                                <div class="user-content">
+                                    <img src="{{nouvelle_thematique.img_temp}}"  class="thumb-lg" alt="img">
+                                    <div class="col-sm-12" style="margin-top:15px">
+                                    <button class="btn btn-primary"  ng-click="file('img_nouvelle_thematique',nouvelle_thematique,'img_temp')" >Icone de la thématique</button>
+                                        <input type="file" ng-files="setTheFiles($files,nouvelle_thematique)" id="img_nouvelle_thematique" style="display: none;" accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-xs-12">
+                        <div class="form-group">
+                            <label class="col-md-12">Nom de la thématique:</label>
+                            <div class="col-md-12">
+                                <input type="text" placeholder="Nom de la thematique" class="form-control form-control-line" ng-model="nouvelle_thematique.nom" required>
+                            </div>
+                            </div>
+                        <div class="form-group"  >
+                            <label class="col-md-12">Créer des Sous-thématiques ? :</label>
+                            <div class="col-md-12" >
+                                <select class="col-md-12 form-control" ng-model="nouvelle_thematique.sousthematique" required>
+                                    <option ng-value="true">oui</option>
+                                    <option ng-value="false">non</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>   
+                </div>
+            </div>
+            <div class="table-responsive col-md-12 col-xs-12 back_white" style="position:relative;padding:0px" ng-if="nouvelle_thematique.sousthematique == 'true'">
+                <table class="table" ng-repeat="sous_thematique in nouvelle_thematique.sous_thematiques" style="margin-bottom:50px">
+
+                    <tr class="back_black white" ng-init="index_sous_thematique = $index">
+                        <td colspan="4" class="text-center">
+                            <span>Nom de la sous thématique {{$index + 1}}: </span>
+                            <input type="text" ng-model="sous_thematique.nom" class="black" required>
+
+                            <i ng-if="nouvelle_thematique.sous_thematiques.length != 1" class="fa fa-trash-o  pointer red" style="font-size:x-large;margin-left:30px"
+                                ng-click="nouvelle_thematique.sous_thematiques.splice($index,1)"></i>
+                            <i ng-if="$index == nouvelle_thematique.sous_thematiques.length-1" class="fa fa-plus pull-right pointer" style="font-size:x-large;" ng-click="nouvelle_thematique.sous_thematiques.push({'couches':[{'colonnes':[{}]}]})    "></i>
+                        </td>
+
+                    </tr>
+
+                    <tbody ng-repeat="couche in sous_thematique.couches" >
+
+                        <tr  class="black">
+                            <td>
+                                <input type="text" ng-model="couche.nom" class="black" placeholder="Nom de la couche {{$index + 1}}" required>
+                            </td>
+                            <td ng-init="couche.geom = 'point'">
+                                <select ng-model="couche.geom" required>
+                                    <option value="point">point</option>
+                                    <option value="Polygon">Polygone</option>
+                                    <option value="LineString">Ligne</option>
+                                 
+                                </select>
+                            </td>
+                            <td  class="text-center" ng-init="couche.type_couche = 'wms'" >
+                                <select ng-model="couche.type_couche" required>
+                                    <!-- <option value="couche">Couche (shp,geojson,kml,etc..)</option> -->
+                                    <!-- <option value="requete">requete (OSM) </option> -->
+                                    <!-- <option value="api">API STRATEGIS </option> -->
+                                    <option value="wms">WMS / WFS OSM </option>
+                                </select>
+                            </td>
+                            <td class="pull-right" style="display: -webkit-inline-box;">
+                               
+                            <!-- <img src="{{couche.img_temp}}" class="thumb-lg" style="height: 35px;width: 35px"> -->
+                            <div class="col-md-4">
+                                    <img src="{{couche.img_temp}}" ng-if='couche.geom=="point"'  class="thumb-lg" style="height: 35px;width: 35px"/>
+                        
+                                    <div ng-if='couche.geom=="Polygon" && couche.img_temp==null'  ng-style="{'width':'35px','height': '35px','background':couche.color,'opacity':'{{couche.opacity}}','border':'3px solid black','display': 'inline-block','margin-top': '22px'}">
+                                        
+                                    </div>
+
+                                   <div ng-if='couche.geom=="Polygon" && couche.img_temp!=null' ng-style="{'height': '35px','background-size': '32px','width': '35px','border':'3px solid black','display': 'inline-block','margin-top': '22px','background-image': 'url('+ couche.img_temp + ')'}" >
+                                         <!-- <img  ng-src="{{couche.img}}" style="width: 25px;height: 25px;" /> -->
+                                   </div>
+
+                                   <hr ng-if='couche.geom=="LineString"' ng-style="{'border':'2px solid','margin-left': '10px','margin-right': '10px','border-color':couche.color}">
+                            </div>
+
+                            <div class="col-md-4 text-center"  ng-if='couche.geom=="Polygon"'>
+                                <button type="button" class="btn btn-primary " style="margin-bottom: 10px"  ng-click="file('img_nouvelle_couche'+$index+''+index_sous_thematique,couche,'img_temp')" > Icone </button>
+                                <button type="button" class="btn btn-primary " ng-click="changeColor_addCouche(couche)" > Couleur </button>
+                            </div>
+                                        <!-- <span class="black" >{{color}}</span> -->
+                            <div class="col-md-4 text-center" style="" ng-if='couche.geom == "point"'>
+                                <button type="button" class="btn btn-primary" ng-click="file('img_nouvelle_couche'+$index+''+index_sous_thematique,couche,'img_temp')">Icone</button>
+                            </div>
+
+                            <div class="col-md-4 text-center" style="" ng-if='couche.geom == "LineString"'>
+                                <button type="button" class="btn btn-primary" ng-click="changeColor_addCouche(couche)">Couleur</button>
+                            </div>
+
+                            <!-- <button class="btn btn-primary"  ng-click="file('img_nouvelle_couche'+$index+''+index_sous_thematique,couche,'img_temp')" >Icone</button> -->
+                            <input type="file" ng-files="setTheFiles($files,couche)" id="img_nouvelle_couche{{$index+''+index_sous_thematique}}" style="display: none;" accept="image/*">
+                            <div class="col-md-4">
+                                <i ng-if="sous_thematique.couches.length != 1" class="fa fa-trash-o pointer red" style="font-size:x-large;margin-left:30px"
+                                    ng-click="sous_thematique.couches.splice($index,1)"></i>
+                                <i ng-if="$index == sous_thematique.couches.length-1" class="fa fa-plus  pointer black" style="font-size:x-large;margin-left:30px" ng-click="sous_thematique.couches.push({'colonnes':[{}]})"></i>
+                            </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>   
+                <button class="back_red white ajouter_colonne text-center pointer save_couche" style="border: none;outline: none;" type="submit">
+                    <i class="fa fa-floppy-o white" style="margin-top: 5px"></i>
+                </button>
+            </div>
+            
+            <div class="table-responsive col-md-12 col-xs-12 back_white" style="position:relative;padding:0px;padding-bottom: 50px" ng-if="nouvelle_thematique.sousthematique ==  'false'" ng-init="nouvelles_sous_thematique.nom=nouvelle_thematique.nom;nouvelles_sous_thematique.sousthematique=nouvelle_thematique.sousthematique">
+                <table class="table" ng-repeat="couche in nouvelles_sous_thematique.couches">
+                    <tr class=" back_white black ">
+                        <td>
+                            <input type="text" ng-model="couche.nom" class="black" placeholder="Nom de la couche {{$index + 1}}" required>
+                        </td>
+                        <td ng-init="couche.geom = 'point'">
+                            <select ng-model="couche.geom">
+                                <option value="point">Point</option>
+                                <option value="Polygon">Polygone</option>
+                                <option value="LineString">Ligne</option>
+                            </select>
+                        </td>
+
+                        <td  class="text-center" ng-init="couche.type_couche = 'wms'" >
+                                <select ng-model="couche.type_couche" required>
+                                    <!-- <option value="couche">Couche (shp,geojson,kml,etc..)</option> -->
+                                    <!-- <option value="requete">requete (OSM) </option> -->
+                                    <option value="wms">WMS / WFS OSM </option>
+                                    <!-- <option value="api">API STRATEGIS </option> -->
+                                </select>
+                        </td>
+
+                        <td class="pull-right" style="display: -webkit-inline-box;">
+                            <!-- <img src="{{couche.img_temp}}" class="thumb-lg" style="height: 35px;width: 35px"> -->
+
+                            <div class="col-md-4">
+                                    <img src="{{couche.img_temp}}" ng-if='couche.geom=="point"'  class="thumb-lg" style="height: 35px;width: 35px"/>
+                        
+                                    <div ng-if='couche.geom=="Polygon" && couche.img_temp==null'  ng-style="{'width':'35px','height': '35px','background':couche.color,'opacity':'{{couche.opacity}}','border':'3px solid black','display': 'inline-block','margin-top': '22px'}">
+                                        
+                                    </div>
+
+                                   <div ng-if='couche.geom=="Polygon" && couche.img_temp!=null' ng-style="{'height': '35px','background-size': '32px','width': '35px','border':'3px solid black','display': 'inline-block','margin-top': '22px','background-image': 'url('+ couche.img_temp + ')'}" >
+                                         <!-- <img  ng-src="{{couche.img}}" style="width: 25px;height: 25px;" /> -->
+                                   </div>
+
+                                   <hr ng-if='couche.geom=="LineString"' ng-style="{'border':'2px solid','margin-left': '10px','margin-right': '10px','border-color':couche.color}">
+                            </div>
+
+                            <div class="col-md-4 text-center" style="" ng-if='couche.geom=="Polygon"'>
+                                <button type="button" class="btn btn-primary " style="margin-bottom: 10px"  ng-click="file('img_nouvelle_couche'+$index,couche,'img_temp')">Icone</button>
+                                <button type="button" class="btn btn-primary " ng-click="changeColor_addCouche(couche)" > Couleur </button>
+                            </div>
+                                        <!-- <span class="black" >{{color}}</span> -->
+                            <div class="col-md-4 text-center" style="" ng-if='couche.geom == "point"'>
+                                <button type="button" class="btn btn-primary" ng-click="file('img_nouvelle_couche'+$index,couche,'img_temp')">Icone</button>
+                            </div>
+
+                            <div class="col-md-4 text-center" style="" ng-if='couche.geom == "LineString"'>
+                                <button type="button" class="btn btn-primary" ng-click="changeColor_addCouche(couche)">Couleur</button>
+                            </div>
+
+                            <!-- <button class="btn btn-primary"  ng-click="file('img_nouvelle_couche'+$index,couche,'img_temp')" >Icone</button> -->
+                            <input type="file" ng-files="setTheFiles($files,couche)" id="img_nouvelle_couche{{$index}}" style="display: none;" accept="image/*">
+
+                            <div class="col-md-4" >
+                                <i ng-if="nouvelles_sous_thematique.couches.length != 1" class="fa fa-trash-o pointer red" style="font-size:x-large;margin-left:30px"
+                                    ng-click="nouvelles_sous_thematique.couches.splice($index,1)"></i>
+                                <i ng-if="$index == nouvelles_sous_thematique.couches.length-1" class="fa fa-plus  pointer black" style="font-size:x-large;margin-left:30px" ng-click="nouvelles_sous_thematique.couches.push({'colonnes':[{}]})"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    <tbody>
+
+
+                    </tbody>
+                </table>
+                <button class="back_red white ajouter_colonne text-center pointer save_couche" style="border: none;outline: none;" type="submit">
+                    <i class="fa fa-floppy-o white" style="margin-top: 5px"></i>
+                </button>
+            </div>
+         </form>   
+        </div>
+
+        <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - - - - 
+                       Ajout de couches dans une sous thematiques ou une thematiques
+- - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
+
+        <div ng-if="mode_ajout_couches == true ">
+        <form ng-submit="ajouter_couches(couches)">
+            <div class="table-responsive col-md-12 col-xs-12 back_white" style="position:relative;padding:0px;padding-bottom: 45px;" ng-init="couches.id_thematique=thematique_couche.id_thematique;couches.id_sous_thematique=sous_thematique_active.key;couches.shema=thematique_couche.shema;couches.rang_thema=thematique_couche.id;couches.rang_sous=sous_thematique_active.id;couches.nom_thematique=thematique_couche.nom">
+                <table class="table" >
+                     <thead class="back_black white">
+                        <tr>
+                            <th class="text-center white">
+                                <span>Nom de la couche : </span>
+                            </th>
+                            <th class="text-center white">
+                                 <span>Type de geometry </span>
+                            </th>
+                            <th class="text-center white">
+                                 <span>Forme des donnees </span>
+                            </th>
+                            <th class="text-center white">
+                                <span>Icone de la couche : </span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody ng-repeat="couche in couches.couches">
+                    <tr class=" back_white black">
+                        <td class="text-center">
+                            
+                            <input type="text" ng-model="couche.nom" class="black" required>
+                        </td>
+                        <td ng-init="couche.geom = 'point'" class="text-center">
+                           
+                            <select ng-model="couche.geom" required>
+                                <option ng-value="point">point</option>
+                                <option ng-value="Polygon">Polygon</option>
+                                <option ng-value="LineString">LineString</option>
+                            </select>
+                        </td>
+                        <td  class="text-center" ng-init="couche.type_couche = 'wms'" >
+                                <select ng-model="couche.type_couche" required>
+                                    <!-- <option value="couche">Couche (shp,geojson,kml,etc..)</option> -->
+                                    <!-- <option value="requete">requete (OSM) </option> -->
+                                    <option value="wms">WMS / WFS OSM </option>
+                                     <!-- <option value="api">API STRATEGIS </option> -->
+                                </select>
+
+
+                        </td>
+                        <td class="pull-right" style="display: -webkit-inline-box;">
+                            <div class="col-md-4">
+                                    <img src="{{couche.img}}" ng-if='couche.geom=="point"'  class="thumb-lg" style="height: 35px;width: 35px"/>
+
+                        
+                                    <div ng-if='couche.geom=="Polygon" && couche.img==null'  ng-style="{'width':'35px','height': '35px','background':couche.color,'opacity':'{{couche.opacity}}','border':'3px solid black','display': 'inline-block','margin-top': '22px'}">
+                                        
+                                    </div>
+
+                                   <div ng-if='couche.geom=="Polygon" && couche.img!=null' ng-style="{'height': '35px','background-size': '32px','width': '35px','border':'3px solid black','display': 'inline-block','margin-top': '22px','background-image': 'url('+ couche.img + ')'}" >
+                                         <!-- <img  ng-src="{{couche.img}}" style="width: 25px;height: 25px;" /> -->
+                                   </div>
+
+                                   <hr ng-if='couche.geom=="LineString"' ng-style="{'border':'2px solid','margin-left': '10px','margin-right': '10px','border-color':couche.color}">
+                            </div>
+
+                            <div class="col-md-4 text-center" style="" ng-if='couche.geom=="Polygon"'>
+                                <button class="btn btn-primary " style="margin-bottom: 10px"  ng-click="file('img_ajout_couche'+$index,couche,'img')">Icone</button>
+                                <button class="btn btn-primary " ng-click="changeColor_addCouche(couche)" > Couleur </button>
+                            </div>
+                                        <!-- <span class="black" >{{color}}</span> -->
+                            <div class="col-md-4 text-center" style="" ng-if='couche.geom == "point" '>
+                                <button class="btn btn-primary" ng-click="file('img_ajout_couche'+$index,couche,'img')">Icone</button>
+                            </div>
+
+                            <div class="col-md-4 text-center" style="" ng-if='couche.geom == "LineString"'>
+                                <button class="btn btn-primary" ng-click="changeColor_addCouche(couche)">Couleur</button>
+                            </div>
+
+                            <!-- <button class="btn btn-primary"  ng-click="file('img_ajout_couche'+$index,couche,'img')" >Icone</button> -->
+                            <input type="file" ng-files="setTheFiles($files,couche)" id="img_ajout_couche{{$index}}" style="display: none;" accept="image/*">
+                            <div class="col-md-4">
+                                <i ng-if="couches.couches.length != 1" class="fa fa-trash-o pointer red" style="font-size:x-large;margin-left:30px" ng-click="couches.couches.splice($index,1)"></i>
+                                <i ng-if="$index == couches.couches.length-1" class="fa fa-plus  pointer black" style="font-size:x-large;margin-left:30px" ng-click="couches.couches.push({'colonnes':[{}]})"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+                <button class="back_red white ajouter_colonne text-center pointer save_couche" style="outline: none;border:none">
+                    <i class="fa fa-floppy-o white" style="margin-top: 5px"></i>
+                </button>
+            </div> 
+        </form>
+        </div>
+
+    </div>
+</div>

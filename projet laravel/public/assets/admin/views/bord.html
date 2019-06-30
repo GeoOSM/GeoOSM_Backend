@@ -1,0 +1,67 @@
+<div id="page-wrapper">
+            <div class="container-fluid">
+            </br></br>
+                <!-- row -->
+                <div class="row">
+                    <!--col -->
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="white-box">
+                            <div class="text-center">
+                                <i class="fa fa-user black" style="font-size:100px;margin:0 auto"></i>
+                                
+                                <h3 class="text-muted vb black text-center">{{utilisateurs.length}}</h3> 
+                                <h5 class="text-muted vb  text-center" style="color:#ff6849">Nombre d'utilisateurs</h5> 
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                    <!--col -->
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="white-box">
+                                <div class="text-center">
+                                    <i class="fa fa-archive black" style="font-size:100px;margin:0 auto;"></i>
+                                    <h3 class="text-muted vb black text-center">{{thematiques.length}}</h3> 
+                                    <h5 class="text-muted vb red text-center">Nombre de themes</h5> 
+                                </div>
+                            </div>
+                    </div>
+                    <!-- /.col color:#a94442-->
+                    <!--col color:#337ab7-->
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="white-box">
+                            <div class="text-center">
+                                <i class="fa fa-database black" style="font-size:100px;margin:0 auto;"></i>
+                                
+                                <h3 class="text-muted vb black text-center" > {{nombre_couches(thematiques)}} </h3> 
+                                <h5 class="text-muted vb  text-center" style="color:#ca0744">Nombre de couches</h5> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="white-box">
+                            <div class="text-center">
+                                <i class="fa fa-map black" style="font-size:100px;margin:0 auto;"></i>
+                                
+                                <h3 class="text-muted vb black text-center" > {{nombre_cartes(cartes)}} </h3> 
+                                <h5 class="text-muted vb  text-center" style="color:#ff6849">Nombre de cartes</h5> 
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                    <!-- <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="white-box">
+                            <div class="text-center">
+                                <i class="fa fa-clock-o black" style="font-size:100px;margin:0 auto"></i>
+                                
+                                <h3 class="text-muted vb black text-center">16-11-17</h3> 
+                                <h5 class="text-muted vb black text-center">Dernière mise à jour</h5> 
+                            </div>
+                        </div>
+                    </div> -->
+                    <button class="btn btn-primary"  ng-click="updateFtpOsm()" style="  position: absolute;bottom: 75px;right: 15px;" > Mettre a jour le serveur de fichier osm </button>
+                </div>
+              
+            </div>
+            <!-- /.container-fluid -->
+           
+        </div>

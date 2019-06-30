@@ -1,0 +1,636 @@
+<div id="wrapper">
+
+    <div style="position: fixed;top: 0;bottom: 0;left: 0;right: 0;background: rgba(0,0,0,0.7);z-index: 9999999999999;" id="spinner">
+        <img src="assets/admin/images/spinner.gif" style="position: absolute;top: 50%;left: 50%;margin-right: -50%;transform: translate(-50%, -50%) ">
+    </div>
+
+    <div style="position: absolute;top: 0;bottom: 0;left: 0;right: 0;background: rgba(0,0,0,0.6);z-index: 999999999;display: none;"
+        id="ajout_donne_div">
+        <div style="background: #fff;width:calc(100% - 100px);height: calc(100% - 100px);margin: 50px 0 0 50px;padding: 10px;overflow: auto;padding-top: 0px">
+
+            <table class="table table-striped table-dark" style="margin-bottom: 80px;">
+                <thead>
+                    <tr>
+                        <th class="" ng-repeat="champ in data_en_importation.champ">{{champ}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="donne in data_en_importation.donne">
+
+                        <td ng-repeat="colone in data_en_importation.champ">{{donne.properties[colone]}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="position: fixed;bottom: 50px;left:50px;right: 50px;background: #fff;padding: 10px">
+
+                <button class="btn btn-primary pull-right" ng-click="importer_donne_dans_couche(data_en_importation)">Importer</button>
+                <button class="btn back_red white border_red pull-right" style="margin-right: 15px" ng-click="close_div_importation()">Annuler</button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div style="position: fixed;top: 0;bottom: 0;left: 0;right: 0;background: rgba(0,0,0,0.6);z-index: -9;opacity: 0;" id="test_cartes">
+        <div style="position: absolute;top: 35px;right:35px;background:red;height: 40px;width: 40px;z-index: 999999999;border-radius: 100%;text-align: center"
+            ng-click="close_test_cartes()" class="pointer">
+            <i class="fa fa-times white" style="font-size: x-large;margin-top: 7px;"></i>
+        </div>
+
+        <div ng-controller="dessinController">
+            <div style="position: absolute;top: 100px;right:50px;height: inherit;width: inherit;z-index: 999999999;border-radius: 100%;text-align: center"
+                ng-init="polygon_dessin_active=false;extent='';pointCoord=''">
+                <button class="btn btn-primary pull-right" ng-class="{'back_black':polygon_dessin_active==false,'back_red':polygon_dessin_active}"
+                    ng-click="polygon_dessin_active=!polygon_dessin_active;dessin_polygon(polygon_dessin_active)"> Calculer une BBOX (extent) </button>
+            </div>
+
+            <div style="position: absolute;top: 140px;right:50px;height: inherit;width: inherit;z-index: 999999999;border-radius: 100%;text-align: center"
+                ng-init="point_dessin_active=false;extent='';pointCoord=''">
+                <button class="btn btn-primary pull-right" style="display: none;" ng-class="{'back_black':point_dessin_active==false,'back_red':point_dessin_active}"
+                    ng-click="point_dessin_active=!point_dessin_active;dessin_point(point_dessin_active)" id="getCoordPoint"> Connaitre les coordonees d'un point </button>
+            </div>
+
+            <div style="position: absolute;top: 120px;left:50px;padding: 5px;background:black;height: inherit;width: inherit;z-index: 999999999;text-align: center;display: none;"
+                id="resultMap">
+                <span id="extentResultat" class=" white bold" ng-if="extent"> BBOX : {{extent}}  </span>
+
+                <span id="pointResultat" class=" white bold" ng-if="pointCoord"> Coord : 
+                    <span id="resultPoint" >{{pointCoord}} </span>
+                <div>
+                    <button ng-click="SaveCoordPdf()" class="btn back_red"> Sauvegarder comme coordone des cartes </button>
+                </div>
+                </span>
+            </div>
+
+
+
+        </div>
+
+        <div style="position: absolute;bottom: 50px;left:50px;background:rgba(0,0,0,0.7);z-index: 999999999; padding: 5px;height: inherit;width: inherit;"
+            class="white">
+
+            Zmax : <span id="textZoom"> </span>
+
+        </div>
+
+        <openlayers style="background: #fff;width:calc(100% - 100px);height: calc(100% - 100px);margin: 50px 0 0 50px;padding: 10px;overflow: auto;padding-top: 0px"
+            class="map" ol-defaults="defaults" ol-controls="controls" ol-interactions="interactions">
+
+        </openlayers>
+
+    </div>
+
+    <div style="position: fixed;top: 0;bottom: 0;left: 0;right: 0;background: rgba(0,0,0,0.6);z-index: 999999999;display: none;"
+        id="edit_cartes_pdf">
+
+        <div style="background: #fff;width:calc(100% - 100px);height:calc(100% - 133px);margin: 50px 0 0 50px;padding: 10px;overflow: auto;padding-top: 0px">
+            <div class="table-responsive " ng-if="pdf_for_edition.status">
+                <table class="table" style="margin-bottom:50px">
+                    <tr>
+                        <td class="col-md-2 bold">nom :</td>
+                        <td>
+                            <input type="text" ng-model="pdf_edition.name" ng-value="pdf_for_edition.pdf.name" style="width: 100%;">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold">Description : </td>
+                        <td>
+
+                            <input type="text" style="height: 50px;width: 100%;" ng-model="pdf_edition.description" ng-value="pdf_for_edition.pdf.description">
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold">Image : </td>
+                        <td>
+
+                            <img src="{{pdf_edition.img_temp}}" class="thumb-lg" style="height: 87px;width: 87px">
+
+                            <input type="file" ng-files="setTheFiles($files,pdf_edition)" id="img_modifier_cartes_pdf" style="display: none;" accept="image/*">
+
+                            <button class="btn btn-primary " ng-click="file('img_modifier_cartes_pdf',pdf_edition,'img_temp')">Changer</button>
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold">PDF : </td>
+                        <td>
+                            <p ng-if="pdf_for_edition.pdf.url && !pdf_edition.url"> {{pdf_for_edition.pdf.url}} </p>
+                            <p ng-if="pdf_edition.url"> {{pdf_edition.url}} </p>
+                            <input type="file" ng-files="setTheFiles($files,pdf_edition)" id="doc_modifier_cartes_pdf" style="display: none;" accept="pdf/*">
+                            <button class="btn btn-primary " ng-click="file('doc_modifier_cartes_pdf',pdf_edition,'url')">Changer</button>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2 bold"> PDF telechargeable par le public  : </td>
+                        <td>
+                            <span ng-if="!pdf_edition.pdf_public">
+                                    <span class="bold" ng-if=" pdf_for_edition.pdf.pdf_public || pdf_for_edition.pdf.pdf_public == 'true' " > Oui </span>
+                                    <span class="bold" ng-if=" !pdf_for_edition.pdf.pdf_public || pdf_for_edition.pdf.pdf_public == 'false' "> Non </span>
+        
+                            </span>
+                            
+                            <select ng-model="pdf_edition.pdf_public" ng-value="pdf_for_edition.pdf.pdf_public">
+                                <option value="true"  >oui</option>
+                                <option value="false"  >non</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold"> BBOX : </td>
+                        <td> <input type="text" ng-model="pdf_edition.bbox" ng-value="pdf_for_edition.pdf.bbox" style="width: 100%;">                            </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold"> Zoom min : </td>
+                        <td>
+                            <select ng-model="pdf_edition.zmin" ng-value="pdf_for_edition.pdf.zmin">
+                                <option ng-repeat="zoom in zooms" ng-value="zoom" ng-if="zoom < pdf_edition.zmax || pdf_edition.zmax == undefined" >{{zoom}}</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold"> Zoom max : </td>
+                        <td>
+                            <select ng-model="pdf_edition.zmax" ng-value="pdf_for_edition.pdf.zmax">
+                               <option ng-repeat="zoom in zooms" ng-value="zoom" ng-if="zoom > pdf_edition.zmin || pdf_edition.zmin == undefined" >{{zoom}}</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="pdf_for_edition.pdf.type== null ">
+                        <td class="col-md-2 bold"> Type de couche : </td>
+                        <td>
+                            <select ng-model="pdf_edition.type">
+                                    <option value="wms">WMS</option>
+                                    <option value="xyz">XYZ</option>
+                                    <option value="raster">Importez un raster</option>
+                                </select>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="pdf_for_edition.pdf.url_raster">
+                        <td class="col-md-2 bold"> Changer votre raster</td>
+                        <td>
+                            <p ng-if="pdf_for_edition.pdf.url_raster && !pdf_edition.url_raster"> {{pdf_for_edition.pdf.url_raster}} </p>
+                            <p ng-if="pdf_edition.url_raster"> {{pdf_edition.url_raster}} </p>
+                            <input type="file" ng-files="setTheFiles($files,pdf_edition)" id="raster_modifier_cartes_pdf" style="display: none;">
+                            <button class="btn btn-primary " ng-click="file('raster_modifier_cartes_pdf',pdf_edition,'url_raster')">Changer</button>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="pdf_for_edition.pdf.type != null || (pdf_edition.type != null && pdf_edition.type != 'raster' ) ">
+                        <td class="col-md-2 bold"> Url de la couche : </td>
+                        <td> <input type="text" ng-model="pdf_edition.url_tile" ng-value="pdf_for_edition.pdf.url_tile" style="width: 100%;">                            </td>
+                    </tr>
+
+                    <tr ng-if="pdf_for_edition.pdf.type=='wms' || pdf_edition.type=='wms'">
+                        <td class="col-md-2 bold"> Identifiant du WMS : </td>
+                        <td> <input type="text" ng-model="pdf_edition.identifiant" ng-value="pdf_for_edition.pdf.identifiant"
+                                style="width: 100%;"> </td>
+                    </tr>
+
+                    <tr ng-if="pdf_edition.type=='raster'">
+                        <td class="col-md-2 bold"> Importer votre raster</td>
+                        <td>
+                            <p ng-if="pdf_for_edition.pdf.url_raster && !pdf_edition.url_raster"> {{pdf_for_edition.pdf.url_raster}} </p>
+                            <p ng-if="pdf_edition.url_raster"> {{pdf_edition.url_raster}} </p>
+                            <input type="file" ng-files="setTheFiles($files,pdf_edition)" id="raster_modifier_cartes_pdf" style="display: none;">
+                            <button class="btn btn-primary " ng-click="file('raster_modifier_cartes_pdf',pdf_edition,'url_raster')">Importer</button>
+                        </td>
+                    </tr>
+
+
+                </table>
+            </div>
+
+            <div style="position: fixed;bottom: 30px;left:50px;right: 50px;background: #fff;padding: 10px">
+
+                <button class="btn btn-primary pull-right" ng-click="updatePdfcarte(pdf_for_edition,pdf_edition)">Modifier</button>
+                <button class="btn back_red white border_red pull-right" style="margin-right: 15px" ng-click="close_edit_cartes_pdf()">Annuler</button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div style="position: fixed;top: 0;bottom: 0;left: 0;right: 0;background: rgba(0,0,0,0.6);z-index: 999999999;display: none;"
+        id="add_cartes_pdf">
+
+        <div style="background: #fff;width:calc(100% - 100px);height:calc(100% - 133px);margin: 50px 0 0 50px;padding: 10px;overflow: auto;padding-top: 0px">
+            <div class="table-responsive " ng-if="new_pdfs.status_open_add_cartes_pdf">
+                <table class="table" style="margin-bottom:50px">
+                    <tr>
+                        <td class="col-md-2 bold">nom :</td>
+                        <td>
+                            <input type="text" ng-model="new_pdfs.name" style="width: 100%;">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold">Description : </td>
+                        <td>
+
+                            <input type="text" style="height: 50px;width: 100%;" ng-model="new_pdfs.description">
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold">Image : </td>
+                        <td>
+
+                            <img src="{{new_pdfs.img_temp}}" class="thumb-lg" style="height: 87px;width: 87px">
+
+                            <input type="file" ng-files="setTheFiles($files,new_pdfs)" id="img_modifier_cartes_pdf" style="display: none;" accept="image/*">
+
+                            <button class="btn btn-primary " ng-click="file('img_modifier_cartes_pdf',new_pdfs,'img_temp')">Importer</button>
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold">PDF : </td>
+                        <td>
+                            {{new_pdfs.url}}
+                            <input type="file" ng-files="setTheFiles($files,new_pdfs)" id="doc_modifier_cartes_pdf" style="display: none;" accept="pdf/*">
+                            <button class="btn btn-primary " ng-click="file('doc_modifier_cartes_pdf',new_pdfs,'url')">Importer</button>
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold"> PDF telechargeable par le public : </td>
+                        <td>
+                            <select ng-model="new_pdfs.pdf_public" >
+                                <option ng-value="true"  >oui</option>
+                                <option ng-value="false"  >non</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold"> BBOX : </td>
+                        <td>
+                            <input type="text" ng-model="new_pdfs.bbox" style="width: 100%;">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold"> Zoom min : </td>
+                        <td>
+                            <select ng-model="new_pdfs.zmin">
+                                <option ng-repeat="zoom in zooms" ng-value="zoom" ng-if="zoom < new_pdfs.zmax || new_pdfs.zmax == undefined" >{{zoom}}</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold"> Zoom max : </td>
+                        <td>
+                            <select ng-model="new_pdfs.zmax">
+                                           <option ng-repeat="zoom in zooms" ng-value="zoom" ng-if="zoom > new_pdfs.zmin || new_pdfs.zmin == undefined" >{{zoom}}</option>
+                                        </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-2 bold"> Type de couche : </td>
+                        <td>
+                            <select ng-model="new_pdfs.type">
+                                <option value="wms">WMS</option>
+                                <option value="xyz">XYZ</option>
+                                <option value="raster">Importez un raster</option>
+                                <option value="indisponible">Pas disponible pour le moment</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="new_pdfs.type != null  && new_pdfs.type != 'raster' && new_pdfs.type != 'indisponible' ">
+                        <td class="col-md-2 bold"> Url de la couche : </td>
+                        <td> <input type="text" ng-model="new_pdfs.url_tile" style="width: 100%;"> </td>
+                    </tr>
+
+                    <tr ng-if="new_pdfs.type=='wms'">
+                        <td class="col-md-2 bold"> Identifiant du WMS : </td>
+                        <td> <input type="text" ng-model="new_pdfs.identifiant" style="width: 100%;"> </td>
+                    </tr>
+
+                    <tr ng-if="new_pdfs.type=='raster'">
+                        <td class="col-md-2 bold"> Importer votre raster</td>
+                        <td>
+                            {{new_pdfs.url_raster}}
+                            <input type="file" ng-files="setTheFiles($files,new_pdfs)" id="raster_modifier_cartes_pdf" style="display: none;">
+                            <button class="btn btn-primary " ng-click="file('raster_modifier_cartes_pdf',new_pdfs,'url_raster')">Importer</button>
+                        </td>
+                    </tr>
+
+
+                </table>
+            </div>
+
+            <div style="position: fixed;bottom: 30px;left:50px;right: 50px;background: #fff;padding: 10px">
+
+                <button class="btn btn-primary pull-right" ng-click="add_doc_pdf()">Ajouter</button>
+                <button class="btn back_red white border_red pull-right" style="margin-right: 15px" ng-click="close_add_cartes_pdf()">Annuler</button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div style="position: fixed;top: 0;bottom: 0;left: 0;right: 0;background: rgba(0,0,0,0.6);z-index: 999999999;display: none;"
+        id="edit_metadata">
+
+        <div ng-if="metadata_edit.status" style="background:#fff;width:calc(100% - 100px);height:calc(100% - 133px);margin: 80px 0 0 50px;padding: 10px;overflow: auto;">
+            <div style="position:fixed;top:50px;left:50px;right:50px;background-color:#cecccc;">
+                <button class="col-md-2 col-md-offset-2 btn bold black back_white md_description" ng-click="toogleMenuMetadata('description')"> Description </button>
+                <button class="col-md-2 col-md-offset-1 btn bold black back_white md_qualite" style="background-color:#a8a6a6" ng-click="toogleMenuMetadata('qualite')"> Proprietes </button>
+                <button class="col-md-2 col-md-offset-1 btn bold black back_white md_ressources" style="background-color:#a8a6a6" ng-click="toogleMenuMetadata('ressources')"> Ressources associés </button>
+            </div>
+            <div id="md_description">
+                <form class="form-horizontal form-material" ng-submit="">
+                    <div class="form-group">
+                        <label class="col-md-12 bold black">Résume </label>
+                        <div class="col-md-12">
+                            <input type="text" placeholder="entrer un résumé descriptif de la données" class="form-control form-control-line" ng-value="metadata.resume"
+                                ng-model="metadata_edit.resume">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12 bold black">Description totale </label>
+                        <div class="col-md-12">
+                            <div text-angular ng-model="metadata_edit.description" ng-value="metadata.description"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12 bold black "> Mots clés <span style="font-weight: 100; font-size: 12px;">(Séparés chaque mots clés par une virgule)</span></label>
+                        <div class="col-md-12">
+                            <span class="tags">
+                                <tag-list-input model="metadata_edit.tags"></tag-list-input>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12 bold black ">Zone couverte par la donnée </label>
+                        <div class="col-md-12">
+                            <input type="text" placeholder="La donnée est sur quelle zone ?" class="form-control form-control-line" ng-value="metadata.zone"
+                                ng-model="metadata_edit.zone">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12 bold black">Date de création de la donnée </label>
+                        <div class="col-md-12">
+                            <div uib-datepicker ng-model="metadata_edit.date_creation" class="well well-sm" datepicker-options="options" template-url="assets/admin/uib/template/datepicker/datepicker.html "></div>
+                            <!-- <pre>Selected date is: <em>{{dt | date:'fullDate' }}</em></pre> -->
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12 bold black"> Périodicite de mise à jour </label>
+                        <div class="col-md-12">
+                            <input type="text" placeholder="La donnée est mise à jour à quelle fréquence ?" class="form-control form-control-line" ng-value="metadata.update"
+                                ng-model="metadata_edit.update">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div id="md_qualite" style="display:none">
+
+                <form class="form-horizontal form-material" ng-submit="">
+                    <div class="form-group">
+                        <label class="col-md-12 bold black">Système de réference spatiale </label>
+                        <div class="col-md-12">
+                            <input type="text" placeholder="Le système de coordonnées de la donnée" class="form-control form-control-line" ng-value="metadata.epsg"
+                                ng-model="metadata_edit.epsg">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12 bold black">Langue des données </label>
+                        <div class="col-md-12">
+                            <input type="text" placeholder="Langue des données" class="form-control form-control-line" ng-value="metadata.langue"
+                                ng-model="metadata_edit.langue">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12 bold black">Echelle </label>
+                        <div class="col-md-12">
+                            <input type="text" placeholder="Echelle de la donnée" class="form-control form-control-line" ng-value="metadata.echelle"
+                                ng-model="metadata_edit.echelle">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="position:relative">
+                        <table class="table table_colonne">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-8 bold"> Producteur / Partenaires</th>
+                                    <th class="col-md-4 text-center"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr  ng-repeat="partenaire in metadata_edit.partenaire">
+                                    <td class="col-md-8 ">
+                                       {{getNameUser(partenaire.id_user)}}
+                                    </td>
+
+                                    <td class="col-md-4 text-center">
+                                        <button class="btn back_red white border_red" ng-click="metadata_edit.partenaire.splice($index,1)">Supprimer</button>
+                                    </td>
+                                </tr>
+                                <tr ng-repeat="nouveau_acteur in nouveau_acteurs">
+
+                                    <td class=" col-md-8">
+                                        <select ng-model="nouveau_acteur.id_user" >
+                                            <option  ng-repeat="utilisateur in utilisateurs" ng-value="utilisateur.id_utilisateur" > {{utilisateur.nom}} </option>
+                                        </select>
+                                    </td>
+
+                                    <td class="col-md-4 text-center">
+                                        <button class="btn back_red white " ng-click="nouveau_acteurs.splice($index,1)">Supprimer</button>
+                                    </td>
+
+                                </tr>
+
+                                <tr style="height:50px">
+                                    <td colspan="4"></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <div class="back_black white ajouter_colonne text-center pointer" ng-click="nouveau_acteurs.push({})">
+                            <i class="fa fa-plus white"></i>
+                        </div>
+                        <div class="back_red white ajouter_colonne text-center pointer save_couche" ng-click="add_colomnes(nouveau_acteurs,thematique_couche.shema,sous_thematique_couche.key_couche,sous_thematique_couche.id_couche,sous_thematique_couche.colonnes,sous_thematique_couche.nom,thematique_couche.sous_thematiques)"
+                            ng-if="nouvelles_colonnes.length">
+                            <i class="fa fa-floppy-o white"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12 bold black">Modalité d'utilisation </label>
+                        <div class="col-md-12">
+                            <div text-angular ng-model="metadata_edit.licence" ng-value="metadata.licence"></div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div id="md_ressources" style="display:none">
+
+            </div>
+
+            <div style="position: fixed;bottom: 20px;left:50px;right: 50px;background: #fff;padding: 10px">
+
+                <button class="btn btn-primary pull-right" ng-click="addMetadata()" ng-if="!metadata_edit.id_metadata">Sauvegarder</button>
+                <button class="btn btn-primary pull-right" ng-click="editMetadata()" ng-if="metadata_edit.id_metadata" >Modifier</button>
+                <button class="btn back_red white border_red pull-right" style="margin-right: 15px" ng-click="close_edit_metadata()"> Annuler</button>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- <div style="position: absolute;top: 0;bottom: 0;left: 0;right: 0;background: rgba(0,0,0,0.6);z-index:999999999;display: none;" id="sequence_cartes">
+        
+        <div style="background: #fff;width:calc(100% - 100px);height: calc(100% - 100px);margin: 50px 0 0 50px;padding: 10px;overflow: auto;padding-top: 0px"  >
+            <div class="table-responsive ">
+                <table class="table" style="margin-bottom:50px">
+
+                    <tr  class="white back_black pointer" >
+                        <td>Nom de la sequence : </td>
+                        <td> <input type="text" class="black" placeholder="Entrer le nom de la nouvelle sequence" ng-model="nouvelleSequence.nom"> </td>
+                    </tr>
+
+                    <tbody >
+
+                        <tr style="" class="black" ng-repeat="couche in cartesPourSequence.couches">
+                                <td> {{couche.nom}} </td>
+                            <td style="padding-right:20px">
+                                <div class="checkbox  pull-right" style="font-size: 8px;">
+                                    <label style="font-size: 1em" class="lab">
+                                        <input type="checkbox"  ng-click="checkbox_sequence(couche,$event)">
+                                        <span class="border_black_gray cr "><i class="cr-icon fa fa-check black"></i></span>
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+        <div style="position: fixed;bottom: 50px;left:50px;right: 50px;background: #fff;padding: 10px">
+            
+             <button class="btn btn-primary pull-right" ng-click="addSequence()" >Creer</button>
+            <button class="btn back_red white border_red pull-right" style="margin-right: 15px" ng-click="close_div_sequence()" >Annuler</button>
+           
+        </div>
+
+       
+    </div> -->
+
+
+    <!--- *********************************************************************************************************
+            ******************************************cors de la page **************************************************
+        **************************************************************************************************************-->
+
+    <nav class="navbar back_red navbar-static-top m-b-0">
+        <div class="navbar-header"> <a class="navbar-toggle hidden-sm hidden-md hidden-lg " href="javascript:void(0)" data-toggle="collapse" data-target=".navbar-collapse"><i class="fa fa-bars"></i></a>
+            <div class="top-left-part"><a class="logo"><b><img src="assets/admin/images/gc.png" alt="home" style="height:55px" /></b><span class="hidden-xs"></span></a></div>
+
+            <button ng-if="menu.thematique" class="btn btn-primary" style="position: absolute;left:calc(50% - 90px);top: 15px;" ng-click="updateCatalogue('thematiques')" >Mettre à jour le catalogue</button>
+
+            <ul class="nav navbar-top-links navbar-right pointer pull-right" ng-click="menu_deconexion()">
+                <li>
+                    <a class="profile-pic"> <img src="{{_user.src_photo}}" alt="user-img" width="36" class="img-circle"><b class="hidden-xs">Admin</b> </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div id="user_connect" class="text-center" style="display: none;">
+        <p class="text-center bold">{{_user.nom}} {{_user.prenom}}</p>
+
+        <button class="btn btn-primary" ng-click="deconnect()">Deconnection</button>
+
+    </div>
+    <!-- Left navbar-header -->
+    <div class="navbar-default back_black sidebar" role="navigation">
+        <div class="sidebar-nav navbar-collapse slimscrollsidebar">
+            <ul class="nav" id="side-menu">
+                <li style="padding: 10px 0 0;" ng-click="changer_menu('bord')">
+                    <a ng-class="{'waves-effect white':menu.bord==false,'waves-effect back_white black':menu.bord}"><i class="fa fa-th-large fa-fw" aria-hidden="true"></i><span class="hide-menu">Tableau de bord</span></a>
+                </li>
+                <li ng-click="changer_menu('utilisateur')">
+                    <a ng-class="{'waves-effect white':menu.utilisateur==false,'waves-effect back_white black':menu.utilisateur}"><i class="fa fa-user fa-fw" aria-hidden="true"></i><span class="hide-menu">Utilisateurs</span></a>
+                </li>
+                <li ng-click="changer_menu('cartes')">
+                    <a ng-class="{'waves-effect white':menu.cartes==false,'waves-effect back_white black':menu.cartes}"><i class="fa fa-map fa-fw" aria-hidden="true"></i><span class="hide-menu">Cartes</span></a>
+                </li>
+                <li ng-click="changer_menu('thematique')">
+                    <a ng-class="{'waves-effect white':menu.thematique==false,'waves-effect back_white black':menu.thematique}"><i class="fa fa-database fa-fw" aria-hidden="true"></i><span class="hide-menu">Thématiques</span></a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+    <div style="box-shadow: 3px 0 4px rgba(0,0,0,0.4), -3px 0 4px rgba(0,0,0,0.4);" class=" back_gray" ng-class="{'confirmation_active':confirmation.active,'confirmation_inactive':confirmation.active == false}">
+
+        <div class="text-center">
+            <p>{{confirmation.msg}}</p>
+        </div>
+
+        <div class="col-md-12 col-xs-12">
+            <button class="col-md-5 back_black white btn" style="margin-right: 4.133%; margin-left: 5.833%;" ng-click="action_confirmation(confirmation.type,confirmation.data,confirmation.data1)">Oui</button>
+            <button class="col-md-5 back_red white btn" ng-click="toogle_confirmation('false')">NON</button>
+        </div>
+
+    </div>
+
+    <div class="information back_black border_white white" style="box-shadow: 3px 0 4px rgba(0,0,0,0.4), -3px 0 4px rgba(0,0,0,0.4);">
+
+        <div class="">
+            <p>{{information}}</p>
+        </div>
+
+    </div>
+
+    <div id="color_picker" style="box-shadow: 3px 0 4px rgba(0,0,0,0.4), -3px 0 4px rgba(0,0,0,0.4);position: fixed;width: 400px;top: 0;left:calc(50% - 200px);height: 100px;z-index: 999999;padding: 7px;display: none;"
+        class="back_white">
+        <div class="text-center back_red white " style="font-weight: bold;">
+            Chosissez une couleur
+            <button type="button" class="close" style="color: #fff;font-size:30px;margin-top: -5px;opacity: 1 " ng-click="close_colorPicker()">×</button>
+        </div>
+        <div class="text-center " style="padding-top: 25px">
+            <color-picker ng-model="myColor" event-api="eventApi" api="api" id="ajout"></color-picker>
+            <button class="btn back_black white" id="valider_color" style="margin-top: -50px;margin-left: 250px;display: none;"> Valider </button>
+        </div>
+
+    </div>
+
+    <bord-directive ng-if="menu.bord"></bord-directive>
+    <utilisateur-directive ng-if="menu.utilisateur"></utilisateur-directive>
+    <thematique-directive ng-if="menu.thematique"></thematique-directive>
+    <cartes-directive ng-if="menu.cartes"></cartes-directive>
+
+</div>
