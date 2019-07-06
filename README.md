@@ -18,8 +18,8 @@ GeoOSM est écrit avec [Node JS](http://nodejs.org), Python 3 et PHP ( [Laravel]
   - Node JS : Communication entre la base de données et python, et aussi entre un utilisateur et python
  
 ## Pour installer
-Pour une meilleure compréhesion et une installation pas à pas, on a séparé le projet en deux:
-- **Projet Laravel**  : tout le projet PHP avec la base de donées
+Pour une meilleure compréhesion et une installation pas à pas, on a séparé le projet en deux et à suivre dans l'odre suivant:
 - **Python+nodejs** : Les projets python et Node JS
+- **Projet Laravel**  : tout le projet PHP avec la base de donées
 
-
+**NB :** pour chaque porjet GeoOSM, il faut répliquer juste **Projet Laravel** car **Python+nodejs** peut ètre utilisé pour plusieurs autres projets
