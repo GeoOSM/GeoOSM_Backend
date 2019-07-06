@@ -1,25 +1,32 @@
-# GeoOSM Backend
-GeoOSM coté serveur est une infrastructure contenant plusieurs logiciels interconnectés par des langages de programmation pour manipuler, stocker et distribuer l’information géographique par QIS Serveur (WMS, WFS, WMTS). Tout ceci avec une interface. Il a la particularité d’offrir la possibilité de manipuler les données OpenStreetMap de manière très aisée sans beaucoup de connaissances techniques.
+# Projet Python + Node JS GeoOSM
 
-## Fonctionnalités
-A partir de l'interface d'administration il est possible principalement de :
-  - Créer d'utilisateurs qui pourront acceder à l'administration.
-  - Créer d'enssembles ou de sous-enssembles de couches
-  - Créer des couches en construisant une requète avec les [tags OSM](https://wiki.openstreetmap.org/wiki/FR:%C3%89l%C3%A9ments_cartographiques) 
-  - Choisir le mode de diffusion d'une donées WFS ou WMS.
-  - Appliquer un style QGIS à une couche
-  - Télécharger de données. 
-  - Métadonnées très basiques
- 
-## Langages
-GeoOSM est écrit avec [Node JS](http://nodejs.org), Python 3 et PHP ( [Laravel](https://laravel.com/)):
-  - PHP: il assure surtout la communication entre les utilisateurs et la base de données. C’est lui qui permet de créer une nouvelle couche, un enssemble ou sous-enssemble, un utilisateur ou encore former une requête SQL sur les données OSM en fonction des entrées de l’utilisateur  etc….
-  - Python: c'est lui qui manipule les projets QGIS pour QGIS SERVEUR. On peut citer entre autre créer un nouveau WMS ou supprimer un existant, appliquer un style QGIS sur une couche, téléchargement de données sur une emprise etc...
-  - Node JS : Communication entre la base de données et python, et aussi entre un utilisateur et python
- 
-## Pour installer
-Pour une meilleure compréhesion et une installation pas à pas, on a séparé le projet en deux:
-- **Projet Laravel**  : tout le projet PHP avec la base de donées
-- **Python+nodejs** : Les projets python et Node JS
+## Pré requis
+Avant de continuer vous devez déja avoir:
+- Qgis server >= 3
+- Qgis Python
+- Node JS
 
+## Installation
+Il vaut mieux suivre les étapes en ordre.
 
+##### 1. Déployement du projet Node JS
+
+```sh
+$ cd ./python+nodejs
+$ npm i
+```
+Le projet Node JS est prèt ! \
+Pour le tester il suffit de :
+```sh
+$ node server.js
+```
+Et il sera sur l'adresse **localhost:3000**
+##### 2. Modification du projet Node JS
+- Remplisser la variable **bd_access** pour la connexion à la Base de donée GeoOSM
+- Modifier la variable **path_nodejs** avec le chemin absolu vers le votre dossier **python+nodejs**
+##### 3. Configurer Apache ou Nginx pour associer un nom de domaine au projet node js
+On appelera ce nom de domaine par la suite **www.serveur_nodejs+python.geoosm**
+##### 4. Remplir toutes les couches par défault de GeoOSM
+Il suffit de lancer la fonction **generateAllShapeFromOsmBuilderCreate** en entrant dans un navigateur l'url **www.serveur_nodejs+python.geoosm/nom du projet**. Remplacer **nom du projet** par le nom de votre projet, car c'est le nom qui sera utilisé pour le nom du projet QGIS qui sera crée.
+
+**NB:** Bien conserver le nom du projet que vous avez utilisé
