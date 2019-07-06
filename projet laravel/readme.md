@@ -118,15 +118,15 @@ On n'est partit surtout du fait qu'une couche peut ètre contenu dans un enssemb
 Cette donnée pouvant elle mème ètre vecteur ou raster et de sources différentes.\
 
 on a 4 tables principales qui les gèrent:
-- Thematiques : elle contient tous les enssembles
-- Sous-thematiques: elle contient tous les sous-enssembles qui sont lié à un enssemble par la clé étrangère **id-thematiques** de la table **thématiques**
-- couches-sous-thématiques: elle contient toutes les couches qui sont liés à un sous-enssemble par la clé étrangère **id-sous-thematiques** de la table **sous-thematiques**
-- couche-thematiques: elle contient toutes les couches qui sont liés directement à une thématique par la clé étrangère **id-thematiques** de la table **thematiques**
+- **Thematiques** : elle contient tous les enssembles
+- **Sous-thematiques**: elle contient tous les sous-enssembles qui sont lié à un enssemble par la clé étrangère **id-thematiques** de la table **thématiques**
+- **couches-sous-thématiques**: elle contient toutes les couches qui sont liés à un sous-enssemble par la clé étrangère **id-sous-thematiques** de la table **sous-thematiques**
+- **couche-thematiques**: elle contient toutes les couches qui sont liés directement à une thématique par la clé étrangère **id-thematiques** de la table **thematiques**
  ![4 tables](https://raw.githubusercontent.com/GeoOSM/GeoOSM_Backend/master/thematiques.PNG)
 
 Pour lier toutes ces couches aux données OSM, on a 2 tables en plus:
-- Catégorie: elle contient la requète sql d'une couche OSM, et est lié à cette couche par la clé étrangère **key_couche**.
-- sous-categorie: qui contient toutes les clauses d'une requète. Si une requète a deux conditions, cette requète aura deux lignes dans la table. Elle est lié à la table categorie par la clé étrangère **id_cat** de la table **categorie**
+- **Catégorie**: elle contient la requète sql d'une couche OSM, et est lié à cette couche par la clé étrangère **key_couche**.
+- **sous-categorie**: qui contient toutes les clauses d'une requète. Si une requète a deux conditions, cette requète aura deux lignes dans la table. Elle est lié à la table categorie par la clé étrangère **id_cat** de la table **categorie**
  ![](https://raw.githubusercontent.com/GeoOSM/GeoOSM_Backend/master/osm.PNG)
 
 un apercu de la table **sous-categorie**:
