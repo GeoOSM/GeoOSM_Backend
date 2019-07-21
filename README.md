@@ -1,4 +1,4 @@
-# GeoOSM Backend
+# GeOsm Backend
 En termes de serveur, GeOsm est une infrastructure contenant plusieurs logiciels interconnectés afin de manipuler, stocker et distribuer l’information géographique par QGIS Server (WMS, WFS, WMTS) dans le but d’y accéder sur une interface commune.
 La caractéristique principale de GeOsm est d’offrir la possibilité de manipuler, valoriser et récupérer les données OpenStreetMap de façon simple et sans que cela ne nécessite de compétences avancées en développement informatique.
 
