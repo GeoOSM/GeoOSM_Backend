@@ -13,7 +13,7 @@ var xhr = require('request');
 var {PythonShell} = require('python-shell')
 // #https://www.npmjs.com/package/python-shell
 var app = express();
-var MBTiles = require('mbtiles');
+var MBTiles = require('@mapbox/mbtiles');
 var turf = require('@turf/turf')
 const { Pool, Client } = require('pg')
 
