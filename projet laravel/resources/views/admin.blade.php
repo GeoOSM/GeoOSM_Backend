@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <title>Admin GeoCameroun</title>
     <!-- Bootstrap Core CSS -->
     
@@ -42,9 +41,10 @@
     <div ng-controller="mainCtrl">
           <div ng-view></div>
     </div>
-    <footer class="footer text-center" style="left: 0px !important;" > GeoCameroun, Developed by TANK & Anas</footer> 
+    <footer class="footer text-center" style="left: 0px !important;" > GeoOSM, Developed by TANK & Anas</footer> 
 </body>
 
+<script type="text/javascript" src="{{asset('assets/config.js')}}"></script>
 <script type="text/javascript" src="{{asset('assets/admin/js/angular.js')}}"></script>
 <script type="text/javascript" src="{{asset('assets/admin/js/angular-route-min.js')}}"></script>
 <script type="text/javascript" src="{{asset('assets/js/angular-animate.min.js')}}"></script>

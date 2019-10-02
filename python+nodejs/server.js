@@ -17,25 +17,14 @@ var MBTiles = require('mbtiles');
 var turf = require('@turf/turf')
 const { Pool, Client } = require('pg')
 
-const bd_access = {
-	user: bd_access.user,
-	host: 'host de la bd',
-	database: 'nom de la bd',
-	password: 'mot de passe de la bd',
-	port: 5432,
-}
-const path_nodejs = '/var/www/smartworld/'
-const path_script_python = path_nodejs+'/python_script/'
-const path_projet_qgis = path_nodejs
-const path_style_qml = path_nodejs+'/style/'
+const pte_projet = require('./config_projet')
+const config = require('./config')
 
-const pool = new Pool({
-  user: bd_access.user,
-  host: bd_access.host,
-  database: bd_access.database,
-  password: bd_access.password,
-  port: 5432,
-})
+const path_nodejs = config.path_nodejs
+const path_script_python = config.path_script_python
+const path_projet_qgis = config.path_projet_qgis
+const path_style_qml = config.path_style_qml
+
 
 var multer  = require('multer')
 // https://github.com/expressjs/multer#memorystorage npm install --save multer
@@ -104,225 +93,208 @@ var curr_month = d.getMonth() + 1;
 var curr_year = d.getFullYear();
 
 
-app.get('/importation/*', cors(corsOptions), function (req, res) {
+// app.get('/importation/*', cors(corsOptions), function (req, res) {
 
-	url = req.params[0]
-	var index = url.indexOf("/")
-	var extention = url.slice(0, index)
-	var lien = url.slice(index)
-
-
-	if (extention.toLowerCase() == 'rar') {
-		console.log(extention, lien)
-		var extractor = unrar.createExtractorFromFile(lien, "/home/admin237/unrar/");
-		var files = extractor.extractAll();
-
-		if (files[0].state == 'SUCCESS') {
-			for (var i = 0; i < files[1].files.length; i++) {
-				if (files[1].files[i].fileHeader.name.indexOf(".shp") != -1) {
-
-					var shapefile = ogr2ogr('/home/admin237/unrar/' + files[1].files[i].fileHeader.name)
-						.format('GeoJSON')
-						.project("EPSG:4326")
-						.skipfailures()
-						.stream()
-
-					shapefile.pipe(fs.createWriteStream('/var/www/cuy/public/assets/donne_importation_geojson/dd.geojson').on('finish', function () {
+// 	url = req.params[0]
+// 	var index = url.indexOf("/")
+// 	var extention = url.slice(0, index)
+// 	var lien = url.slice(index)
 
 
-						fs.readFile('/var/www/cuy/public/assets/donne_importation_geojson/dd.geojson', { encoding: 'utf-8' }, (err, data) => {
-							if (err) throw err;
-							// console.log(data);
-							res.send(data)
-						});
+// 	if (extention.toLowerCase() == 'rar') {
+// 		console.log(extention, lien)
+// 		var extractor = unrar.createExtractorFromFile(lien, "/home/admin237/unrar/");
+// 		var files = extractor.extractAll();
 
-					}))
+// 		if (files[0].state == 'SUCCESS') {
+// 			for (var i = 0; i < files[1].files.length; i++) {
+// 				if (files[1].files[i].fileHeader.name.indexOf(".shp") != -1) {
 
+// 					var shapefile = ogr2ogr('/home/admin237/unrar/' + files[1].files[i].fileHeader.name)
+// 						.format('GeoJSON')
+// 						.project("EPSG:4326")
+// 						.skipfailures()
+// 						.stream()
 
-
-				}
-			}
-
-		}
-	} else if (extention.toLowerCase() == 'geojson' || extention.toLowerCase() == 'json') {
-
-		fs.readFile(lien, { encoding: 'utf-8' }, (err, data) => {
-			if (err) throw err;
-			res.send(data)
-		});
-
-	} else if (extention.toLowerCase() == 'zip') {
-		console.log(extention, lien)
-		var shapefile = ogr2ogr(lien)
-			.format('GeoJSON')
-			.project("EPSG:4326")
-			.skipfailures()
-			.stream()
-
-		shapefile.pipe(fs.createWriteStream('/var/www/cuy/public/assets/donne_importation_geojson/dd.geojson').on('finish', function () {
-
-			fs.readFile('/var/www/cuy/public/assets/donne_importation_geojson/dd.geojson', { encoding: 'utf-8' }, (err, data) => {
-				if (err) throw err;
-				// console.log(data);
-				res.send(data)
-			});
-
-		}))
-
-	} else {
-
-		var shapefile = ogr2ogr(lien)
-			.format('GeoJSON')
-			.skipfailures()
-			.stream()
-
-		shapefile.pipe(fs.createWriteStream('/var/www/cuy/public/assets/donne_importation_geojson/dd.geojson').on('finish', function () {
-
-			fs.readFile('/var/www/cuy/public/assets/donne_importation_geojson/dd.geojson', { encoding: 'utf-8' }, (err, data) => {
-				if (err) throw err;
-				res.send(data)
-			});
-
-		}))
-
-	}
+// 					shapefile.pipe(fs.createWriteStream('/var/www/cuy/public/assets/donne_importation_geojson/dd.geojson').on('finish', function () {
 
 
-})
+// 						fs.readFile('/var/www/cuy/public/assets/donne_importation_geojson/dd.geojson', { encoding: 'utf-8' }, (err, data) => {
+// 							if (err) throw err;
+// 							// console.log(data);
+// 							res.send(data)
+// 						});
 
-app.get('/shape/:datapoint/:datapolygon/:dataline', cors(corsOptions), function (req, res) {
-
-	//var type = 'DXF'
-	var type = 'ESRI Shapefile'
-	//res.send(req.params.datapoint + ',' + req.params.datapolygon + ','+ req.params.dataline)
-	var shapefile = ogr2ogr(req.params.datapoint)
-		.format(type)
-		.skipfailures()
-		.stream()
-
-	shapefile.pipe(fs.createWriteStream(dir_project + 'DessinPoint.zip').on('finish', function () {
-
-
-		var shapefile = ogr2ogr(req.params.datapolygon)
-			.format(type)
-			.skipfailures()
-			.stream()
-
-		shapefile.pipe(fs.createWriteStream(dir_project + 'DessinPolygone.zip').on('finish', function () {
-
-
-			var shapefile = ogr2ogr(req.params.dataline)
-				.format(type)
-				.skipfailures()
-				.stream()
-
-			shapefile.pipe(fs.createWriteStream(dir_project + 'DessinLine.zip').on('finish', function () {
+// 					}))
 
 
 
-				res.send("ok")
+// 				}
+// 			}
+
+// 		}
+// 	} else if (extention.toLowerCase() == 'geojson' || extention.toLowerCase() == 'json') {
+
+// 		fs.readFile(lien, { encoding: 'utf-8' }, (err, data) => {
+// 			if (err) throw err;
+// 			res.send(data)
+// 		});
+
+// 	} else if (extention.toLowerCase() == 'zip') {
+// 		console.log(extention, lien)
+// 		var shapefile = ogr2ogr(lien)
+// 			.format('GeoJSON')
+// 			.project("EPSG:4326")
+// 			.skipfailures()
+// 			.stream()
+
+// 		shapefile.pipe(fs.createWriteStream('/var/www/cuy/public/assets/donne_importation_geojson/dd.geojson').on('finish', function () {
+
+// 			fs.readFile('/var/www/cuy/public/assets/donne_importation_geojson/dd.geojson', { encoding: 'utf-8' }, (err, data) => {
+// 				if (err) throw err;
+// 				// console.log(data);
+// 				res.send(data)
+// 			});
+
+// 		}))
+
+// 	} else {
+
+// 		var shapefile = ogr2ogr(lien)
+// 			.format('GeoJSON')
+// 			.skipfailures()
+// 			.stream()
+
+// 		shapefile.pipe(fs.createWriteStream('/var/www/cuy/public/assets/donne_importation_geojson/dd.geojson').on('finish', function () {
+
+// 			fs.readFile('/var/www/cuy/public/assets/donne_importation_geojson/dd.geojson', { encoding: 'utf-8' }, (err, data) => {
+// 				if (err) throw err;
+// 				res.send(data)
+// 			});
+
+// 		}))
+
+// 	}
+
+
+// })
+
+// app.get('/shape/:datapoint/:datapolygon/:dataline', cors(corsOptions), function (req, res) {
+
+// 	//var type = 'DXF'
+// 	var type = 'ESRI Shapefile'
+// 	//res.send(req.params.datapoint + ',' + req.params.datapolygon + ','+ req.params.dataline)
+// 	var shapefile = ogr2ogr(req.params.datapoint)
+// 		.format(type)
+// 		.skipfailures()
+// 		.stream()
+
+// 	shapefile.pipe(fs.createWriteStream(dir_project + 'DessinPoint.zip').on('finish', function () {
+
+
+// 		var shapefile = ogr2ogr(req.params.datapolygon)
+// 			.format(type)
+// 			.skipfailures()
+// 			.stream()
+
+// 		shapefile.pipe(fs.createWriteStream(dir_project + 'DessinPolygone.zip').on('finish', function () {
+
+
+// 			var shapefile = ogr2ogr(req.params.dataline)
+// 				.format(type)
+// 				.skipfailures()
+// 				.stream()
+
+// 			shapefile.pipe(fs.createWriteStream(dir_project + 'DessinLine.zip').on('finish', function () {
 
 
 
-			}))
+// 				res.send("ok")
 
-		}))
 
-	}))
-})
 
-app.get('/dxf/:datapoint/:datapolygon/:dataline', cors(corsOptions), function (req, res) {
+// 			}))
 
-	var type = 'DXF'
-	var shapefile = ogr2ogr(req.params.datapoint)
-		.format(type)
-		.skipfailures()
-		.destination(dir_project + 'Point.dxf')
+// 		}))
 
-	shapefile.exec(function (er, data) {
-		if (er) console.error(er)
+// 	}))
+// })
 
-		var shapefile = ogr2ogr(req.params.datapolygon)
-			.format(type)
-			.skipfailures()
-			.destination(dir_project + 'Polygone.dxf')
+// app.get('/dxf/:datapoint/:datapolygon/:dataline', cors(corsOptions), function (req, res) {
 
-		shapefile.exec(function (er, data) {
-			if (er) console.error(er)
+// 	var type = 'DXF'
+// 	var shapefile = ogr2ogr(req.params.datapoint)
+// 		.format(type)
+// 		.skipfailures()
+// 		.destination(dir_project + 'Point.dxf')
 
-			var shapefile = ogr2ogr(req.params.dataline)
-				.format(type)
-				.skipfailures()
-				.destination(dir_project + 'Line.dxf')
+// 	shapefile.exec(function (er, data) {
+// 		if (er) console.error(er)
 
-			shapefile.exec(function (er, data) {
-				if (er) console.error(er)
-				res.send('ok')
+// 		var shapefile = ogr2ogr(req.params.datapolygon)
+// 			.format(type)
+// 			.skipfailures()
+// 			.destination(dir_project + 'Polygone.dxf')
 
-			})
+// 		shapefile.exec(function (er, data) {
+// 			if (er) console.error(er)
 
-		})
-	})
+// 			var shapefile = ogr2ogr(req.params.dataline)
+// 				.format(type)
+// 				.skipfailures()
+// 				.destination(dir_project + 'Line.dxf')
 
-})
-//downloadVectorToWMS,
-//addRasterToWMS
-app.get('/tiles_geocameroun/:folder/:z/:x/:y.*', function(req, res) {
-    console.log(1)
-    var mbtilesLocation = '/home/admin237/server_tiles/mbtiles/'+ req.params['folder']+'/tiles.mbtiles';
-    new MBTiles(mbtilesLocation, function(err, mbtiles) {
+// 			shapefile.exec(function (er, data) {
+// 				if (er) console.error(er)
+// 				res.send('ok')
+
+// 			})
+
+// 		})
+// 	})
+
+// })
+// //downloadVectorToWMS,
+// //addRasterToWMS
+// app.get('/tiles_geocameroun/:folder/:z/:x/:y.*', function(req, res) {
+//     console.log(1)
+//     var mbtilesLocation = '/home/admin237/server_tiles/mbtiles/'+ req.params['folder']+'/tiles.mbtiles';
+//     new MBTiles(mbtilesLocation, function(err, mbtiles) {
      
-    var extension = req.params[0];
-    switch (extension) {
-      case "png": {
-        mbtiles.getTile(req.params['z'], req.params['x'], req.params['y'], function(err, tile, headers) {
-          if (err) {
-            res.status(404).send('Tile rendering error: ' + err + '\n');
-          } else {
-            res.header("Content-Type", "image/png")
-            res.send(tile);
-          }
-        });
-        break;
-      }
-      case "grid.json": {
-        mbtiles.getGrid(req.params['z'], req.params['x'], req.params['y'], function(err, grid, headers) {
-          if (err) {
-            res.status(404).send('Grid rendering error: ' + err + '\n');
-          } else {
-            res.header("Content-Type", "text/json")
-            res.send(grid);
-          }
-        });
-        break;
-      }
-    }
+//     var extension = req.params[0];
+//     switch (extension) {
+//       case "png": {
+//         mbtiles.getTile(req.params['z'], req.params['x'], req.params['y'], function(err, tile, headers) {
+//           if (err) {
+//             res.status(404).send('Tile rendering error: ' + err + '\n');
+//           } else {
+//             res.header("Content-Type", "image/png")
+//             res.send(tile);
+//           }
+//         });
+//         break;
+//       }
+//       case "grid.json": {
+//         mbtiles.getGrid(req.params['z'], req.params['x'], req.params['y'], function(err, grid, headers) {
+//           if (err) {
+//             res.status(404).send('Grid rendering error: ' + err + '\n');
+//           } else {
+//             res.header("Content-Type", "text/json")
+//             res.send(grid);
+//           }
+//         });
+//         break;
+//       }
+//     }
   
-  });
-});
+//   });
+// });
 
 // https://cuy.sogefi.cm:8443/generateAllShapeFromOsmBuilder/smartworld4
 app.get('/generateAllShapeFromOsmBuilder/:projet_qgis',cors(corsOptions),function (req,res) {
 	var projet_qgis= path_projet_qgis+req.params["projet_qgis"]+".qgs"
 
-	if(req.params["projet_qgis"] == "madagascar" ){
-		var destination ='/var/www/smartworld/madagascar_gpkg/'
-		var database = "madagascar"
-	}else if(req.params["projet_qgis"] == "smartworld4"){
-		var destination = '/var/www/smartworld/gpkg/'
-		var database = "geocameroun3"
-	}else if(req.params["projet_qgis"] == "occitanie"){
-		var destination = '/var/www/smartworld/occitanie_gpkg/'
-		var database = "occitanie"
-	}
-
-	const pool = new Pool({
-		user: bd_access.user,
-		host: bd_access.host,
-		database: database,
-		password: bd_access.password,
-		port: 5432,
-	  })
+	const pool = new Pool(pte_projet(req.params["projet_qgis"]).bd_access)
 
 	pool.query('SELECT * from public.categorie where sql is not null', (err, response) => {
 		pool.end()
@@ -432,24 +404,9 @@ app.get('/generateAllShapeFromOsmBuilder/:projet_qgis',cors(corsOptions),functio
 // https://cuy.sogefi.cm:8443/generateShapeFromOsmBuilder/171/false
 app.get('/generateShapeFromOsmBuilder/:projet_qgis/:id_cat/:addtowms',cors(corsOptions),function (req,res) {
 	var projet_qgis= path_projet_qgis+req.params["projet_qgis"]+".qgs"
-	var destination = ""
-	if(req.params["projet_qgis"] == "madagascar" ){
-		var destination ='/var/www/smartworld/madagascar_gpkg/'
-		var database = "madagascar"
-	}else if(req.params["projet_qgis"] == "smartworld4"){
-		var destination = '/var/www/smartworld/gpkg/'
-		var database = "geocameroun3"
-	}else if(req.params["projet_qgis"] == "occitanie"){
-		var destination = '/var/www/smartworld/occitanie_gpkg/'
-		var database = "occitanie"
-	}
-	const pool = new Pool({
-		user: bd_access.user,
-		host: bd_access.host,
-		database: database,
-		password: bd_access.password,
-		port: 5432,
-	  })
+	var destination =pte_projet(req.params["projet_qgis"]).destination
+	
+	const pool = new Pool(pte_projet(req.params["projet_qgis"]).bd_access)
 
 		pool.query('SELECT * from public.categorie where id_cat = '+ req.params["id_cat"] , (err, response) => {
 			pool.end()
@@ -485,14 +442,8 @@ app.get('/generateShapeFromOsmBuilder/:projet_qgis/:id_cat/:addtowms',cors(corsO
 							
 							
 
-							const pool1 = new Pool({
-								user: bd_access.user,
-								host: bd_access.host,
-								database: database,
-								password: bd_access.password,
-								port: 5432,
-							})
-							var url = 'http://tiles.geocameroun.xyz/cgi-bin/qgis_mapserv.fcgi?map='+projet_qgis
+							const pool1 = new Pool(pte_projet(["projet_qgis"]).bd_access)
+							var url = config.url_qgis_server+projet_qgis
 							
 							if (query.sous_thematiques) { 
 								var query_update = 'UPDATE public."couche-sous-thematique" SET url= \' '+ url +'\', identifiant= \''+ query.nom_cat.replace(/[^a-zA-Z0-9]/g,'_') +'\' WHERE id ='+query.key_couche
@@ -698,7 +649,7 @@ app.get('/get_source_file/:projet_qgis/:idndifiant',cors(corsOptions), function 
 							
 			if (err) throw err;
 					console.log(results[0])		
-				var file = 'http://service.geocameroun.cm'+results[0].replace('/vsizip/','')	
+				var file = config.url_node_js+results[0].replace('/vsizip/','')	
 								
 				res.send({
 					'status' : 'ok',
@@ -713,16 +664,8 @@ app.get('/get_source_file/:projet_qgis/:idndifiant',cors(corsOptions), function 
 // https://cuy.sogefi.cm:8443/downloadVectorToWMS/occitanie/Association_false_54_198.gpkg
 // https://cuy.sogefi.cm:8443/downloadVectorToWMS/madagascar/grand_bassin_versant_lac_itasy_mars.zip
 app.get('/downloadVectorToWMS/:projet_qgis/:file/',cors(corsOptions),function (req,res) {
-	if(req.params["projet_qgis"] == "madagascar" ){
-		var destination ='/var/www/smartworld/madagascar_gpkg/'
-		var database = "madagascar"
-	}else if(req.params["projet_qgis"] == "smartworld4"){
-		var destination = '/var/www/smartworld/gpkg/'
-		var database = "geocameroun3"
-	}else if(req.params["projet_qgis"] == "occitanie"){
-		var destination = '/var/www/smartworld/occitanie_gpkg/'
-		var database = "occitanie"
-	}
+	
+	var destination = pte_projet(req.params["projet_qgis"]).destination
 	var projet_qgis= path_projet_qgis+req.params["projet_qgis"]+".qgs"
 			var nom_shp = req.params["file"]
 			
@@ -742,7 +685,7 @@ app.get('/downloadVectorToWMS/:projet_qgis/:file/',cors(corsOptions),function (r
 						console.log(results)
 						if( Array.isArray(results) && results[0] == 'ok' ){
 							
-							var url = 'http://tiles.geocameroun.xyz/cgi-bin/qgis_mapserv.fcgi?map='+projet_qgis
+							var url = config.url_qgis_server+projet_qgis
 							console.log('oui ou non')
 							
 								res.send({
@@ -910,7 +853,7 @@ app.post('/analyse_spatiale',cors(corsOptions), function (req,res){
 					pythonPath: 'python3',
 					//pythonOptions: ['-u'], // get print results in real-time
 					//scriptPath: 'path/to/my/scripts',
-					args: [projet_qgis, layername,path_projet_qgis+'/roi.geojson','/home/admin237/analyse/']
+					args: [projet_qgis, layername,path_projet_qgis+'/roi.geojson',config.path_for_download_result]
 				};
 				// console.log(options)
 				PythonShell.run(path_script_python+'/download_data.py', options, function (err, results) {
@@ -919,7 +862,7 @@ app.post('/analyse_spatiale',cors(corsOptions), function (req,res){
 					compeur.push(1)	
 					if (results != null){
 						donne['querry'][compeur.length -1 ]['number'] = results[0]
-						donne['querry'][compeur.length -1 ]['nom_file']= "http://service.geocameroun.cm/home/admin237/analyse/"+layername+'.gpkg'
+						donne['querry'][compeur.length -1 ]['nom_file']= config.url_node_js+config.path_for_download_result+layername+'.gpkg'
 					}else {
 						donne['querry'][compeur.length -1 ]['number'] = 0
 						donne['querry'][compeur.length -1 ]['nom_file']= false
@@ -962,7 +905,7 @@ app.post('/analyse_spatiale',cors(corsOptions), function (req,res){
 			compeur.push(ptsWithin.features.length)
 			donne['querry'][compeur.length -1 ]['number']= ptsWithin.features.length
 			var nom_file =donne['querry'][compeur.length -1 ]['nom'].replace(/[^\w\s]/gi, '').toLowerCase()+ '_' + Date.now()+'.zip'
-			donne['querry'][compeur.length -1 ]['nom_file']= "http://service.geocameroun.cm/home/admin237/analyse/"+nom_file
+			donne['querry'][compeur.length -1 ]['nom_file']= config.url_node_js+config.path_for_download_result+nom_file
 			//console.log('contains',compeur.length,donne['querry'].length)
 
 			var type = 'ESRI Shapefile'
@@ -971,7 +914,7 @@ app.post('/analyse_spatiale',cors(corsOptions), function (req,res){
 				.skipfailures()
 				.stream()
 		
-			shapefile.pipe(fs.createWriteStream( '/home/admin237/analyse/'+nom_file).on('finish', function () {
+			shapefile.pipe(fs.createWriteStream( config.path_for_download_result+nom_file).on('finish', function () {
 				if(compeur.length == donne['querry'].length){
 					res.send(donne['querry'])
 				}else{
@@ -1006,7 +949,7 @@ app.post('/analyse_spatiale',cors(corsOptions), function (req,res){
 					compeur.push(1)	
 					if (results != null){
 						donne['querry'][compeur.length -1 ]['number'] = results[1]
-						donne['querry'][compeur.length -1 ]['nom_file']= "http://service.geocameroun.cm/"+results[0]
+						donne['querry'][compeur.length -1 ]['nom_file']= config.url_node_js+results[0]
 					}else {
 						donne['querry'][compeur.length -1 ]['number'] = 0
 						donne['querry'][compeur.length -1 ]['nom_file']= false
@@ -1065,31 +1008,9 @@ app.get('/remove_layer_by_name/:projet_qgis/:idndifiant',cors(corsOptions), func
 // '/change_all_style_point/:projet_qgis/:layername/:img' /change_all_style_point/occitanie
 app.get('/change_all_style_point/:projet_qgis/',cors(corsOptions),function (req,res) {
 	var projet_qgis= path_projet_qgis+req.params["projet_qgis"]+"_icon.qgs"
-	var destination = ""
-	if(req.params["projet_qgis"] == "madagascar" ){
-		var destination ='/var/www/smartworld/madagascar_gpkg/img/'
-		var database = "madagascar"
-		// var icon_png = "/var/www/madagascar_admin/"+"public/"+req.params["img"]
-		var icon_png = "/var/www/madagascar_admin/"+"public/"
-	}else if(req.params["projet_qgis"] == "smartworld4"){
-		var destination = '/var/www/smartworld/gpkg/img/'
-		var database = "geocameroun3"
-		// var icon_png = "/var/www/geocameroun_admin/"+"public/"+req.params["img"]
-		var icon_png = "/var/www/geocameroun_admin/"+"public/"
-	}else if(req.params["projet_qgis"] == "occitanie"){
-		var destination = '/var/www/smartworld/occitanie_gpkg/img/'
-		var database = "occitanie"
-		// var icon_png = "/var/www/occitanie_admin/"+"public/assets/images/icones-couches-modification/"+req.params["img"]
-		var icon_png = "/var/www/occitanie_admin/"+"public/"
-	}
+	var destination = pte_projet(["projet_qgis"]).destination
 
-	const pool = new Pool({
-		user: bd_access.user,
-		host: bd_access.host,
-		database: database,
-		password: bd_access.password,
-		port: 5432,
-	  })
+	const pool = new Pool(pte_projet(["projet_qgis"]).bd_access)
 
 	  let pte = []
 	  var  i = 39
@@ -1151,16 +1072,8 @@ app.get('/change_all_style_point/:projet_qgis/',cors(corsOptions),function (req,
 //https://cuy.sogefi.cm:8443/addRasterToWMS/madagascar/carte_ocsol_2018_Itasy.tif
 app.get('/addRasterToWMS/:projet_qgis/:nom/', cors(corsOptions), function (req, res, next) {
 	var projet_qgis= path_projet_qgis+req.params["projet_qgis"]+".qgs"
-	if(req.params["projet_qgis"] == "madagascar" ){
-		var destination ='/var/www/smartworld/madagascar_gpkg/'
-		var database = "madagascar"
-	}else if(req.params["projet_qgis"] == "smartworld4"){
-		var destination = '/var/www/smartworld/gpkg/'
-		var database = "geocameroun3"
-	}else if(req.params["projet_qgis"] == "occitanie"){
-		var destination = '/var/www/smartworld/occitanie_gpkg/'
-		var database = "occitanie"
-	}
+	var destination = pte_projet(req.params["projet_qgis"]).destination
+
 	   var nom = req.params["nom"]
 	   var file = '/var/www/smartworld/raster/'+nom
 	   console.log(nom)
@@ -1178,7 +1091,7 @@ app.get('/addRasterToWMS/:projet_qgis/:nom/', cors(corsOptions), function (req, 
 		if (err) throw err;
 		//console.log( results,3)
 		if( Array.isArray(results) && results[0] == 'ok' ){
-			var url = 'http://tiles.geocameroun.xyz/cgi-bin/qgis_mapserv.fcgi?map='+projet_qgis
+			var url = config.url_qgis_server+projet_qgis
 			
 				res.send({
 					'status' : 'ok',

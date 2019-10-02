@@ -20,13 +20,10 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     ////////////////////////////////////////////////////////////////////////////
 
-    $scope.rootApp = "/var/www/geocameroun_admin/"
+    for (var key in config_projet) {
+        $scope[key] = config_projet[key]
+    }
 
-    $scope.urlBackend = 'http://217.70.189.38:8000'
-
-    $scope.urlNodejs = 'http://service.geocameroun.cm/importation/'
-
-    $scope.projet_qgis_server = "occitanie"
     //$scope.urlElastic='https://cuy.sogefi.cm:9200'
 
     $rootScope.$on('$locationChangeStart', function (event, next, current) {
@@ -56,7 +53,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             if (requete_reussi(resp)) {
                 
-                myfactory.get_data("http://service.geocameroun.cm/generateAllShapeFromOsmBuilder/"+$scope.projet_qgis_server).then(function (resp) {
+                myfactory.get_data($scope.urlNodejs_backend+"/generateAllShapeFromOsmBuilder/"+$scope.projet_qgis_server).then(function (resp) {
                     toogle_information("Operation reussi")
                     $('#spinner').hide()
 
@@ -647,7 +644,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
 
     $scope.getFileNode =function(couche){
-        myfactory.get_data('http://service.geocameroun.cm/get_source_file/'+$scope.projet_qgis_server+'/'+couche.identifiant).then(
+        myfactory.get_data($scope.urlNodejs_backend+'/get_source_file/'+$scope.projet_qgis_server+'/'+couche.identifiant).then(
             function (data) {
                 if (data.status == 'ok') {
                    alert(data.url )
@@ -716,7 +713,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 var request = {
                     method: 'POST',
-                    url: 'http://service.geocameroun.cm/download_style_qgs',
+                    url: $scope.urlNodejs_backend+'/download_style_qgs',
                     data: formData,
                     headers: {
                         'Content-Type': undefined
@@ -732,7 +729,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                             var identifiant = couche.identifiant 
                             var style_file = e.data.style_file 
 
-                            myfactory.get_data('http://service.geocameroun.cm/set_style_qgs/'+$scope.projet_qgis_server+'/'+style_file+'/'+identifiant).then(
+                            myfactory.get_data($scope.urlNodejs_backend+'/set_style_qgs/'+$scope.projet_qgis_server+'/'+style_file+'/'+identifiant).then(
                                 function (data) {
                                     if (data.status == 'ok') {
                                         toogle_information('Le fichier de style a bien été appliqué') 
@@ -1179,7 +1176,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 function(data){console.log(data)
                     if(data == 'ok'){
                         toogle_information("Le catalogue a été bien mis à jour")
-                        myfactory.get_data("http://service.geocameroun.cm/generateLegend/"+$scope.projet_qgis_server).then(function (resp) {
+                        myfactory.get_data($scope.urlNodejs_backend+"/generateLegend/"+$scope.projet_qgis_server).then(function (resp) {
                             
                          })
                     }else{
@@ -2339,7 +2336,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             function (data) {
                 if (requete_reussi(data)) {
                     if ( couche.type_couche=='wms' && couche.wms_type == 'osm') {
-                        myfactory.get_data('http://service.geocameroun.cm/remove_layer_by_name/'+$scope.projet_qgis_server+'/'+couche.identifiant).then(
+                        myfactory.get_data($scope.urlNodejs_backend+'/remove_layer_by_name/'+$scope.projet_qgis_server+'/'+couche.identifiant).then(
                             function(data){
                                 console.log(data,'qgis_server')
                             }
@@ -4774,7 +4771,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 var request = {
                     method: 'POST',
-                    url: 'http://service.geocameroun.cm/download',
+                    url: $scope.urlNodejs_backend+'/download',
                     data: formData,
                     headers: {
                         'Content-Type': undefined
@@ -4798,7 +4795,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                 console.log($scope.new_pdfs)
                                 var request = {
                                     method: 'POST',
-                                    url: 'http://service.geocameroun.cm/downloadRaster',
+                                    url: $scope.urlNodejs_backend+'/downloadRaster',
                                     data: formData,
                                     headers: {
                                         'Content-Type': undefined
@@ -4817,7 +4814,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                                             $scope.new_pdfs.identifiant = e.data.identifiant
 
-                                            myfactory.get_data("http://service.geocameroun.cm/generateLegend/"+$scope.projet_qgis_server).then(function (resp) {
+                                            myfactory.get_data($scope.urlNodejs_backend+"/generateLegend/"+$scope.projet_qgis_server).then(function (resp) {
                                                 
                                              })
                                             $scope.new_pdfs.url_tile = e.data.projet_qgis
@@ -4849,7 +4846,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 console.log($scope.new_pdfs)
                 var request = {
                     method: 'POST',
-                    url: 'http://service.geocameroun.cm/downloadRaster',
+                    url: $scope.urlNodejs_backend+'/downloadRaster',
                     data: formData,
                     headers: {
                         'Content-Type': undefined
@@ -5129,7 +5126,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             var request = {
                 method: 'POST',
-                url: 'http://service.geocameroun.cm/download',
+                url: $scope.urlNodejs_backend+'/download',
                 data: formData,
                 headers: {
                     'Content-Type': undefined
@@ -5154,7 +5151,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                             var request = {
                                 method: 'POST',
-                                url: 'http://service.geocameroun.cm/downloadRaster',
+                                url: $scope.urlNodejs_backend+'/downloadRaster',
                                 data: formData,
                                 headers: {
                                     'Content-Type': undefined
@@ -5205,7 +5202,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             var request = {
                 method: 'POST',
-                url: 'http://service.geocameroun.cm/downloadRaster',
+                url: $scope.urlNodejs_backend+'/downloadRaster',
                 data: formData,
                 headers: {
                     'Content-Type': undefined
@@ -5701,7 +5698,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                         } else {
                                             var addToWms = 'true'
                                         }
-                                        myfactory.get_data('http://service.geocameroun.cm/generateShapeFromOsmBuilder/'+$scope.projet_qgis_server+'/'+ couche.cles_vals_osm[0].id_cat + '/' + addToWms).then(
+                                        myfactory.get_data($scope.urlNodejs_backend+'/generateShapeFromOsmBuilder/'+$scope.projet_qgis_server+'/'+ couche.cles_vals_osm[0].id_cat + '/' + addToWms).then(
                                             function (data) {
                                                 console.log(data)
                                                 if (requete_reussi(data)) {
@@ -5713,7 +5710,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                                                     toogle_information('la couche a bien ete modifiee')
                                                     $('#spinner').hide()
-                                                    // myfactory.get_data("http://service.geocameroun.cm/generateLegend/"+$scope.projet_qgis_server).then(function (resp) {
+                                                    // myfactory.get_data($scope.urlNodejs_backend+"/generateLegend/"+$scope.projet_qgis_server).then(function (resp) {
                                                         
                                                     //  })
                                                 } else {
@@ -5785,7 +5782,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                     couche.status = data.statut
 
                                     if (couche.wms_type == 'osm') {
-                                        myfactory.get_data('http://service.geocameroun.cm/generateShapeFromOsmBuilder/'+$scope.projet_qgis_server+'/'+ couche.cles_vals_osm[0].id_cat + '/false').then(
+                                        myfactory.get_data($scope.urlNodejs_backend+'/generateShapeFromOsmBuilder/'+$scope.projet_qgis_server+'/'+ couche.cles_vals_osm[0].id_cat + '/false').then(
                                             function (data) {
                                                 if (requete_reussi(data)) {
                                                     toogle_information('La condition a bien ete supprimer')

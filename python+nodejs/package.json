@@ -1,5 +1,5 @@
 {
-  "name": "web geoservice de geoosm ",
+  "name": "web_geoservice_de_geoosm",
   "version": "1.0.0",
   "description": "Manipulation des données et de prpjets qgis",
   "main": "server.js",

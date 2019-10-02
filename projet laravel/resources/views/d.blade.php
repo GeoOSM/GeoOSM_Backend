@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
-    <title>Admin SIG-CUY</title>
+    <title>Admin GeOSM</title>
     <!-- Bootstrap Core CSS -->
    
     <link href="{{asset('assets/admin/bootstrap/dist/css/bootstrap.min.css')}}" rel="stylesheet"> 
@@ -42,7 +42,7 @@
     <div ng-controller="mainCtrl">
           <div ng-view></div>
     </div>
-    <footer class="footer text-center"> 2018 &copy; SOGEFI, STRATEGIS V2 </footer> 
+    <footer class="footer text-center"> 2019 &copy; GeOSM </footer> 
 </body>
 
 <script type="text/javascript" src="{{asset('assets/admin/js/angular.js')}}"></script>
