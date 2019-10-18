@@ -1,0 +1,173 @@
+slide1_fonds{
+	padding-top: 30px;
+	transform: translatex(0); 
+}
+
+slide2_fonds{
+    transform: translatex(100%); 
+	display: block;
+	padding-top: 60px;
+}
+slide1_fonds,slide2_fonds{
+	display: block;
+	transition:0.5s;
+}
+
+
+
+@media (max-height: 400px) {
+    .onglets-child span{
+		display: none;
+	}
+}
+
+.menu-fonds-parent{
+	display: -webkit-box;
+	border-radius:5px;
+	margin-bottom: 20px;
+    height: fit-content !important;
+    height: intrinsic !important;
+    height: -moz-fit-content !important;
+    height: -webkitfit-content !important;
+}
+.menu-fonds-child-head{
+	display: -webkit-box;
+	height: 40px;
+	position: relative;
+	
+ }
+ .menu-fonds-child-head-active{
+	border-bottom: 1px solid #000;
+	height: 40px;
+	z-index: 99
+ }
+ .menu-fonds-child-head-infos{
+	position: absolute;
+	left: 0;width: 0px;
+	top: 0;bottom: 0;
+	transition:0.5s;
+	padding-top: 25px
+}
+.menu-fonds-child-head-infos span{
+	margin-top: -15px;
+	margin-left: 12px;
+	display: none;
+	/*transition:0.5s;*/
+}
+.menu-fonds-child-head-arrow{
+	position: absolute;
+	/* border-radius: 0 5px 0 0; */
+	top: 0;bottom: 0;right: 0;
+	width: 35px;padding: 5px;
+	transition: 0.5s;
+	padding-left: 1px;padding-top: 7px
+}
+.menu-fonds-child-head h4,.menu-fonds-child-head-active h4{
+	padding: 0px;padding-left: 3px;
+	font-weight: bolder;transition: 0.5s;
+	
+}
+ .menu-fonds-child-head-arrow img{
+	 transform: rotate(0deg);
+	 width: 28px;height: 28px;
+	 /*margin-top: -3px;*/
+	 margin-left: 3px;
+	 transition: 0.5s
+ }
+.menu-fonds-child-head:hover .menu-fonds-child-head-infos span{
+	display: block;
+ }
+ /* .menu-fonds-child-head:hover, .menu-fonds-child-head-active:hover{
+	background-color: rgba(0,0,0,0.1)
+ } */
+ .menu-fonds-child-head:hover  .menu-fonds-child-head-arrow{
+	/*background-color: transparent;*/
+	box-shadow: inset 0 0 5px #fff,0 0 5px #ccc;
+
+ }
+ 
+ .menu-fonds-child-head:hover .menu-fonds-child-head-arrow .menu-fonds-child-head-arrow-white{
+	/*display: none;*/
+	transform: rotate(90deg);
+ }
+ .menu-fonds-child-head:hover .menu-fonds-child-head-infos{
+	width: 32.5px;
+ }
+ .menu-fonds-child-head:hover h4{
+	margin-left: 29px;
+ }
+ .menu-fonds-child-head-active .menu-fonds-child-head-arrow .menu-fonds-child-head-arrow-white{
+	/*display: none;*/
+	transform: rotate(90deg);
+ }
+ .menu-fonds-child-body{
+	height: fit-content;
+	display: none;
+	padding: 10px;
+	padding-top:60px;
+	margin-left: -100%;
+ }
+ .menu-fonds-child-body-active{
+	height: fit-content;
+	padding: 10px;
+	padding-top:60px;
+	/* margin-left: -100%; */
+ }
+.menu-fonds-child{
+  padding: 5px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: inset 0 0 5px #818080,0 0 10px #ccc;
+	
+	/* box-shadow:  inset 0 0 5px #fff,0 0 5px #ccc; */
+}
+.menu-fonds-child:hover{
+	box-shadow: inset 0 0 5px #818080,0 0 10px #fff;
+	
+	background-color: #fff
+}
+.menu-fonds-child .checkbox:hover	 label .border_black_gray{
+	box-shadow:  inset 0 0 10px #fff,0 0 20px #434343;
+}
+.menu-fonds-child img{
+	width: 400px;
+  padding: 20px;
+}
+.menu-fonds-child .menu-fonds-child-title{
+	font-size: 19px;
+	font-weight: bolder;
+	margin-bottom: -10px
+}
+.menu-fonds-child-opacity{
+	margin-top:-5px;
+	margin-left: 5px;
+}
+.menu-fonds-child-pourcentage{
+	padding: 0px;
+	/* margin-top: 3px; */
+	/* margin-left: -10px; */
+	font-size: 15px
+}
+
+.menu-sous-fonds{
+	display: none
+}
+
+.slide-arriere-fonds{
+	position: fixed;
+	left: -10px;right: -10px;top: 0;
+	height: 40px;display: none;padding-top: 15px;
+	
+}
+.slide-arriere-fonds img{
+	  /* transform: rotate(180deg); */
+  height: 25px;
+  margin-top: 1px;
+  margin-left: 10px;
+}
+.slide-arriere-fonds span{
+	font-size: 20px;
+
+	margin-left: 3px
+}

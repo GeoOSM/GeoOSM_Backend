@@ -8,14 +8,14 @@
 */
 Route::post('loginAdmin', ['as' => 'loginAdmin', 'uses' => 'loginController@loginAdmin']);
 
-Route::get('/','geoportailController@index');
+// Route::get('/','geoportailController@index');
 Route::get('/getParamsForSeo','geoportailController@getParamsForSeo');
 
 Route::get('/check', 'geoportailController@checkaccount');
 
 Route::get('deconnect', 'loginController@deconnect');
 
-Route::get('/admin', function () {
+Route::get('/', function () {
     return view('admin');
 });
 

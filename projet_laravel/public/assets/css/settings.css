@@ -1,0 +1,340 @@
+
+
+
+ #section-droite{
+	position: absolute;
+	right: 0;bottom: 0;
+	/*width: 250px	;
+	/*width: calc(100% - 50px);*/
+	height: calc(100vh - 110px);
+	display: -webkit-box;
+	
+}
+.settings-dessin-creation-child-active{
+
+background: #1CAC77;
+
+}
+
+.settings-dessin-edition-child-active{
+
+	background: #1CAC77;
+}
+
+
+@media (max-width: 1450px){
+	#section-droite{
+		/*width: 250px;*/
+	}
+}
+
+.settings-toggle{
+	position: absolute;
+	top: 0px;
+	/* right: calc(100% - 40px); */
+	right: 0px;
+	height: 40px;
+  	width: 40px;
+	padding: 5px;
+	transition: 0.5s;
+	border-bottom-left-radius: 10px;
+	border-top-left-radius: 10px;
+}
+
+.settings-toggle-active{
+	position: absolute;
+	top: 0px;
+	right: calc(100% - 40px);
+	/* right: 0px; */
+	  height: 40px;
+  	width: 40px;
+	padding: 5px;
+	transition: 0.5s;
+	border-bottom-left-radius: 10px;
+	border-top-left-radius: 10px;
+}
+
+.settings-toggle img{
+	transition: 0s
+}
+
+.settings-toggle:hover img{
+	transition: 1s;
+	/* transform: rotate(180deg) */
+}
+
+.settings-menu{
+	position: absolute;
+	right: 0;top: 0;
+	width: 0px;
+	height: inherit;
+	transition: 0.5s;
+}
+.settings-menu-active{
+	position: absolute;
+	right: 0;top: 0;
+	width: calc(100% - 40px);
+	height: inherit;
+	transition: 0.5s;
+	overflow-y: overlay;
+}
+
+.settings-menu-active::-webkit-scrollbar-track{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  border-radius: 10px
+}
+
+.settings-menu-active::-webkit-scrollbar
+{
+  width: 7px;
+  background-color: #F5F5F5;
+}
+.settings-menu-child{
+	width: 100%;
+	height: fit-content;
+	border-bottom: 2px solid #fff
+	/* margin-bottom: 20px */
+}
+
+
+
+.settings-menu-child-head{
+	height: 40px;
+	padding: 5px;
+	padding: 5px;
+	position: relative;
+	width: 100%;
+	padding-top: 10px;
+}
+
+.settings-menu-child-head-active{
+	height: 40px;
+	padding: 5px;
+	padding: 5px;
+	position: relative;
+	padding-top: 10px;
+}
+
+.settings-menu-child-head span,.settings-menu-child-head-active span{
+	font-size: 14px;
+	text-transform: uppercase;
+	font-weight: bold;
+
+	/*font-weight: bold*/
+}
+
+/* .settings-menu-child-head-arrow{
+	position: absolute;
+	top: 0;bottom: 0;right: 0;
+	width: 40px;padding: 5px;
+	border-left: 1px solid #fff
+}
+.settings-menu-child-head-arrow-active{
+	position: absolute;
+	top: 0;bottom: 0;right: 0;
+	width: 40px;padding: 5px;
+} */
+.settings-menu-child img{
+	width: 20px;
+	
+	float: right;
+	transition: 0.5s;
+	/* margin-left: 3px; */
+	/* transform: rotate(90deg); */
+}
+
+.settings-menu-child-head-active img{
+	width: 20px;
+	float: right;
+	transform: rotate(90deg); 
+	transition: 0.5s;
+	/* margin-left: 3px; */
+	/* transform: rotate(90deg); */
+}
+
+/* .settings-menu-child-head-arrow-active img{
+	width: 30px;
+	height: 30px;
+	transform: rotate(90deg);
+} */
+
+.settings-menu-child-body{
+	height: 0px;transition: 0.5s;
+	display: none;
+}
+.settings-menu-child-body-active{
+	padding: 10px;
+	padding-bottom: 10px;
+	padding-top: 15px;
+	/* text-align: center; */
+	height: fit-content;
+	transition: 0.5s;
+	display: block
+}
+/************ calcul d'itineraire *************/
+.settings-menu-child-body-active form{
+	position: relative
+}
+.settings-menu-child-body-active input{
+	height: 40px;
+}
+.settings-itineraire-btn{
+	outline: none;
+	width: 100%;
+}
+.settings-itineraire-btn:hover{
+	color: #fff
+}
+
+.itineraire-supprimer{
+	outline: none;
+	width: 100%;
+}
+.itineraire-supprimer:hover{
+	color: #fff
+}
+
+.settings-itineraire-depart{
+	position: absolute;
+	text-align: center;
+	right: 0px;top: 0;bottom: 0px;
+	width: 15%;padding: 5px
+}
+/************ //calcul d'itineraire *************/
+/************ outil mesure *************/
+
+.settings-mesure{
+	
+}
+
+
+.settings-mesure-child{
+    width: 100%;
+	margin-bottom: 10px;
+	border-radius: 20px;
+	padding: 5px;
+	padding-left: 10%;
+	text-align: center;
+	background: #434343;
+}
+
+.settings-mesure-child-active{
+		width: 100%;
+	margin-bottom: 10px;
+	border-radius: 20px;
+	padding: 5px;
+	padding-left: 10%;
+	text-align: center;
+	background: #1CAC77;
+}
+
+.settings-mesure-child img,.settings-mesure-child-active img{
+	float: left ;	
+}
+.settings-mesure-child span,.settings-mesure-child-active span{
+	font-size: 15px	
+}
+/************ //outil mesure *************/
+
+/************ outil dessin *************/
+
+.settings-dessin-pallette{
+	display:  -webkit-inline-box;
+	margin-top: 10px	
+}
+.settings-dessin-pallette-bloc{
+	width: 40px;
+	height: 40px;
+	padding: 10px;
+	border: 1px solid ;
+}
+.settings-dessin-pallette-color{
+	height: 20px;
+	width: 20px;
+	display: block;
+}
+.settings-dessin-text{
+	font-size: 16px;
+	margin-left: 10px;
+    margin-top: 7px;
+    display: block;
+}
+
+.settings-dessin-creation,.settings-dessin-edition{
+	margin-top: 0px
+}
+.settings-dessin-palette-text,.settings-dessin-creation-text,.settings-dessin-edition-text{
+	font-size: 15px;
+	font-weight: bold;
+	display: block;
+	padding: 0 7px;
+	padding-bottom: 2px;
+	border-bottom: 2px solid ;
+}
+.settings-dessin-creation-parent{
+	display:  -webkit-inline-box;
+	width: 100%;
+	height: inherit;
+	margin-top: 20px
+}
+.settings-dessin-creation-parent div{
+	width: 17%;
+	margin-left: 7%;
+	border-radius: 5px;
+	position: relative
+}
+.settings-dessin-creation-parent div:after {
+	content: "";
+	display: block;
+	padding-bottom: 100%;
+}
+
+.settings-dessin-creation-parent div img{
+	position: absolute;
+	left: 50%;top: 50%;
+	height: 70%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%) ;
+}
+
+.settings-dessin-edition-child,.settings-dessin-edition-child-active{
+	width: 100%;
+	margin-top: 10px;
+	border-radius: 20px;
+	padding: 5px;
+	padding-left: 5%;
+	text-align: center;
+}
+/* .settings-dessin-edition-child:hover{
+	background-color: #F10E29
+} */
+.settings-dessin-edition-child img,.settings-dessin-edition-child-active img{
+	float: left ;	
+}
+.settings-dessin-edition-child span,.settings-dessin-edition-child-active span{
+	font-size: 15px;	
+}
+
+@media (max-width: 1300px){
+	.settings-dessin-edition-child span,.settings-dessin-edition-child-active span{
+		font-size: 15px	;
+		margin-top: 4px;
+		display: block;
+	}
+	.settings-dessin-text {
+		font-size: 14px	
+	}
+}
+@media (max-width : 767px) {
+	#section-droite{
+		display: none;
+	}
+	
+}
+
+/************ ///outil dessin *************/
+
+/******************************************************
+ **************        /////section droite        ****************
+ ******************************************************/
+ 
