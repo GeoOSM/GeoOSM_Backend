@@ -52,19 +52,20 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         myfactory.get_data("/thematique/genrateAutomaticJsonFileByCat/").then(function (resp) {
 
             if (requete_reussi(resp)) {
-                
-                myfactory.get_data($scope.urlNodejs_backend+"/generateAllShapeFromOsmBuilder/"+$scope.projet_qgis_server).then(function (resp) {
-                    toogle_information("Operation reussi")
-                    $('#spinner').hide()
+                $('#spinner').hide()
+                // myfactory.get_data($scope.urlNodejs_backend+"/generateAllShapeFromOsmBuilder/"+$scope.projet_qgis_server).then(function (resp) {
+                //     toogle_information("Operation reussi")
+                //     $('#spinner').hide()
 
                     
-                },
-                function (msg) {
-                    toogle_information('une erreur : code updateFtpOsm_1  ')
-                    $('#spinner').hide()
-                })
+                // },
+                // function (msg) {
+                //     toogle_information('une erreur : code updateFtpOsm_1  ')
+                //     $('#spinner').hide()
+                // })
                
             } else {
+                $('#spinner').hide()
                 toogle_information('une erreur : Verifier toutes les requetes osm pour chercher l erreur ou contacter Appo ')
             }
             
@@ -2566,12 +2567,26 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             function (data) {
                 if (requete_reussi(data)) {
 
+                    if (donne.fileImg || donne.myColor == 'change') {
+                        myfactory.get_data($scope.urlNodejs_backend+'/update_style_couche_qgis/'+$scope.projet_qgis_server+'/'+donne.identifiant).then(
+                            function (data) {
+                                console.log(data)
+                            },
+                            function (err) {
+                                $('#spinner').hide()
+                                toogle_information('Verifier votre connexion')
+                            }
+                        )
+                    }
+
                     toogle_information("La couche " + donne.nom + " a ete bien modifi�")
 
                     if (nom_a_ete_change == 'true') {
                         donne.nom = donne.nom_modifier
                     }
                     donne.file = undefined
+                    donne.fileImg = undefined
+                    donne.myColor = undefined
 
                     donne.img = donne.img_temp
 
@@ -2655,7 +2670,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                         donne.nom_img_modife = 'assets/images/icones-couches-modification/' + space2underscore(donne.nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
                         donne.remplir_couleur = null
-                        donne.opacity = null
+                        donne.opacity = null                        
                         if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
                             function_modifier_nom_couche(donne, 'false')
                         } else {

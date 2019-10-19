@@ -106,7 +106,7 @@ Le projet Laravel est prêt !
 Faire une configuration apache ou nginx pour lier un nom de domaine au projet Laravel qui pointe vers le dossier **/projet laravel/public** \
 Par la suite, on appellera nom de domaine "**www.serveur_php.geosm**"\
 Après vous pouvez tester dans votre navigateur **www.serveur_php.geosm/admin**, les identifiants de connexion par défaut sont\
- - login : admin
+ - login : admin@geocameroun.cm
  - mot de passe : 1234
  
 ##### 4.  Chargez les couches par défaut de GeOsm
