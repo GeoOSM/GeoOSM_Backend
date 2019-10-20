@@ -57,18 +57,18 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 //     toogle_information("Operation reussi")
                 //     $('#spinner').hide()
 
-                    
+
                 // },
                 // function (msg) {
                 //     toogle_information('une erreur : code updateFtpOsm_1  ')
                 //     $('#spinner').hide()
                 // })
-               
+
             } else {
                 $('#spinner').hide()
                 toogle_information('une erreur : Verifier toutes les requetes osm pour chercher l erreur ou contacter Appo ')
             }
-            
+
         }, function (msg) {
             alert('une erreur : Verifier toutes les requetes osm pour chercher l erreur ou contacter Appo ')
             $('#spinner').hide()
@@ -83,7 +83,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     olData.getMap().then(function (map) {
 
- 
+
         map.setView(view)
 
         map.addInteraction(new ol.interaction.MouseWheelZoom())
@@ -182,6 +182,85 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     }
 
+    $scope.limites_administratives = [
+        {
+            'nom':'Départements',
+            'key_couche':271,
+            'sous_thematiques':true,
+            'id_limite':1
+        }
+    ]
+
+    $scope.nouvelles_limites_administratives = []
+
+    $scope.get_couche_thematique = function(key_couche,sous_thematique) {
+        var data = $scope.thematiques
+        for (var i = 0; i < data.length; i++) {
+            if (sous_thematique) {
+                for (var j = 0; j < data[i].sous_thematiques.length; j++) {
+                    for (var k = 0; k < data[i].sous_thematiques[j].couches.length; k++) {
+                            if (data[i].sous_thematiques[j].couches[k].key_couche == key_couche) {
+                                return data[i].sous_thematiques[j].couches[k]
+                            }
+                    }
+
+                }
+            } else {
+                for (var k = 0; k < data[i].couches.length; k++) {
+
+                        if (data[i].couches[k].key_couche == key_couche) {
+                            return data[i].couches[k]
+                        }
+                }
+
+            }
+        }
+
+    }
+
+    $scope.couches_thematiques_by_type_geom = function(type_geom) {
+        var data = $scope.thematiques
+        var result = []
+
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].sous_thematiques != false) {
+                for (var j = 0; j < data[i].sous_thematiques.length; j++) {
+                    for (var k = 0; k < data[i].sous_thematiques[j].couches.length; k++) {
+                            if (data[i].sous_thematiques[j].couches[k].geom == type_geom) {
+                                data[i].sous_thematiques[j].couches[k].sous_thematiques = true
+                                result.push(data[i].sous_thematiques[j].couches[k]) 
+                            }
+                    }
+                }
+            } else {
+                for (var k = 0; k < data[i].couches.length; k++) {
+                        if (data[i].couches[k].geom == type_geom) {
+                            data[i].couches[k].sous_thematiques = false
+                            result.push(data[i].couches[k]) 
+                        }
+                }
+            }
+        }
+        return result
+
+    }
+
+    $scope.add_limite_administrative = function(){
+        var data = $scope.nouvelles_limites_administratives[0]
+        if (data.nom && data.couche) {
+            var donne = {
+                'key_couche':JSON.parse(data.couche).key_couche,
+                'sous_thematiques':JSON.parse(data.couche).sous_thematiques,
+                'nom':data.nom
+            }
+            console.log(donne)
+            $scope.limites_administratives.push(donne)
+            $scope.nouvelles_limites_administratives = []
+        }else{
+            $scope.toogle_information('Renseignez toutes les informations')
+        }
+    }
+
     $scope.nombre_couches = function (data) {
         var nombre = 0
         for (var i = 0; i < data.length; i++) {
@@ -200,34 +279,41 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     }
 
     $scope.nombre_cartes = function (data) {
-        var nombre = 0
-        for (var i = 0; i < data.length; i++) {
-            if (data[i].sous_cartes != false) {
-                for (var j = 0; j < data[i].sous_cartes.length; j++) {
-                    for (var index = 0; index < data[i].sous_cartes[j].couches.length; index++) {
-                       if(data[i].sous_cartes[j].couches[index].type == "pdf"){
-                        nombre = nombre + data[i].sous_cartes[j].couches[index].cartes_pdf.length
-                       }else{
-                        nombre = nombre++
-                       }
-                        
+        if (data) {
+
+            var nombre = 0
+            for (var i = 0; i < data.length; i++) {
+
+                if (Array.isArray(data[i].sous_cartes)) {
+                    for (var j = 0; j < data[i].sous_cartes.length; j++) {
+                        for (var index = 0; index < data[i].sous_cartes[j].couches.length; index++) {
+                            if (data[i].sous_cartes[j].couches[index].type == "pdf") {
+                                nombre = nombre + data[i].sous_cartes[j].couches[index].cartes_pdf.length
+                            } else {
+                                nombre = nombre + 1
+                            }
+
+                        }
+
                     }
-                  
-                }
-            } else {
-               // nombre = nombre + data[i].couches.length
-                for (var index = 0; index < data[i].couches.length; index++) {
-                   if(data[i].couches[index].type == "pdf"){
-                    nombre = nombre + data[i].couches[index].cartes_pdf.length
-                   }else{
-                    nombre = nombre++
-                   }
-                    
+                } else {
+
+                    // nombre = nombre + data[i].couches.length
+                    for (var index = 0; index < data[i].couches.length; index++) {
+                        if (data[i].couches[index].type == "pdf") {
+                            nombre = nombre + data[i].couches[index].cartes_pdf.length
+                        } else {
+                            nombre = nombre + 1
+                        }
+
+                    }
                 }
             }
-        }
 
-        return nombre
+            return nombre
+        } else {
+            return "Calcul en cours"
+        }
     }
 
     $scope.listFiles = function () {
@@ -564,11 +650,11 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     "catalogue_thematiques": catalogue_thematiques
                 }
 
-                if($scope.theme_non_catalogue){
+                if ($scope.theme_non_catalogue) {
                     $scope.thematiques = cataloguerColones($scope.theme_non_catalogue)
                 }
 
-               
+
 
             },
             function (err) {
@@ -644,13 +730,13 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     }
 
 
-    $scope.getFileNode =function(couche){
-        myfactory.get_data($scope.urlNodejs_backend+'/get_source_file/'+$scope.projet_qgis_server+'/'+couche.identifiant).then(
+    $scope.getFileNode = function (couche) {
+        myfactory.get_data($scope.urlNodejs_backend + '/get_source_file/' + $scope.projet_qgis_server + '/' + couche.identifiant).then(
             function (data) {
                 if (data.status == 'ok') {
-                   alert(data.url )
-                }else{
-                    toogle_information('Un probleme est survenu') 
+                    alert(data.url)
+                } else {
+                    toogle_information('Un probleme est survenu')
                 }
                 $('#spinner').hide()
             }
@@ -667,7 +753,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
         $("#" + id).on('change', function (e) {
 
-            if (id.indexOf('raster_modifier_cartes_pdf') == -1 && id.indexOf('doc_modifier_cartes_pdf') == -1 && id.indexOf('doc_modifier_cartes_new_pdf') == -1 && id != 'style_importation'  && id != 'couche_importation' && ($("#" + id)[0].files[0].size / 1048576) < 7.5) {
+            if (id.indexOf('raster_modifier_cartes_pdf') == -1 && id.indexOf('doc_modifier_cartes_pdf') == -1 && id.indexOf('doc_modifier_cartes_new_pdf') == -1 && id != 'style_importation' && id != 'couche_importation' && ($("#" + id)[0].files[0].size / 1048576) < 7.5) {
 
                 couche.fileImg = couche.file
                 if (!couche.fileImg) {
@@ -701,10 +787,10 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     }
                 }
 
-            } else if(id == 'style_importation'){
+            } else if (id == 'style_importation') {
                 var file = $("#" + id)[0].files[0]
                 var objectURL = window.URL.createObjectURL($("#" + id)[0].files[0]);
-                
+
                 couche[propertie] = couche.file
 
                 formData = new FormData();
@@ -714,7 +800,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 var request = {
                     method: 'POST',
-                    url: $scope.urlNodejs_backend+'/download_style_qgs',
+                    url: $scope.urlNodejs_backend + '/download_style_qgs',
                     data: formData,
                     headers: {
                         'Content-Type': undefined
@@ -726,32 +812,32 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     function success(e) {
                         formData = new FormData();
                         console.log(e.data.status)
-                        if(e.data.status == 'ok'){
-                            var identifiant = couche.identifiant 
-                            var style_file = e.data.style_file 
+                        if (e.data.status == 'ok') {
+                            var identifiant = couche.identifiant
+                            var style_file = e.data.style_file
 
-                            myfactory.get_data($scope.urlNodejs_backend+'/set_style_qgs/'+$scope.projet_qgis_server+'/'+style_file+'/'+identifiant).then(
+                            myfactory.get_data($scope.urlNodejs_backend + '/set_style_qgs/' + $scope.projet_qgis_server + '/' + style_file + '/' + identifiant).then(
                                 function (data) {
                                     if (data.status == 'ok') {
-                                        toogle_information('Le fichier de style a bien été appliqué') 
-                                    }else{
-                                        toogle_information('Un probleme est survenu, S2') 
+                                        toogle_information('Le fichier de style a bien été appliqué')
+                                    } else {
+                                        toogle_information('Un probleme est survenu, S2')
                                     }
                                     $('#spinner').hide()
                                 }
                             )
 
-                        }else{
+                        } else {
                             $('#spinner').hide()
-                            toogle_information('Un probleme est survenu, S1') 
+                            toogle_information('Un probleme est survenu, S1')
                         }
-                      
+
                     },
                     function (e) {
                         $('#spinner').hide()
                         toogle_information('Verifier votre connexion et recommencer')
                     }
-                )
+                    )
 
 
             } else if (id == 'couche_importation') {
@@ -1170,20 +1256,21 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     //function pour recuperer les thematiques
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
 
-    $scope.updateCatalogue = function(type){
-        if(type == 'thematiques'){
+    $scope.updateCatalogue = function (type) {
+        if (type == 'thematiques') {
             $('#spinner').show()
             myfactory.get_data('/api/v1/RestFull/catalogAdmin/').then(
-                function(data){console.log(data)
-                    if(data == 'ok'){
+                function (data) {
+                    console.log(data)
+                    if (data == 'ok') {
                         toogle_information("Le catalogue a été bien mis à jour")
-                        myfactory.get_data($scope.urlNodejs_backend+"/generateLegend/"+$scope.projet_qgis_server).then(function (resp) {
-                            
-                         })
-                    }else{
+                        myfactory.get_data($scope.urlNodejs_backend + "/generateLegend/" + $scope.projet_qgis_server).then(function (resp) {
+
+                        })
+                    } else {
                         toogle_information(" un problème est survenu")
                     }
-                   
+
                     $('#spinner').hide()
                 },
                 function (err) {
@@ -1196,9 +1283,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     }
 
     function getThematiques() {
-        
+
         myfactory.get_data('/geoportail/getCatalogue/').then(
-        // myfactory.get_data('/api/v1/RestFull/catalogAdmin/').then(
+            // myfactory.get_data('/api/v1/RestFull/catalogAdmin/').then(
             function (data) {
 
 
@@ -1217,7 +1304,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 $scope.theme_non_catalogue = data
 
-                if($scope.catalogueDonne){
+                if ($scope.catalogueDonne) {
                     $scope.thematiques = cataloguerColones($scope.theme_non_catalogue)
                 }
 
@@ -2336,10 +2423,10 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         myfactory.post_data('/thematique/deleteCouche/', JSON.stringify(couche)).then(
             function (data) {
                 if (requete_reussi(data)) {
-                    if ( couche.type_couche=='wms' && couche.wms_type == 'osm') {
-                        myfactory.get_data($scope.urlNodejs_backend+'/remove_layer_by_name/'+$scope.projet_qgis_server+'/'+couche.identifiant).then(
-                            function(data){
-                                console.log(data,'qgis_server')
+                    if (couche.type_couche == 'wms' && couche.wms_type == 'osm') {
+                        myfactory.get_data($scope.urlNodejs_backend + '/remove_layer_by_name/' + $scope.projet_qgis_server + '/' + couche.identifiant).then(
+                            function (data) {
+                                console.log(data, 'qgis_server')
                             }
                         )
                     }
@@ -2568,7 +2655,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 if (requete_reussi(data)) {
 
                     if (donne.fileImg || donne.myColor == 'change') {
-                        myfactory.get_data($scope.urlNodejs_backend+'/update_style_couche_qgis/'+$scope.projet_qgis_server+'/'+donne.identifiant).then(
+                        myfactory.get_data($scope.urlNodejs_backend + '/update_style_couche_qgis/' + $scope.projet_qgis_server + '/' + donne.identifiant).then(
                             function (data) {
                                 console.log(data)
                             },
@@ -2670,7 +2757,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                         donne.nom_img_modife = 'assets/images/icones-couches-modification/' + space2underscore(donne.nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
                         donne.remplir_couleur = null
-                        donne.opacity = null                        
+                        donne.opacity = null
                         if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
                             function_modifier_nom_couche(donne, 'false')
                         } else {
@@ -3448,14 +3535,14 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             formData.append('nombre_images', JSON.stringify(nombre_images));
             formData.append('path', '/../../../public/assets/admin/');
             formData.append('pathBd', 'assets/admin/');
-            if(type_carte == "pdf"){
+            if (type_carte == "pdf") {
                 formData.append('largeur', 44);
                 formData.append('lomguer', 32);
-            }else{
+            } else {
                 formData.append('largeur', 90);
                 formData.append('lomguer', 250);
             }
-            
+
             var request = {
                 method: 'POST',
                 url: '/uploads/file',
@@ -3925,12 +4012,12 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
 
         } else if (data.type_couche == 'wms' || data.type == 'wms') {
-            var url = data.url.replace(/ /g,"")
+            var url = data.url.replace(/ /g, "")
             if (type == 'sousCartePdf') {
-                url = data.url_tile.replace(/ /g,"")
+                url = data.url_tile.replace(/ /g, "")
             }
 
-            if(data.service_wms==null || data.service_wms == true){
+            if (data.service_wms == null || data.service_wms == true) {
                 var wms = new ol.source.TileWMS({
                     url: url,
                     params: { 'LAYERS': data.identifiant, 'TILED': true },
@@ -3941,27 +4028,27 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     source: wms,
                     visible: true
                 })
-            }else{
+            } else {
                 var vectorSource = new ol.source.Vector({
-                    url: function(extent) {
-                        bbox =$scope.map.getView().calculateExtent($scope.map.getSize())
-                       
+                    url: function (extent) {
+                        bbox = $scope.map.getView().calculateExtent($scope.map.getSize())
+
                         var Amin = ol.proj.transform([bbox[0], bbox[1]], 'EPSG:3857', 'EPSG:4326')
                         var Amax = ol.proj.transform([bbox[2], bbox[3]], 'EPSG:3857', 'EPSG:4326')
-                        
+
                         var extend3857 = [Amin[0], Amin[1], Amax[0], Amax[1]]
-            
-                        var url_wfs = url+"&SERVICE=WFS&VERSION=1.1.0&REQUEST=GETFEATURE&typeName="+data.identifiant+"&outputFormat=GeoJSON&bbox="+extend3857.join(',')
+
+                        var url_wfs = url + "&SERVICE=WFS&VERSION=1.1.0&REQUEST=GETFEATURE&typeName=" + data.identifiant + "&outputFormat=GeoJSON&bbox=" + extend3857.join(',')
                         //console.log('url_wfs',extent)
                         return url_wfs
                     },
-                   strategy: ol.loadingstrategy.bbox,
+                    strategy: ol.loadingstrategy.bbox,
                     format: new ol.format.GeoJSON({
-                       dataProjection: 'EPSG:4326',
+                        dataProjection: 'EPSG:4326',
                     }),
-                  });
-               
-                  var tiles = new ol.layer.Vector({
+                });
+
+                var tiles = new ol.layer.Vector({
                     source: vectorSource,
                     style: new ol.style.Style({
                         image: new ol.style.Icon({
@@ -3969,9 +4056,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                             src: data.img_temp
                         })
                     })
-                  });
+                });
             }
-           
+
             tiles.set('name', space2underscore(data.nom))
             $scope.map.addLayer(tiles);
 
@@ -4017,7 +4104,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             $('#test_cartes').show()
             $('#test_cartes').css('z-index', '999999999')
             $('#test_cartes').css('opacity', '1')
-            
+
 
         } else if (data.type_couche == 'requete' && data.status == true) {
 
@@ -4522,7 +4609,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     $scope.close_test_cartes = function () {
         $('#test_cartes').hide()
-       $('#test_cartes').css('opacity', '0')
+        $('#test_cartes').css('opacity', '0')
         $('#resultMap').hide();
     }
 
@@ -4786,7 +4873,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 var request = {
                     method: 'POST',
-                    url: $scope.urlNodejs_backend+'/download',
+                    url: $scope.urlNodejs_backend + '/download',
                     data: formData,
                     headers: {
                         'Content-Type': undefined
@@ -4810,7 +4897,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                 console.log($scope.new_pdfs)
                                 var request = {
                                     method: 'POST',
-                                    url: $scope.urlNodejs_backend+'/downloadRaster',
+                                    url: $scope.urlNodejs_backend + '/downloadRaster',
                                     data: formData,
                                     headers: {
                                         'Content-Type': undefined
@@ -4829,9 +4916,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                                             $scope.new_pdfs.identifiant = e.data.identifiant
 
-                                            myfactory.get_data($scope.urlNodejs_backend+"/generateLegend/"+$scope.projet_qgis_server).then(function (resp) {
-                                                
-                                             })
+                                            myfactory.get_data($scope.urlNodejs_backend + "/generateLegend/" + $scope.projet_qgis_server).then(function (resp) {
+
+                                            })
                                             $scope.new_pdfs.url_tile = e.data.projet_qgis
                                             function_add_doc_pdf(sous_cartes, id_referent)
                                         }
@@ -4861,7 +4948,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 console.log($scope.new_pdfs)
                 var request = {
                     method: 'POST',
-                    url: $scope.urlNodejs_backend+'/downloadRaster',
+                    url: $scope.urlNodejs_backend + '/downloadRaster',
                     data: formData,
                     headers: {
                         'Content-Type': undefined
@@ -5141,7 +5228,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             var request = {
                 method: 'POST',
-                url: $scope.urlNodejs_backend+'/download',
+                url: $scope.urlNodejs_backend + '/download',
                 data: formData,
                 headers: {
                     'Content-Type': undefined
@@ -5166,7 +5253,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                             var request = {
                                 method: 'POST',
-                                url: $scope.urlNodejs_backend+'/downloadRaster',
+                                url: $scope.urlNodejs_backend + '/downloadRaster',
                                 data: formData,
                                 headers: {
                                     'Content-Type': undefined
@@ -5217,7 +5304,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             var request = {
                 method: 'POST',
-                url: $scope.urlNodejs_backend+'/downloadRaster',
+                url: $scope.urlNodejs_backend + '/downloadRaster',
                 data: formData,
                 headers: {
                     'Content-Type': undefined
@@ -5713,7 +5800,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                         } else {
                                             var addToWms = 'true'
                                         }
-                                        myfactory.get_data($scope.urlNodejs_backend+'/generateShapeFromOsmBuilder/'+$scope.projet_qgis_server+'/'+ couche.cles_vals_osm[0].id_cat + '/' + addToWms).then(
+                                        myfactory.get_data($scope.urlNodejs_backend + '/generateShapeFromOsmBuilder/' + $scope.projet_qgis_server + '/' + couche.cles_vals_osm[0].id_cat + '/' + addToWms).then(
                                             function (data) {
                                                 console.log(data)
                                                 if (requete_reussi(data)) {
@@ -5726,7 +5813,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                                     toogle_information('la couche a bien ete modifiee')
                                                     $('#spinner').hide()
                                                     // myfactory.get_data($scope.urlNodejs_backend+"/generateLegend/"+$scope.projet_qgis_server).then(function (resp) {
-                                                        
+
                                                     //  })
                                                 } else {
                                                     toogle_information('un problème est survenu, contacter administrateur')
@@ -5797,7 +5884,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                     couche.status = data.statut
 
                                     if (couche.wms_type == 'osm') {
-                                        myfactory.get_data($scope.urlNodejs_backend+'/generateShapeFromOsmBuilder/'+$scope.projet_qgis_server+'/'+ couche.cles_vals_osm[0].id_cat + '/false').then(
+                                        myfactory.get_data($scope.urlNodejs_backend + '/generateShapeFromOsmBuilder/' + $scope.projet_qgis_server + '/' + couche.cles_vals_osm[0].id_cat + '/false').then(
                                             function (data) {
                                                 if (requete_reussi(data)) {
                                                     toogle_information('La condition a bien ete supprimer')
@@ -5920,7 +6007,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             'sous': couche.sous_cartes,
             'tags': [],
             'partenaire': [],
-            'type_couche_metadata':'cartes'
+            'type_couche_metadata': 'cartes'
         }
 
         if (pdf) {
@@ -5974,7 +6061,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         $('#edit_metadata').show()
     }
 
-    $scope.addMetadata = function(){
+    $scope.addMetadata = function () {
         if ($scope.metadata_edit.type_couche_metadata == 'cartes') {
             $scope.addMetadata_cartes()
         } else {
@@ -5982,7 +6069,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         }
     }
 
-    $scope.editMetadata = function(){
+    $scope.editMetadata = function () {
         if ($scope.metadata_edit.type_couche_metadata == 'cartes') {
             $scope.editMetadata_cartes()
         } else {
@@ -6175,7 +6262,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             'sous': couche.sous_thematiques,
             'tags': [],
             'partenaire': [],
-            'type_couche_metadata':'thematiques'
+            'type_couche_metadata': 'thematiques'
         }
 
         console.log(!Array.isArray(metada), metada)
@@ -6239,20 +6326,20 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                             for (var j = 0; j < $scope.thematiques[i].sous_thematiques.length; j++) {
                                 for (var k = 0; k < $scope.thematiques[i].sous_thematiques[j].couches.length; k++) {
                                     if ($scope.thematiques[i].sous_thematiques[j].couches[k].key_couche == donne.key_couche) {
-                                       
-                                            $scope.thematiques[i].sous_thematiques[j].couches[k]['metadata'] = donne
-                                            $scope.thematiques[i].sous_thematiques[j].couches[k]['metadata'].id = data.id
-                                            $scope.close_edit_metadata()
+
+                                        $scope.thematiques[i].sous_thematiques[j].couches[k]['metadata'] = donne
+                                        $scope.thematiques[i].sous_thematiques[j].couches[k]['metadata'].id = data.id
+                                        $scope.close_edit_metadata()
                                     }
                                 }
                             }
                         } else if ($scope.metadata_edit.sous == false && !$scope.thematiques[i].sous_thematiques) {
                             for (var j = 0; j < $scope.thematiques[i].couches.length; j++) {
                                 if ($scope.thematiques[i].couches[j].key_couche == donne.key_couche) {
-                                   
-                                        $scope.thematiques[i].couches[j]['metadata'] = donne
-                                        $scope.thematiques[i].couches[j]['metadata'].id = data.id
-                                        $scope.close_edit_metadata()
+
+                                    $scope.thematiques[i].couches[j]['metadata'] = donne
+                                    $scope.thematiques[i].couches[j]['metadata'].id = data.id
+                                    $scope.close_edit_metadata()
                                 }
                             }
                         }
@@ -6292,20 +6379,20 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                             for (var j = 0; j < $scope.thematiques[i].sous_thematiques.length; j++) {
                                 for (var k = 0; k < $scope.thematiques[i].sous_thematiques[j].couches.length; k++) {
                                     if ($scope.thematiques[i].sous_thematiques[j].couches[k].key_couche == donne.key_couche) {
-                                        
-                                            $scope.thematiques[i].sous_thematiques[j].couches[k]['metadata'] = donne
-                                            $scope.thematiques[i].sous_thematiques[j].couches[k]['metadata'].id = data.id
-                                            $scope.close_edit_metadata()
+
+                                        $scope.thematiques[i].sous_thematiques[j].couches[k]['metadata'] = donne
+                                        $scope.thematiques[i].sous_thematiques[j].couches[k]['metadata'].id = data.id
+                                        $scope.close_edit_metadata()
                                     }
                                 }
                             }
                         } else if ($scope.metadata_edit.sous == false && !$scope.thematiques[i].sous_thematiques) {
                             for (var j = 0; j < $scope.thematiques[i].couches.length; j++) {
                                 if ($scope.thematiques[i].couches[j].key_couche == donne.key_couche) {
-                                   
-                                        $scope.thematiques[i].couches[j]['metadata'] = donne
-                                        $scope.thematiques[i].couches[j]['metadata'].id = data.id
-                                        $scope.close_edit_metadata()
+
+                                    $scope.thematiques[i].couches[j]['metadata'] = donne
+                                    $scope.thematiques[i].couches[j]['metadata'].id = data.id
+                                    $scope.close_edit_metadata()
 
                                 }
                             }
@@ -6322,46 +6409,46 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         )
     }
 
-    $scope.submitActions = function(option,sous_thematique_couche){
+    $scope.submitActions = function (option, sous_thematique_couche) {
         console.log(option, $scope.submitSelectedItem)
-        if(option=="fiche"){
+        if (option == "fiche") {
             $scope.openMetadata_thematiques(sous_thematique_couche)
-        }else if(option=="style"){
-            $scope.file('style_importation',sous_thematique_couche,'style_importation')
-        }else if(option=="telechargez"){
+        } else if (option == "style") {
+            $scope.file('style_importation', sous_thematique_couche, 'style_importation')
+        } else if (option == "telechargez") {
             $scope.getFileNode(sous_thematique_couche)
-        }else if(option=="tester"){
+        } else if (option == "tester") {
             $scope.testCarte(sous_thematique_couche)
         }
         $scope.submitSelectedItem = null
     }
 
-    $scope.define_service=function(service,couche){
-       
-        
-        if(service=='wms'){
+    $scope.define_service = function (service, couche) {
+
+
+        if (service == 'wms') {
             service_wms = true
-        }else{
+        } else {
             service_wms = false
         }
 
         var donne = {
-            'sous_thematiques':couche.sous_thematiques,
-            'key_couche':couche.key_couche,
-            'service_wms':service_wms
+            'sous_thematiques': couche.sous_thematiques,
+            'key_couche': couche.key_couche,
+            'service_wms': service_wms
         }
-        console.log(service,couche,donne)  
-       // $('#spinner').show()
-            
+        console.log(service, couche, donne)
+        // $('#spinner').show()
+
         myfactory.post_data('/thematique/define_service/', JSON.stringify(donne)).then(
-            
+
             function (data) {
                 if (requete_reussi(data)) {
-                    couche.service_wms=service_wms
+                    couche.service_wms = service_wms
                 }
-               // $('#spinner').hide()
+                // $('#spinner').hide()
             }, function (err) {
-               // $('#spinner').hide()
+                // $('#spinner').hide()
                 toogle_information('Verifier votre connexion')
             }
         )
