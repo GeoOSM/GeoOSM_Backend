@@ -44,9 +44,9 @@ Route::post('searchLimite', 'geoportailController@searchLimite');
 Route::post('getLimiteById', 'geoportailController@getLimiteById'); 
 Route::get('getZoneInteret', 'geoportailController@getZoneInteret');
 
-Route::get('create_table_limite', 'adminController@create_table_limite'); 
-
-
+Route::post('add_limite_administrative', 'adminController@add_limite_administrative'); 
+Route::post('delete_limite_administrative', 'adminController@delete_limite_administrative'); 
+Route::get('get_all_limite_administrative', 'adminController@get_all_limite_administrative'); 
 
 
 /*-------------------Web Services RESTFULL API V1---------------------*/

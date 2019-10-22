@@ -182,35 +182,38 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     }
 
-    $scope.limites_administratives = [
-        {
-            'nom':'Départements',
-            'key_couche':271,
-            'sous_thematiques':true,
-            'id_limite':1
+    $scope.limites_administratives = []
+
+    myfactory.get_data('get_all_limite_administrative').then(
+        function(data){
+            $scope.limites_administratives = data
+        },
+        function(err){
+            toogle_information("Verifier votre connexion")
         }
-    ]
+    )
+    
 
     $scope.nouvelles_limites_administratives = []
 
-    $scope.get_couche_thematique = function(key_couche,sous_thematique) {
+    $scope.get_couche_thematique = function (key_couche, sous_thematique) {
         var data = $scope.thematiques
         for (var i = 0; i < data.length; i++) {
             if (sous_thematique) {
                 for (var j = 0; j < data[i].sous_thematiques.length; j++) {
                     for (var k = 0; k < data[i].sous_thematiques[j].couches.length; k++) {
-                            if (data[i].sous_thematiques[j].couches[k].key_couche == key_couche) {
-                                return data[i].sous_thematiques[j].couches[k]
-                            }
+                        if (data[i].sous_thematiques[j].couches[k].key_couche == key_couche) {
+                            return data[i].sous_thematiques[j].couches[k]
+                        }
                     }
 
                 }
             } else {
                 for (var k = 0; k < data[i].couches.length; k++) {
 
-                        if (data[i].couches[k].key_couche == key_couche) {
-                            return data[i].couches[k]
-                        }
+                    if (data[i].couches[k].key_couche == key_couche) {
+                        return data[i].couches[k]
+                    }
                 }
 
             }
@@ -218,7 +221,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     }
 
-    $scope.couches_thematiques_by_type_geom = function(type_geom) {
+    $scope.couches_thematiques_by_type_geom = function (type_geom) {
         var data = $scope.thematiques
         var result = []
 
@@ -226,18 +229,18 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             if (data[i].sous_thematiques != false) {
                 for (var j = 0; j < data[i].sous_thematiques.length; j++) {
                     for (var k = 0; k < data[i].sous_thematiques[j].couches.length; k++) {
-                            if (data[i].sous_thematiques[j].couches[k].geom == type_geom) {
-                                data[i].sous_thematiques[j].couches[k].sous_thematiques = true
-                                result.push(data[i].sous_thematiques[j].couches[k]) 
-                            }
+                        if (data[i].sous_thematiques[j].couches[k].geom == type_geom) {
+                            data[i].sous_thematiques[j].couches[k].sous_thematiques = true
+                            result.push(data[i].sous_thematiques[j].couches[k])
+                        }
                     }
                 }
             } else {
                 for (var k = 0; k < data[i].couches.length; k++) {
-                        if (data[i].couches[k].geom == type_geom) {
-                            data[i].couches[k].sous_thematiques = false
-                            result.push(data[i].couches[k]) 
-                        }
+                    if (data[i].couches[k].geom == type_geom) {
+                        data[i].couches[k].sous_thematiques = false
+                        result.push(data[i].couches[k])
+                    }
                 }
             }
         }
@@ -245,19 +248,43 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     }
 
-    $scope.add_limite_administrative = function(){
+    $scope.add_limite_administrative = function () {
         var data = $scope.nouvelles_limites_administratives[0]
         if (data.nom && data.couche) {
             var donne = {
-                'key_couche':JSON.parse(data.couche).key_couche,
-                'sous_thematiques':JSON.parse(data.couche).sous_thematiques,
-                'nom':data.nom
+                'key_couche': JSON.parse(data.couche).key_couche,
+                'sous_thematiques': JSON.parse(data.couche).sous_thematiques,
+                'nom': data.nom
             }
-            console.log(donne)
-            $scope.limites_administratives.push(donne)
-            $scope.nouvelles_limites_administratives = []
-        }else{
-            $scope.toogle_information('Renseignez toutes les informations')
+
+            $('#spinner').show()
+
+            myfactory.post_data("add_limite_administrative", donne).then(
+                function (resp) {
+                console.log(resp)
+                if (resp.status == "ok") {
+                   
+                    donne.nom_table = resp.nom_table
+                    donne.id_limite = resp.id_limite
+                    console.log(donne)
+                    $scope.limites_administratives.push(donne)
+                    $scope.nouvelles_limites_administratives = []
+
+                } else { 
+                    toogle_information("Un problème est survenu")
+                }
+
+                $('#spinner').hide()
+
+            }, function (msg) {
+                toogle_information("Verifier votre connexion")
+                $('#spinner').hide()
+
+            })
+
+            
+        } else {
+            toogle_information('Renseignez toutes les informations')
         }
     }
 

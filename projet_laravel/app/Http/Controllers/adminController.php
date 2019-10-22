@@ -461,27 +461,42 @@ class AdminController extends Controller
 
    }
 
-//    http://adminoccitanie.geocameroun.cm/create_table_limite?nom_table=communes&id_cat=179
-   public function create_table_limite(Request $Requests)
+   public function add_limite_administrative(Request $Requests)
    {
     try{
         DB::select('BEGIN;');
         DB::select('SAVEPOINT mon_pointdesauvegarde;'); 
 
 
-        $nom_table = $Requests->input('nom_table',null);
-        $id_cat = $Requests->input('id_cat');
+        $nom = $Requests->input('nom');
+        $key_couche = $Requests->input('key_couche');
+        $sous_thematiques = $Requests->input('sous_thematiques');
 
-        $categorie = DB::table('categorie')->select('sql')->where("id_cat","=",$id_cat)->get();
+        $nom_table = strtolower(preg_replace("/[^a-zA-Z]/", "", $nom));
+        
+
+        $categorie = DB::table('categorie')->select('sql')->where(
+            [
+                ["key_couche","=",$key_couche],
+                ["sous_thematiques","=",$sous_thematiques]
+            ]
+        )->get();
+
         $sql = $categorie[0]->sql;
         // return 'create table '.$nom_table.' as '.$sql;
         $querry = DB::select('create table '.$nom_table.' as '.$sql);
         DB::select("ALTER TABLE ".$nom_table." ADD COLUMN id serial");
         DB::select("ALTER TABLE ".$nom_table." ADD PRIMARY KEY (id)");
         
+        $id_limite = DB::table('limite_admin')->insertGetId(
+            ['nom_table' => $nom_table,'nom' => $nom, 'sous_thematiques' => $sous_thematiques,'key_couche'=>$key_couche],'id_limite'
+        );
+
         DB::select('COMMIT;');
         $data['status'] ='ok';
-        // $data['id'] =$querry;
+        $data['id_limite'] =$id_limite;
+        $data['nom_table'] =$nom_table;
+
         return $data;
 
     }catch(\Exception $e){
@@ -491,6 +506,39 @@ class AdminController extends Controller
                 return $e;
         }
    }
+
+   public function get_all_limite_administrative(Request $Requests)
+   {
+        $limites = DB::table('limite_admin')->select('nom_table','nom','sous_thematiques','key_couche','id_limite')->get();
+        return $limites;
+   }
+   public function delete_limite_administrative(Request $Requests)
+   {
+    try{
+        DB::select('BEGIN;');
+        DB::select('SAVEPOINT mon_pointdesauvegarde;'); 
+
+        $id_limite = $Requests->input('id_limite');
+
+        $nom_table = DB::table('limite_admin')->select('nom_table')->where("id_limite","=",$id_limite)->get();
+
+        if (sizeof($nom_table)>0) {
+            DB::select("DROP TABLE ".$nom_table[0]->nom_table);
+            DB::table('limite_admin')->where("id_limite","=",$id_limite)->delete();
+        }
+
+        DB::select('COMMIT;');
+        $data['status'] ='ok';
+        return $data;
+
+    }catch(\Exception $e){
+        
+        DB::select('ROLLBACK TO mon_pointdesauvegarde;');
+        DB::select('COMMIT;');
+                return $e;
+        }
+   }
+
    public function users()
    {
         $data=[];

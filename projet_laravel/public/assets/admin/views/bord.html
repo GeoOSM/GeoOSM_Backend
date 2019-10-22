@@ -32,7 +32,7 @@
                             
                             <th>
                                 <select class="form-control form-control-line" ng-model="nvl_limite_adm.couche">
-                                    <option value="{{couche_admin}}" ng-repeat="couche_admin in couches_thematiques_by_type_geom('Polygon')" > {{couche_admin.nom}} </option>
+                                    <option value="{{couche_admin}}"  ng-repeat="couche_admin in couches_thematiques_by_type_geom('Polygon')" ng-if="couche_admin.wms_type = 'osm'" > {{couche_admin.nom}} ({{couche_admin.number}} entité(s)) </option>
                                 </select>
                             </th>
 
