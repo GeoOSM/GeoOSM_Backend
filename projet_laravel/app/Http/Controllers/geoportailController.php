@@ -1078,7 +1078,7 @@ public function updateAttribute(Request $request)
           }
   }
 
-
+ 
   public function addCountVieuwData(Request $Requests)
   { 
 

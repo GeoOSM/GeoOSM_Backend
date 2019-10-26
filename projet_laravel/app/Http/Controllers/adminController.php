@@ -507,11 +507,22 @@ class AdminController extends Controller
         }
    }
 
-   public function get_all_limite_administrative(Request $Requests)
+   public function config_bd_projet(Request $Requests)
    {
         $limites = DB::table('limite_admin')->select('nom_table','nom','sous_thematiques','key_couche','id_limite')->get();
-        return $limites;
+        $extent =DB::select("select min(ST_XMin(st_transform(geom,3857))) as a,min(ST_YMin(st_transform(geom,3857))) as b,max(ST_XMax(st_transform(geom,3857))) as c,max(ST_YMax(st_transform(geom,3857))) as d from instances_gc where id='".$this->id_instance_gc."'");
+        
+         $data['status'] ='ok';
+         $data['bbox'] =[];
+         if (sizeof($extent) >0 ) {
+            $bbox =  array(floatval($extent[0]->a),floatval($extent[0]->b),floatval($extent[0]->c),floatval($extent[0]->d));
+            // "[".$extent[0]->a.",".$extent[0]->b.",".$extent[0]->c.",".$extent[0]->d."]";
+            $data['bbox'] = $bbox;
+        }
+         $data['limites'] =$limites;
+        return $data;
    }
+
    public function delete_limite_administrative(Request $Requests)
    {
     try{

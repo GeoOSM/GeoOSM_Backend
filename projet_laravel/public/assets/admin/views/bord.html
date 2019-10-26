@@ -21,7 +21,8 @@
                             <th>{{limite_adm.nom}}</th>
                             <th>{{get_couche_thematique(limite_adm.key_couche,limite_adm.sous_thematiques).nom}}</th>
                             <th>
-                                <button class="btn back_red white " ng-click="limites_administratives.splice($index,1)">Supprimer</button>
+                                    <!-- ng-click="limites_administratives.splice($index,1)" -->
+                                <button class="btn back_red white" ng-click="toogle_confirmation('supprimer_limite_adm',limite_adm)" >Supprimer</button>
                             </th>
                         </tr>
 

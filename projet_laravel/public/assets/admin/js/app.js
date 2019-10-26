@@ -24,11 +24,13 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         $scope[key] = config_projet[key]
     }
 
-    //$scope.urlElastic='https://cuy.sogefi.cm:9200'
+
+
+
 
     $rootScope.$on('$locationChangeStart', function (event, next, current) {
         myfactory.get_data("check").then(function (resp) {
-
+            
             if (resp.session == true) {
                 $scope._user = resp
                 console.log(resp)
@@ -182,17 +184,28 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     }
 
-    $scope.limites_administratives = []
+    
 
-    myfactory.get_data('get_all_limite_administrative').then(
-        function(data){
-            $scope.limites_administratives = data
+    $scope.limites_administratives = []
+    $scope.bbox_projet = []
+    myfactory.get_data('config_bd_projet').then(
+        function (data) {
+            if (data.status == "ok") {
+                $scope.limites_administratives = data['limites']
+                $scope.bbox_projet = data['bbox']
+                console.log(data)
+                if ($scope.bbox_projet.length != 0 ) {
+                    // view.fit([-1362582.12638531,1135601.87320162,475042.880315974,2875877.76991498])
+                }
+               
+            }
+           
         },
-        function(err){
+        function (err) {
             toogle_information("Verifier votre connexion")
         }
     )
-    
+
 
     $scope.nouvelles_limites_administratives = []
 
@@ -247,6 +260,40 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         return result
 
     }
+    $scope.supprimer_limite_adm = function (limite) {
+        $('#spinner').show()
+
+        myfactory.post_data("delete_limite_administrative", limite).then(
+            function (resp) {
+                $('#spinner').hide()
+
+                if (resp.status == "ok") {
+                    var index_limite = undefined
+                    for (var index = 0; index < $scope.limites_administratives.length; index++) {
+                        var element = $scope.limites_administratives[index];
+                        if (element.id_limite == limite.id_limite) {
+                            index_limite = index
+                        }
+                    }
+
+                    if (index_limite != undefined) {
+                        $scope.limites_administratives.splice(index_limite, 1)
+                    }
+
+                    toogle_information("La limite a bien été supprimé")
+
+                } else {
+                    toogle_information("Un problème est survenu")
+                }
+            },
+            function (msg) {
+                toogle_information("Verifier votre connexion")
+                $('#spinner').hide()
+
+            }
+        )
+    }
+
 
     $scope.add_limite_administrative = function () {
         var data = $scope.nouvelles_limites_administratives[0]
@@ -261,28 +308,30 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             myfactory.post_data("add_limite_administrative", donne).then(
                 function (resp) {
-                console.log(resp)
-                if (resp.status == "ok") {
-                   
-                    donne.nom_table = resp.nom_table
-                    donne.id_limite = resp.id_limite
-                    console.log(donne)
-                    $scope.limites_administratives.push(donne)
-                    $scope.nouvelles_limites_administratives = []
+                    console.log(resp)
+                    if (resp.status == "ok") {
 
-                } else { 
-                    toogle_information("Un problème est survenu")
-                }
+                        donne.nom_table = resp.nom_table
+                        donne.id_limite = resp.id_limite
+                        console.log(donne)
+                        $scope.limites_administratives.push(donne)
+                        $scope.nouvelles_limites_administratives = []
 
-                $('#spinner').hide()
+                    } else {
+                        toogle_information("Un problème est survenu")
+                    }
 
-            }, function (msg) {
-                toogle_information("Verifier votre connexion")
-                $('#spinner').hide()
+                    $scope.toogle_confirmation('false')
+                    $('#spinner').hide()
 
-            })
+                }, function (msg) {
+                    toogle_information("Verifier votre connexion")
+                    $scope.toogle_confirmation('false')
+                    $('#spinner').hide()
 
-            
+                })
+
+
         } else {
             toogle_information('Renseignez toutes les informations')
         }
@@ -530,6 +579,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         } else if (texte == 'delete_pdf_carte') {
             msg = "Supprimer la carte " + data.name + " ?"
             $scope.confirmation = { 'msg': msg, 'data': data, 'data1': data1, 'active': true, 'type': texte }
+        } else if (texte == 'supprimer_limite_adm') {
+            msg = "Supprimer la limite administrative " + data.nom + " ?"
+            $scope.confirmation = { 'msg': msg, 'data': data, 'active': true, 'type': texte }
         } else if (texte === 'false') {
             $scope.confirmation.active = false
         }
@@ -564,6 +616,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             $scope.delete_cles_vals_osm(data, data1)
         } else if (type == 'delete_pdf_carte') {
             $scope.delete_doc_pdf(data, data1)
+        } else if (type == 'supprimer_limite_adm') {
+            $scope.supprimer_limite_adm(data)
         }
 
     }
@@ -4004,7 +4058,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             var extend3857 = [Amin[0], Amin[1], Amax[0], Amax[1]]
 
             $scope.map.getView().fit(extend3857, $scope.map.getSize());
-
+            
+        }else if($scope.bbox_projet.length != 0) {
+            view.fit($scope.bbox_projet,$scope.map.getSize())
         }
 
         if (data.zmin) {
@@ -4077,12 +4133,29 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 var tiles = new ol.layer.Vector({
                     source: vectorSource,
-                    style: new ol.style.Style({
-                        image: new ol.style.Icon({
-                            scale: 0.15,
-                            src: data.img_temp
-                        })
-                    })
+                    style: function(feature){
+                        if (data.geom =='point') {
+                            return new ol.style.Style({
+                                image: new ol.style.Icon({
+                                    scale: 0.15,
+                                    src: data.img_temp
+                                })
+                            })
+                        }else{
+                           return new ol.style.Style({
+                                stroke: new ol.style.Stroke({
+                                    color: '#434343',
+                                    width: 4
+                                }),
+                                fill: new ol.style.Fill({
+                                    color: [0,0,0,0.3]
+                                }),
+                                //text: createTextStylePolygon(feature, map.getView().getResolution())
+            
+                            })
+                        }
+                    }
+                   
                 });
             }
 
@@ -5884,7 +5957,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     $scope.delete_cles_vals_osm = function (cle_val_osm, couche) {
         console.log(cle_val_osm, couche.cles_vals_osm)
 
-
+       var id_cat = couche.cles_vals_osm[0].id_cat
         $('#spinner').show()
 
         myfactory.post_data('/thematique/delete_cles_vals_osm/', JSON.stringify(cle_val_osm)).then(
@@ -5903,18 +5976,23 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     $scope.toogle_confirmation('false')
 
 
-                    if (couche.cles_vals_osm.length > 0) {
-                        myfactory.post_data('/thematique/genrateJsonFileByCat/', JSON.stringify({ 'id_cat': couche.cles_vals_osm[0].id_cat })).then(
+                        myfactory.post_data('/thematique/genrateJsonFileByCat/', JSON.stringify({ 'id_cat': id_cat })).then(
                             function (data) {
                                 if (requete_reussi(data)) {
                                     couche.number = data.number
                                     couche.status = data.statut
 
                                     if (couche.wms_type == 'osm') {
-                                        myfactory.get_data($scope.urlNodejs_backend + '/generateShapeFromOsmBuilder/' + $scope.projet_qgis_server + '/' + couche.cles_vals_osm[0].id_cat + '/false').then(
+                                        myfactory.get_data($scope.urlNodejs_backend + '/generateShapeFromOsmBuilder/' + $scope.projet_qgis_server + '/' + id_cat + '/false').then(
                                             function (data) {
                                                 if (requete_reussi(data)) {
                                                     toogle_information('La condition a bien ete supprimer')
+                                                    
+                                                    if(couche.cles_vals_osm.length== 0) {
+                                                        couche.number = 0
+                                                        couche.status = true
+                                                    }
+
                                                     $('#spinner').hide()
                                                 } else {
                                                     toogle_information('un problème est survenu, contacter administrateur')
@@ -5941,11 +6019,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                             }
                         )
-                    } else {
-                        couche.number = 0
-                        couche.status = true
-                        $('#spinner').hide()
-                    }
+                    
+                    
                 }
 
 
