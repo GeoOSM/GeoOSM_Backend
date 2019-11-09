@@ -760,49 +760,25 @@ public function updateAttribute(Request $request)
       DB::select('BEGIN;');
       DB::select('SAVEPOINT mon_pointdesauvegarde;');
 
-
-      // $quartiers = 'quartiers';
-
-      $communes = 'communes';
-      $departements = 'departements';
-      // $regions = 'regions';
-
       $coord_4326=$request->input('coord',null);
       
       $coord = DB::select("select ST_TRANSFORM(ST_SetSRID(ST_Point(".$coord_4326[0].",".$coord_4326[1]."),4326),4326) as geom");
 
-      
-      $getDepartements=DB::select("SELECT hstore_to_json->'ref:INSEE' as ref,name FROM ".$departements." WHERE ST_Contains( geometry , '".$coord[0]->geom."'::geometry ) "  );
-
-      // $getRegions=DB::select("SELECT hstore_to_json->'ref:INSEE' as ref,name FROM ".$regions." WHERE ST_Contains( geometry , '".$coord[0]->geom."'::geometry )");
-      $getCommunes=DB::select("SELECT hstore_to_json->'ref:INSEE' as ref,name FROM ".$communes." WHERE ST_Contains( geometry , '".$coord[0]->geom."'::geometry )");
-      // $getQuartiers=DB::select("SELECT hstore_to_json->'ref:INSEE' as ref,name FROM ".$quartiers." WHERE ST_Contains( geometry , '".$coord[0]->geom."'::geometry )");
+      $limites = DB::table('limite_admin')->select('nom_table','nom','sous_thematiques','key_couche','id_limite')->get();
 
       $reponse= array();
 
-      // if( sizeof($getQuartiers)>=1  ){
-      //   $reponse['quartier'] = $getQuartiers[0]->name;
-      // }else{
-      //   $reponse['quartier'] = false;
-      // }
-      
-      if( sizeof($getDepartements)>=1  ){
-        $reponse['departement'] = $getDepartements[0]->name.' ('.$getDepartements[0]->ref.') ';
-      }else{
-        $reponse['departement'] = false;
+      for ($i=0; $i < sizeof($limites) ; $i++) { 
+        
+        $lim_i = DB::select("SELECT name FROM ".$limites[$i]->nom_table." WHERE ST_Contains( geometry , '".$coord[0]->geom."'::geometry ) "  );
+        
+        if (sizeOf($lim_i)>0 ) {
+          $reponse[$limites[$i]->nom] = $lim_i[0]->name;
+        }else{
+          $reponse[$limites[$i]->nom] = false;
+        }
+        
       }
-
-      if( sizeof($getCommunes)>=1  ){
-        $reponse['commune'] =$getCommunes[0]->name.' ('.$getCommunes[0]->ref.') ';
-      }else{
-        $reponse['commune'] = false;
-      }
-
-      // if( sizeof($getRegions)>=1  ){
-      //   $reponse['region'] = $getRegions[0]->name;
-      // }else{
-      //   $reponse['region'] = false;
-      // }
 
       return  $reponse;
   }
