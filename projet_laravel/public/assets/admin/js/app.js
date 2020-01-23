@@ -1923,7 +1923,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     //$scope.thematique_en_modif={};
     var function_modifier_thematique = function (thematique, extension) {
 
-        if ($scope.thematiques[thematique.id].nom != thematique.nom || extension) {
+        if ($scope.thematiques[thematique.id].nom != thematique.nom || extension || $scope.thematiques[thematique.id].color != thematique.color) {
+
+            
 
             if (extension) {
                 thematique.nom_img_modife = 'assets/images/thematiques/' + space2underscore(thematique.nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
@@ -1935,6 +1937,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                         toogle_information("La thematique " + thematique.nom + " a ete bien modifi�")
                         $scope.thematiques[thematique.id].nom = thematique.nom
                         $scope.thematiques[thematique.id].img = thematique.img_temp
+                        $scope.thematiques[thematique.id].color = thematique.color
                         $scope.page_principale_thematique = !$scope.page_principale_thematique
 
                     }
@@ -2694,11 +2697,11 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     }
 
-    $scope.changeColor_addCouche = function (couche) {
+    $scope.changeColor_addCouche = function (couche,delete_img = true) {
         if ($scope.api) {
             $scope.api.getScope().$parent.myColor = $scope.myColor
         }
-        if (couche.img_temp) {
+        if (couche.img_temp && delete_img) {
             couche.img_temp = null
         }
         couche.myColor = 'change'
@@ -3420,11 +3423,17 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     //function pour modifier un groupe de cartes
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    $scope.modification_cartes = function (cartes_en_modif) {
+    var function_modifier_carte = function (cartes_en_modif,extension){
 
-        if ($scope.cartes[cartes_en_modif.id].color != cartes_en_modif.color || $scope.cartes[cartes_en_modif.id].nom != cartes_en_modif.nom) {
+        if ($scope.cartes[cartes_en_modif.id].color != cartes_en_modif.color || extension || $scope.cartes[cartes_en_modif.id].nom != cartes_en_modif.nom) {
 
             $('#spinner').show()
+
+            if (extension) {
+                cartes_en_modif.nom_img_modife = 'assets/images/cartes/' + space2underscore(cartes_en_modif.nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+            }
+            
+
             myfactory.post_data('/cartes/updateGroupeCartes/', JSON.stringify(cartes_en_modif)).then(
                 function (data) {
                     if (requete_reussi(data)) {
@@ -3433,6 +3442,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                         $scope.cartes[cartes_en_modif.id].nom = cartes_en_modif.nom
                         $scope.cartes[cartes_en_modif.id].color = cartes_en_modif.color
+                        $scope.cartes[cartes_en_modif.id].img = cartes_en_modif.img_temp
+
                         $scope.page_principale_cartes = !$scope.page_principale_cartes
 
                     }
@@ -3447,6 +3458,44 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         } else {
             toogle_information("aucune modification n'a �t� enregistr�")
         }
+    }
+    $scope.modification_cartes = function (cartes_en_modif) {
+
+        if (cartes_en_modif.fileImg) {
+            var extension = cartes_en_modif.fileImg.name.split('.')[cartes_en_modif.fileImg.name.split('.').length - 1]
+            formData.append('path', '/../../../public/assets/images/cartes');
+            formData.append('pathBd', 'assets/images/cartes/');
+            formData.append('image_file', cartes_en_modif.fileImg);
+            formData.append('nom', space2underscore(cartes_en_modif.nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension));
+            var request = {
+                method: 'POST',
+                url: '/upload/file',
+                data: formData,
+                headers: {
+                    'Content-Type': undefined
+                }
+            };
+            $('#spinner').show()
+            $http(request)
+                .then(
+                function success(e) {
+                    formData = new FormData();
+
+                    if (e.data.status) {
+                        function_modifier_carte(cartes_en_modif, extension)
+                    }
+                    $('#spinner').hide()
+                },
+                function (e) {
+                    $('#spinner').hide()
+                    toogle_information('Verifier votre connexion')
+                }
+                )
+        } else {
+            function_modifier_carte(cartes_en_modif)
+        }
+
+       
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

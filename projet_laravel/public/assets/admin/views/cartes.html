@@ -98,8 +98,8 @@
         <div class="row" ng-if="mode_modification_cartes == false && mode_sous_cartes == false && mode_ajout_cartes ==false"> 
             <div class="wrapper " style="padding-left: calc(50% - 500px)">
                 <div class="clash-card barbarian " ng-repeat="carte in cartes | filter:{nom :filtre_cartes}">
-                    <div class="clash-card__image clash-card__image--barbarian" ng-style="{'background-color':'{{carte.color}}','border-radius': '0px'}">
-                       <div class="clash-card__unit-name white " style="font-weight: bold;  padding-top: 25px;font-size:16px">{{carte.nom}}</div>
+                    <div class="clash-card__image clash-card__image--barbarian" ng-style="{'background':'url({{carte.img}})','opacity': 0.8}">
+                       <div class="clash-card__unit-name white " style="font-weight: bold;  padding-top: 25px;font-size:27px">{{carte.nom}}</div>
                     </div>
                     <!-- <div class="clash-card__unit-name" style="font-size:16px">{{carte.nom}}</div> -->
                     <div class="clash-card__unit-stats clash-card__unit-stats--barbarian clearfix back_white pointer" style="border-radius:0px">
@@ -305,11 +305,15 @@
                 <div class="col-md-3 col-xs-12">
                     <div class="user-bg">
                         <div class="overlay-box">
-                            <div class="user-content" ng-init="cartes_en_modif.color = cartes_couche.color">
-                                <div  ng-style="{'width':'35px','height': '35px','background':cartes_en_modif.color,'opacity':'1','border':'3px solid black','display': 'inline-block','margin-top': '22px'}"> </div>
+                            <div class="user-content" ng-init="cartes_en_modif.color = cartes_couche.color;cartes_en_modif.img = cartes_couche.img" >
+                                <!-- <div  ng-style="{'width':'35px','height': '35px','background':cartes_en_modif.color,'opacity':'1','border':'3px solid black','display': 'inline-block','margin-top': '22px'}"> </div> -->
+                                
+                                <img src="{{cartes_en_modif.img_temp}}"  class="thumb-lg" alt="img">
 
                                 <div class="col-sm-12" style="margin-top:15px">
-                                    <button class="btn btn-primary"  ng-click="changeColor_addCouche(cartes_en_modif)" >Changer de couleur</button>
+                                    <!-- <button class="btn btn-primary"  ng-click="changeColor_addCouche(cartes_en_modif)" >Changer de couleur</button> -->
+                                    <button class="btn btn-primary"  ng-click="file('img_modification_carte',cartes_en_modif,'img_temp')" >icone</button>
+                                    <input type="file" ng-files="setTheFiles($files,cartes_en_modif)" id="img_modification_carte" style="display: none;" accept="image/*">
                                     
                                 </div>
                             </div>

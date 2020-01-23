@@ -97,17 +97,17 @@ class FilesController extends Controller
 
         $image = $request->file('image_file');
 
-        $largeur = $request->input('largeur');
-        $lomguer = $request->input('lomguer');
+        $largeur = $request->input('largeur',null);
+        $lomguer = $request->input('lomguer',null);
         $extension = $image->getClientOriginalExtension();
 
         
 
-         if ($extension != 'svg' && $extension != 'zip' && $extension != 'json' && $extension != 'geojson' ) { 
+         if ($extension != 'svg' && $extension != 'zip' && $extension != 'json' && $extension != 'geojson' && $largeur) { 
             $image_resize = Image::make($image->getRealPath());
 
            
-                 $image_resize->resize( $lomguer,  $largeur); //80 80 // 250 90
+            $image_resize->resize( $lomguer,  $largeur); //80 80 // 250 90
            
 
             $nom_img = str_replace(" ", "_", $request->input('nom')); 

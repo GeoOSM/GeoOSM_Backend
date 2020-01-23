@@ -97,22 +97,22 @@
         <div class="row" ng-if="mode_modification_thematique == false && mode_sous_thematique == false && mode_ajout_thematique ==false">
             <div class="wrapper " style="padding-left: calc(50% - 500px)">
                 <div class="clash-card barbarian " ng-repeat="thematique in thematiques | filter:{nom :filtre_thematique}">
-                    <div class="clash-card__image clash-card__image--barbarian">
+                    <div class="clash-card__image clash-card__image--barbarian" ng-style="{'background':thematique.color}">
                         <img src="{{thematique.img}}" alt="barbarian" class="" />
                     </div>
-                    <div class="clash-card__unit-name" style="font-size:16px">{{thematique.nom}}</div>
+                    <div class="clash-card__unit-name" ng-style="{'font-size':'16px'}" >{{thematique.nom}} </div>
                     <div class="clash-card__unit-stats clash-card__unit-stats--barbarian clearfix back_white pointer" style="border-radius:0px">
                         <div class="one-third border_black" ng-click="function_thematique($index,'couche')" style="padding-top:13px">
                             <!-- fa-flash -->
-                            <i class="fa fa-database red " style="font-size:x-large;margin:0 auto;"></i>
+                            <i class="fa fa-database " style="font-size:x-large;margin:0 auto;"></i>
                             <div class="stat-value black">Couches</div>
                         </div>
                         <div class="one-third border_black" ng-click="function_thematique($index,'modification')">
-                            <i class="fa fa-pencil red " style="font-size:xx-large;margin:0 auto;"></i>
+                            <i class="fa fa-pencil " style="font-size:xx-large;margin:0 auto;"></i>
                             <div class="stat-value black">Modifier</div>
                         </div>
                         <div class="one-third no-border " type="button"  ng-click="toogle_confirmation('thematique',thematique)">
-                            <i class="fa fa-trash-o red" style="font-size:xx-large;margin:0 auto;"></i>
+                            <i class="fa fa-trash-o" style="font-size:xx-large;margin:0 auto;"></i>
                             <div class="stat-value black">Supprimer</div>
                         </div>
                     </div>
@@ -240,16 +240,19 @@
         <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - - - - 
                        Modification des  thématiques 
 - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
-        <div class="row" ng-if="mode_modification_thematique" ng-init="thematique_en_modif.id_thematique = thematique_couche.id_thematique;thematique_en_modif.id = thematique_couche.id;thematique_en_modif.nom = thematique_couche.nom;thematique_en_modif.img_temp = thematique_couche.img">
+        <div class="row" ng-if="mode_modification_thematique" ng-init="thematique_en_modif.id_thematique = thematique_couche.id_thematique;thematique_en_modif.id = thematique_couche.id;thematique_en_modif.nom = thematique_couche.nom;thematique_en_modif.color = thematique_couche.color;thematique_en_modif.img_temp = thematique_couche.img">
             <div class="col-md-12 col-xs-12 white-box" >
                 <div class="col-md-3 col-xs-12">
                     <div class="user-bg">
                         <div class="overlay-box">
                             <div class="user-content" ng-init="thematique_en_modif.img = thematique_couche.img">
-                                <img src="{{thematique_en_modif.img_temp}}" class="thumb-lg" alt="img">
+                                
+                                <img src="{{thematique_en_modif.img_temp}}" ng-style="{'background':thematique_en_modif.color,'padding':'15px','border-radius': '7px'}" class="thumb-lg" alt="img">
+                                
                                 <div class="col-sm-12" style="margin-top:15px">
-                                    <button class="btn btn-primary"  ng-click="file('img_modification_thematique',thematique_en_modif,'img_temp')" >Changer l'icone</button>
-                                    <input type="file" ng-files="setTheFiles($files,thematique_en_modif)" id="img_modification_thematique" style="display: none;" accept="image/*">
+                                    <button class="btn btn-primary"  ng-click="file('img_modification_thematique',thematique_en_modif,'img_temp')" >icone</button>
+                                    <button class="btn btn-primary"  ng-click="changeColor_addCouche(thematique_en_modif,false)" >Couleur</button>
+                                    <input type="file" ng-files="setTheFiles($files,thematique_en_modif)" id="img_modification_thematique" style="display: none;" accept=".svg,.SVG">
                                 </div>
                             </div>
                         </div>

@@ -151,17 +151,18 @@ class thematiqueController extends Controller
 	   		$nom = $Requests->input('nom',null);
 		   	$id = $Requests->input('id_thematique',null);
 		   	$img = $Requests->input('nom_img_modife',null);
+		   	$color = $Requests->input('color',null);
 
 		   	$imgN = str_replace(" ", "_", $img);
 
 		   	if ($img) {
 		   		$querry = DB::table('thematique')
 				           ->where('id', $id)
-				           ->update(['nom' => $nom,'image_src' => $imgN]);
+				           ->update(['nom' => $nom,'color' => $color,'image_src' => $imgN]);
 		   	}else{
 		   		$querry = DB::table('thematique')
 				           ->where('id', $id)
-				           ->update(['nom' => $nom]);
+				           ->update(['color' => $color,'nom' => $nom]);
 		   	}
 		   	
 

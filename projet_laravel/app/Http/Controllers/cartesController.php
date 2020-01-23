@@ -120,11 +120,22 @@ class cartesController extends Controller
 	   		$nom = $Requests->input('nom',null);
 	   		$color = $Requests->input('color',null);
 		   	$id = $Requests->input('id_cartes',null);
-		   
+			$img = $Requests->input('nom_img_modife',null);
 
-		   $querry = DB::table('cartes')
-				        ->where('id', $id)
-				        ->update(['nom' => $nom,'color' => $color]);
+
+			$imgN = str_replace(" ", "_", $img);
+
+			if ($img) {
+				$querry = DB::table('cartes')
+						->where('id', $id)
+						->update(['nom' => $nom,'color' => $color,'image_src' => $imgN]);
+			}else{
+				$querry = DB::table('cartes')
+				->where('id', $id)
+				->update(['nom' => $nom,'color' => $color]);
+			}
+
+		  
 
 			DB::select('COMMIT;');
 

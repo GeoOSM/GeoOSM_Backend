@@ -235,7 +235,9 @@ body {
 }
 
 .clash-card {
-  background: white;
+  background: #fff;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
   width: 237px;
   display: inline-block;
   margin: auto;
@@ -424,12 +426,14 @@ body {
   right: 100px;
   z-index: 999;
 }
-
+.one-third i{
+  color: #777;
+}
 .one-third:hover{
-    background: #F10E29;
+    background: #777;
 }
 .one-third:hover i{
-    color: #fff;
+    color: #fff !important;
 }
 .one-third:hover .stat-value{
     color: #fff;
