@@ -3460,7 +3460,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         }
     }
     $scope.modification_cartes = function (cartes_en_modif) {
-
+        
         if (cartes_en_modif.fileImg) {
             var extension = cartes_en_modif.fileImg.name.split('.')[cartes_en_modif.fileImg.name.split('.').length - 1]
             formData.append('path', '/../../../public/assets/images/cartes');

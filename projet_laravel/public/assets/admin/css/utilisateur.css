@@ -239,7 +239,7 @@ body {
   border-top-left-radius: 14px;
   border-top-right-radius: 14px;
   width: 237px;
-  display: inline-block;
+  display: inline-grid;
   margin: auto;
   margin-right: 15px;
   margin-bottom: 15px;
