@@ -15,7 +15,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="Bibliotheque.svg">
+   sodipodi:docname="Stade.svg">
   <defs
      id="defs2">
     <style
@@ -122,6 +122,50 @@
        id="style1317">
             .cls-1{fill:#fff}
         </style>
+    <style
+       id="style1337">
+            .cls-1{fill:#fff}
+        </style>
+    <style
+       id="style1375">
+            .cls-1{fill:#fff}
+        </style>
+    <style
+       id="style1388">
+            .cls-1{fill:#fff}
+        </style>
+    <style
+       id="style1407">
+            .cls-1{fill:#fff}
+        </style>
+    <style
+       id="style1424">
+            .cls-1{fill:#fff}
+        </style>
+    <style
+       id="style1437">
+            .cls-1{fill:#fff}
+        </style>
+    <style
+       id="style1450">
+            .cls-1{fill:#fff}
+        </style>
+    <style
+       id="style1479">
+            .cls-1{fill:#fff}
+        </style>
+    <style
+       id="style1495">
+            .cls-1{fill:#fff}
+        </style>
+    <style
+       id="style1514">
+            .cls-1{fill:#fff}
+        </style>
+    <style
+       id="style1533">
+            .cls-1{fill:#fff}
+        </style>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -160,44 +204,18 @@
      id="layer1"
      transform="translate(0,-254.66665)">
     <rect
-       style="fill:#b33939;fill-opacity:1;fill-rule:evenodd;stroke-width:0.26458332"
+       style="fill:#33d9b2;fill-opacity:1;fill-rule:evenodd;stroke-width:0.26458332"
        id="rect815"
        width="42.333332"
        height="42.333332"
        x="-8.9641112e-09"
        y="254.70229"
        ry="3.4999876" />
-    <g
-       id="g1335"
-       transform="matrix(1.0137292,0,0,1.2781804,7.8075689,261.37829)">
-      <path
-         data-name="Tracé 4260"
-         class="cls-1"
-         d="M 5.7,17.4 A 15.469,15.469 0 0 0 2.6,16.8 1.216,1.216 0 0 1 1.4,15.6 V 3.5 C 0.6,3.7 0,3.8 0,3.8 v 16.1 c 6.6,-1.7 10.6,0.7 10.6,0.7 L 10.5,20.3 A 12.383,12.383 0 0 0 5.7,17.4 Z"
-         id="Tracé_4260"
-         inkscape:connector-curvature="0"
-         style="fill:#ffffff" />
-      <path
-         data-name="Tracé 4261"
-         class="cls-1"
-         d="m 2.6,0 v 15.6 a 13.268,13.268 0 0 1 9.7,5 V 5.6 A 13.07,13.07 0 0 0 2.6,0 Z"
-         id="Tracé_4261"
-         inkscape:connector-curvature="0"
-         style="fill:#ffffff" />
-      <path
-         data-name="Tracé 4262"
-         class="cls-1"
-         d="m 24.7,3.5 v 12.2 a 1.216,1.216 0 0 1 -1.2,1.2 15.469,15.469 0 0 0 -3.1,0.6 12.383,12.383 0 0 0 -4.8,2.9 l -0.1,0.3 c 0,0 4.1,-2.4 10.6,-0.7 V 3.8 c 0,0 -0.6,-0.1 -1.4,-0.3 z"
-         id="Tracé_4262"
-         inkscape:connector-curvature="0"
-         style="fill:#ffffff" />
-      <path
-         data-name="Tracé 4263"
-         class="cls-1"
-         d="m 23.5,0 a 13.07,13.07 0 0 0 -9.7,5.6 v 15 a 14,14 0 0 1 9.7,-5 z"
-         id="Tracé_4263"
-         inkscape:connector-curvature="0"
-         style="fill:#ffffff" />
-    </g>
+    <path
+       class="cls-1"
+       d="M 33.599317,263.94154 H 8.6154424 a 0.73722907,0.95250066 0 0 0 -0.737229,0.95252 v 21.9075 a 0.73722907,0.95250066 0 0 0 0.737229,0.95248 H 33.599317 a 0.73722907,0.95250066 0 0 0 0.737229,-0.95248 v -21.9075 a 0.86419631,1.1165425 0 0 0 -0.737229,-0.95252 z m -13.106293,17.03918 a 3.9736646,5.1339785 0 0 1 0,-10.16002 z m 1.146798,-10.16002 a 3.9736646,5.1339785 0 0 1 0,10.16002 z m -12.2871506,1.05833 h 2.7031726 v 8.25504 H 9.3526714 Z m 0,9.73669 H 13.202646 V 270.39739 H 9.3526714 v -4.55084 H 20.574937 v 3.59832 a 5.0614871,6.5394462 0 0 0 -0.08192,13.01753 v 3.38663 H 9.3526654 Z m 23.5094166,-1.48165 h -2.703173 v -8.25504 h 2.703173 z m 0,-9.73668 h -3.849975 v 11.21833 h 3.849975 v 4.23331 H 21.639822 v -3.38663 a 5.1343908,6.6336379 0 0 0 4.505291,-7.30253 5.0573914,6.5341546 0 0 0 -4.505291,-5.8208 v -3.49252 h 11.222266 z"
+       id="Tracé_1814"
+       inkscape:connector-curvature="0"
+       style="fill:#ffffff;stroke-width:0.93108934" />
   </g>
 </svg>

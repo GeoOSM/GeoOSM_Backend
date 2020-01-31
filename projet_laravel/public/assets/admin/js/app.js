@@ -30,7 +30,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     $rootScope.$on('$locationChangeStart', function (event, next, current) {
         myfactory.get_data("check").then(function (resp) {
-            
+
             if (resp.session == true) {
                 $scope._user = resp
                 console.log(resp)
@@ -184,7 +184,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     }
 
-    
+
 
     $scope.limites_administratives = []
     $scope.bbox_projet = []
@@ -194,12 +194,12 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 $scope.limites_administratives = data['limites']
                 $scope.bbox_projet = data['bbox']
                 console.log(data)
-                if ($scope.bbox_projet.length != 0 ) {
+                if ($scope.bbox_projet.length != 0) {
                     // view.fit([-1362582.12638531,1135601.87320162,475042.880315974,2875877.76991498])
                 }
-               
+
             }
-           
+
         },
         function (err) {
             toogle_information("Verifier votre connexion")
@@ -890,34 +890,34 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 $('#spinner').show()
                 $http(request)
                     .then(
-                    function success(e) {
-                        formData = new FormData();
-                        console.log(e.data.status)
-                        if (e.data.status == 'ok') {
-                            var identifiant = couche.identifiant
-                            var style_file = e.data.style_file
+                        function success(e) {
+                            formData = new FormData();
+                            console.log(e.data.status)
+                            if (e.data.status == 'ok') {
+                                var identifiant = couche.identifiant
+                                var style_file = e.data.style_file
 
-                            myfactory.get_data($scope.urlNodejs_backend + '/set_style_qgs/' + $scope.projet_qgis_server + '/' + style_file + '/' + identifiant).then(
-                                function (data) {
-                                    if (data.status == 'ok') {
-                                        toogle_information('Le fichier de style a bien été appliqué')
-                                    } else {
-                                        toogle_information('Un probleme est survenu, S2')
+                                myfactory.get_data($scope.urlNodejs_backend + '/set_style_qgs/' + $scope.projet_qgis_server + '/' + style_file + '/' + identifiant).then(
+                                    function (data) {
+                                        if (data.status == 'ok') {
+                                            toogle_information('Le fichier de style a bien été appliqué')
+                                        } else {
+                                            toogle_information('Un probleme est survenu, S2')
+                                        }
+                                        $('#spinner').hide()
                                     }
-                                    $('#spinner').hide()
-                                }
-                            )
+                                )
 
-                        } else {
+                            } else {
+                                $('#spinner').hide()
+                                toogle_information('Un probleme est survenu, S1')
+                            }
+
+                        },
+                        function (e) {
                             $('#spinner').hide()
-                            toogle_information('Un probleme est survenu, S1')
+                            toogle_information('Verifier votre connexion et recommencer')
                         }
-
-                    },
-                    function (e) {
-                        $('#spinner').hide()
-                        toogle_information('Verifier votre connexion et recommencer')
-                    }
                     )
 
 
@@ -958,73 +958,73 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                     $http(request)
                         .then(
-                        function success(e) {
-                            formData = new FormData();
+                            function success(e) {
+                                formData = new FormData();
 
-                            if (e.data.status) {
+                                if (e.data.status) {
 
-                                $scope.donne_en_importation = {
-                                    'file': file,
-                                    'extension': extension,
-                                    'nom': space2underscore(file.name.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
-                                }
+                                    $scope.donne_en_importation = {
+                                        'file': file,
+                                        'extension': extension,
+                                        'nom': space2underscore(file.name.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                                    }
 
-                                //if (extension.toLowerCase() != 'geojson' && extension.toLowerCase() != 'json') {
-                                console.log($scope.urlNodejs + extension + $scope.rootApp + 'public/assets/admin/uploadcouche/' + $scope.donne_en_importation.nom)
-                                myfactory.get_data($scope.urlNodejs + extension + $scope.rootApp + 'public/assets/admin/uploadcouche/' + $scope.donne_en_importation.nom).then(
-                                    function (data) {
-                                        if (data.features.length > 0) {
+                                    //if (extension.toLowerCase() != 'geojson' && extension.toLowerCase() != 'json') {
+                                    console.log($scope.urlNodejs + extension + $scope.rootApp + 'public/assets/admin/uploadcouche/' + $scope.donne_en_importation.nom)
+                                    myfactory.get_data($scope.urlNodejs + extension + $scope.rootApp + 'public/assets/admin/uploadcouche/' + $scope.donne_en_importation.nom).then(
+                                        function (data) {
+                                            if (data.features.length > 0) {
 
-                                            $scope.data_en_importation = {
-                                                'champ': [],
-                                                'table': table,
-                                                'shema': shema,
-                                                'donne': data.features,
-                                                'couche': couche,
-                                            }
+                                                $scope.data_en_importation = {
+                                                    'champ': [],
+                                                    'table': table,
+                                                    'shema': shema,
+                                                    'donne': data.features,
+                                                    'couche': couche,
+                                                }
 
-                                            angular.forEach(data.features[0].properties, function (value, key) {
-                                                $scope.data_en_importation.champ.push(key)
-                                            });
-
-                                            var i = 0
-                                            while (data.features[i]) {
-
-                                                angular.forEach(data.features[i].properties, function (value, key) {
-
-                                                    if ($scope.data_en_importation.champ.indexOf(key) == -1) {
-                                                        $scope.data_en_importation.champ.push(key)
-                                                    }
+                                                angular.forEach(data.features[0].properties, function (value, key) {
+                                                    $scope.data_en_importation.champ.push(key)
                                                 });
 
-                                                i++
+                                                var i = 0
+                                                while (data.features[i]) {
 
+                                                    angular.forEach(data.features[i].properties, function (value, key) {
+
+                                                        if ($scope.data_en_importation.champ.indexOf(key) == -1) {
+                                                            $scope.data_en_importation.champ.push(key)
+                                                        }
+                                                    });
+
+                                                    i++
+
+                                                }
+
+
+                                                console.log($scope.data_en_importation)
+
+                                                $('#ajout_donne_div').show()
+                                            } else {
+                                                toogle_information('Aucune donnees dans votre fichier')
                                             }
 
+                                            $('#spinner').hide()
 
-                                            console.log($scope.data_en_importation)
-
-                                            $('#ajout_donne_div').show()
-                                        } else {
-                                            toogle_information('Aucune donnees dans votre fichier')
+                                        }, function (err) {
+                                            $('#spinner').hide()
+                                            toogle_information('Verifier votre connexion et recommencer')
                                         }
+                                    )
 
-                                        $('#spinner').hide()
+                                    //} 
+                                }
 
-                                    }, function (err) {
-                                        $('#spinner').hide()
-                                        toogle_information('Verifier votre connexion et recommencer')
-                                    }
-                                )
-
-                                //} 
+                            },
+                            function (e) {
+                                $('#spinner').hide()
+                                toogle_information('Verifier votre connexion et recommencer')
                             }
-
-                        },
-                        function (e) {
-                            $('#spinner').hide()
-                            toogle_information('Verifier votre connexion et recommencer')
-                        }
                         )
 
                 }
@@ -1197,19 +1197,19 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             $http(request)
                 .then(
-                function (e) {
+                    function (e) {
 
-                    formData = new FormData()
+                        formData = new FormData()
 
-                    if (e.data.status) {
-                        $scope.function_add_user(e.data.nom_img)
+                        if (e.data.status) {
+                            $scope.function_add_user(e.data.nom_img)
+                        }
+
+                    },
+                    function (e) {
+                        $('#spinner').hide()
+                        toogle_information('Verifier votre connexion')
                     }
-
-                },
-                function (e) {
-                    $('#spinner').hide()
-                    toogle_information('Verifier votre connexion')
-                }
                 );
         } else {
             $scope.function_add_user()
@@ -1296,10 +1296,10 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     }
 
                 },
-                function (e) {
-                    $('#spinner').hide()
-                    toogle_information('Verifier votre connexion')
-                }
+                    function (e) {
+                        $('#spinner').hide()
+                        toogle_information('Verifier votre connexion')
+                    }
                 )
         } else if (property.length > 0 && !$scope.modification_utilisateur.fileImg) {
             $('#spinner').show()
@@ -1730,188 +1730,188 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             $http(request)
                 .then(
-                function success(e) {
-                    formData = new FormData();
+                    function success(e) {
+                        formData = new FormData();
 
-                    var extension = nouvelle_thematique.fileImg.name.split('.')[nouvelle_thematique.fileImg.name.split('.').length - 1]
-                    nouvelle_thematique.nom_img_modife = 'assets/images/thematiques/' + space2underscore(nouvelle_thematique.nom).replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension
-                    if (e.data.status) {
-                        var nombre_images = []
-                        if (nouvelle_thematique.sousthematique == 'true') {
+                        var extension = nouvelle_thematique.fileImg.name.split('.')[nouvelle_thematique.fileImg.name.split('.').length - 1]
+                        nouvelle_thematique.nom_img_modife = 'assets/images/thematiques/' + space2underscore(nouvelle_thematique.nom).replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension
+                        if (e.data.status) {
+                            var nombre_images = []
+                            if (nouvelle_thematique.sousthematique == 'true') {
 
-                            for (var i = 0; i < nouvelle_thematique.sous_thematiques.length; i++) {
-                                for (var j = 0; j < nouvelle_thematique.sous_thematiques[i].couches.length; j++) {
+                                for (var i = 0; i < nouvelle_thematique.sous_thematiques.length; i++) {
+                                    for (var j = 0; j < nouvelle_thematique.sous_thematiques[i].couches.length; j++) {
 
-                                    nouvelle_thematique.sous_thematiques[i].couches[j].nom_img_modife = null
-                                    nouvelle_thematique.sous_thematiques[i].couches[j].remplir_couleur = null
-                                    nouvelle_thematique.sous_thematiques[i].couches[j].opacity = null
-                                    nouvelle_thematique.sous_thematiques[i].couches[j].contour_couleur = null
-                                    nouvelle_thematique.sous_thematiques[i].couches[j].nom = nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase()
-                                    if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'point') {
+                                        nouvelle_thematique.sous_thematiques[i].couches[j].nom_img_modife = null
+                                        nouvelle_thematique.sous_thematiques[i].couches[j].remplir_couleur = null
+                                        nouvelle_thematique.sous_thematiques[i].couches[j].opacity = null
+                                        nouvelle_thematique.sous_thematiques[i].couches[j].contour_couleur = null
+                                        nouvelle_thematique.sous_thematiques[i].couches[j].nom = nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase()
+                                        if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'point') {
 
-                                        var extension = nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.')[nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.').length - 1]
-                                        formData.append('image_file' + i + '' + j, nouvelle_thematique.sous_thematiques[i].couches[j].fileImg);
+                                            var extension = nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.')[nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.').length - 1]
+                                            formData.append('image_file' + i + '' + j, nouvelle_thematique.sous_thematiques[i].couches[j].fileImg);
 
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.nom = space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
+                                            nouvelle_thematique.sous_thematiques[i].couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                                            nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.nom = space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
 
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.appendId = 'image_file' + i + '' + j
-                                        nombre_images.push(nouvelle_thematique.sous_thematiques[i].couches[j].fileImg)
+                                            nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.appendId = 'image_file' + i + '' + j
+                                            nombre_images.push(nouvelle_thematique.sous_thematiques[i].couches[j].fileImg)
 
-                                    } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'Polygon' && nouvelle_thematique.sous_thematiques[i].couches[j].fileImg) {
+                                        } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'Polygon' && nouvelle_thematique.sous_thematiques[i].couches[j].fileImg) {
 
-                                        var extension = nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.')[nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.').length - 1]
-                                        formData.append('image_file' + i + '' + j, nouvelle_thematique.sous_thematiques[i].couches[j].fileImg);
+                                            var extension = nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.')[nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.').length - 1]
+                                            formData.append('image_file' + i + '' + j, nouvelle_thematique.sous_thematiques[i].couches[j].fileImg);
 
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.nom = space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.appendId = 'image_file' + i + '' + j
-                                        nombre_images.push(nouvelle_thematique.sous_thematiques[i].couches[j].fileImg)
+                                            nouvelle_thematique.sous_thematiques[i].couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                                            nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.nom = space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
+                                            nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.appendId = 'image_file' + i + '' + j
+                                            nombre_images.push(nouvelle_thematique.sous_thematiques[i].couches[j].fileImg)
 
-                                    } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'Polygon' && nouvelle_thematique.sous_thematiques[i].couches[j].color) {
+                                        } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'Polygon' && nouvelle_thematique.sous_thematiques[i].couches[j].color) {
 
-                                        if (nouvelle_thematique.sous_thematiques[i].couches[j].color.indexOf("hsla") != -1) {
-                                            a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsla(', '').replace(')', '').split(',');
+                                            if (nouvelle_thematique.sous_thematiques[i].couches[j].color.indexOf("hsla") != -1) {
+                                                a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsla(', '').replace(')', '').split(',');
+                                                alpha = a[3]
+                                            } else {
+                                                a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsl(', '').replace(')', '').split(',');
+                                                alpha = 1
+                                            }
+
+                                            rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
+
+                                            nouvelle_thematique.sous_thematiques[i].couches[j].remplir_couleur = rgb
+                                            nouvelle_thematique.sous_thematiques[i].couches[j].opacity = alpha
+                                            nouvelle_thematique.sous_thematiques[i].couches[j].img_temp = null
+
+                                        } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'LineString') {
+
+                                            if (nouvelle_thematique.sous_thematiques[i].couches[j].color.indexOf("hsla") != -1) {
+                                                a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsla(', '').replace(')', '').split(',');
+                                                alpha = a[3]
+                                            } else {
+                                                a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsl(', '').replace(')', '').split(',');
+                                                alpha = 1
+                                            }
+
+                                            rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
+
+                                            nouvelle_thematique.sous_thematiques[i].couches[j].contour_couleur = rgb
+                                            nouvelle_thematique.sous_thematiques[i].couches[j].opacity = alpha
+                                            nouvelle_thematique.sous_thematiques[i].couches[j].img_temp = null
+
+                                        }
+
+
+                                    }
+                                }
+
+                            } else {
+
+                                for (var j = 0; j < nouvelle_thematique.couches.length; j++) {
+
+                                    nouvelle_thematique.couches[j].nom_img_modife = null
+                                    nouvelle_thematique.couches[j].remplir_couleur = null
+                                    nouvelle_thematique.couches[j].opacity = null
+                                    nouvelle_thematique.couches[j].contour_couleur = null
+                                    nouvelle_thematique.couches[j].nom = nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase()
+                                    if (nouvelle_thematique.couches[j].geom == 'point') {
+
+                                        var extension = nouvelle_thematique.couches[j].fileImg.name.split('.')[nouvelle_thematique.couches[j].fileImg.name.split('.').length - 1]
+                                        formData.append('image_file' + j, nouvelle_thematique.couches[j].fileImg);
+
+                                        nouvelle_thematique.couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                                        nouvelle_thematique.couches[j].fileImg.nom = space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
+                                        nouvelle_thematique.couches[j].fileImg.appendId = 'image_file' + j
+                                        nombre_images.push(nouvelle_thematique.couches[j].fileImg)
+
+                                    } else if (nouvelle_thematique.couches[j].geom == 'Polygon' && nouvelle_thematique.couches[j].fileImg) {
+
+                                        var extension = nouvelle_thematique.couches[j].fileImg.name.split('.')[nouvelle_thematique.couches[j].fileImg.name.split('.').length - 1]
+                                        formData.append('image_file' + j, nouvelle_thematique.couches[j].fileImg);
+
+                                        nouvelle_thematique.couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                                        nouvelle_thematique.couches[j].fileImg.nom = space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
+
+                                        nouvelle_thematique.couches[j].fileImg.appendId = 'image_file' + j
+                                        nombre_images.push(nouvelle_thematique.couches[j].fileImg)
+
+                                    } else if (nouvelle_thematique.couches[j].geom == 'Polygon' && nouvelle_thematique.couches[j].color) {
+
+                                        if (nouvelle_thematique.couches[j].color.indexOf("hsla") != -1) {
+                                            a = nouvelle_thematique.couches[j].color.replace('hsla(', '').replace(')', '').split(',');
                                             alpha = a[3]
                                         } else {
-                                            a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsl(', '').replace(')', '').split(',');
+                                            a = nouvelle_thematique.couches[j].color.replace('hsl(', '').replace(')', '').split(',');
                                             alpha = 1
                                         }
 
                                         rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
 
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].remplir_couleur = rgb
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].opacity = alpha
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].img_temp = null
+                                        nouvelle_thematique.couches[j].remplir_couleur = rgb
+                                        nouvelle_thematique.couches[j].opacity = alpha
+                                        nouvelle_thematique.couches[j].img_temp = null
 
-                                    } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'LineString') {
+                                    } else if (nouvelle_thematique.couches[j].geom == 'LineString') {
 
-                                        if (nouvelle_thematique.sous_thematiques[i].couches[j].color.indexOf("hsla") != -1) {
-                                            a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsla(', '').replace(')', '').split(',');
+                                        if (nouvelle_thematique.couches[j].color.indexOf("hsla") != -1) {
+                                            a = nouvelle_thematique.couches[j].color.replace('hsla(', '').replace(')', '').split(',');
                                             alpha = a[3]
                                         } else {
-                                            a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsl(', '').replace(')', '').split(',');
+                                            a = nouvelle_thematique.couches[j].color.replace('hsl(', '').replace(')', '').split(',');
                                             alpha = 1
                                         }
 
                                         rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
 
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].contour_couleur = rgb
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].opacity = alpha
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].img_temp = null
+                                        nouvelle_thematique.couches[j].contour_couleur = rgb
+                                        nouvelle_thematique.couches[j].opacity = alpha
+                                        nouvelle_thematique.couches[j].img_temp = null
 
                                     }
-
-
-                                }
-                            }
-
-                        } else {
-
-                            for (var j = 0; j < nouvelle_thematique.couches.length; j++) {
-
-                                nouvelle_thematique.couches[j].nom_img_modife = null
-                                nouvelle_thematique.couches[j].remplir_couleur = null
-                                nouvelle_thematique.couches[j].opacity = null
-                                nouvelle_thematique.couches[j].contour_couleur = null
-                                nouvelle_thematique.couches[j].nom = nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase()
-                                if (nouvelle_thematique.couches[j].geom == 'point') {
-
-                                    var extension = nouvelle_thematique.couches[j].fileImg.name.split('.')[nouvelle_thematique.couches[j].fileImg.name.split('.').length - 1]
-                                    formData.append('image_file' + j, nouvelle_thematique.couches[j].fileImg);
-
-                                    nouvelle_thematique.couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
-                                    nouvelle_thematique.couches[j].fileImg.nom = space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
-                                    nouvelle_thematique.couches[j].fileImg.appendId = 'image_file' + j
-                                    nombre_images.push(nouvelle_thematique.couches[j].fileImg)
-
-                                } else if (nouvelle_thematique.couches[j].geom == 'Polygon' && nouvelle_thematique.couches[j].fileImg) {
-
-                                    var extension = nouvelle_thematique.couches[j].fileImg.name.split('.')[nouvelle_thematique.couches[j].fileImg.name.split('.').length - 1]
-                                    formData.append('image_file' + j, nouvelle_thematique.couches[j].fileImg);
-
-                                    nouvelle_thematique.couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
-                                    nouvelle_thematique.couches[j].fileImg.nom = space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
-
-                                    nouvelle_thematique.couches[j].fileImg.appendId = 'image_file' + j
-                                    nombre_images.push(nouvelle_thematique.couches[j].fileImg)
-
-                                } else if (nouvelle_thematique.couches[j].geom == 'Polygon' && nouvelle_thematique.couches[j].color) {
-
-                                    if (nouvelle_thematique.couches[j].color.indexOf("hsla") != -1) {
-                                        a = nouvelle_thematique.couches[j].color.replace('hsla(', '').replace(')', '').split(',');
-                                        alpha = a[3]
-                                    } else {
-                                        a = nouvelle_thematique.couches[j].color.replace('hsl(', '').replace(')', '').split(',');
-                                        alpha = 1
-                                    }
-
-                                    rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
-
-                                    nouvelle_thematique.couches[j].remplir_couleur = rgb
-                                    nouvelle_thematique.couches[j].opacity = alpha
-                                    nouvelle_thematique.couches[j].img_temp = null
-
-                                } else if (nouvelle_thematique.couches[j].geom == 'LineString') {
-
-                                    if (nouvelle_thematique.couches[j].color.indexOf("hsla") != -1) {
-                                        a = nouvelle_thematique.couches[j].color.replace('hsla(', '').replace(')', '').split(',');
-                                        alpha = a[3]
-                                    } else {
-                                        a = nouvelle_thematique.couches[j].color.replace('hsl(', '').replace(')', '').split(',');
-                                        alpha = 1
-                                    }
-
-                                    rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
-
-                                    nouvelle_thematique.couches[j].contour_couleur = rgb
-                                    nouvelle_thematique.couches[j].opacity = alpha
-                                    nouvelle_thematique.couches[j].img_temp = null
 
                                 }
 
                             }
 
+
+                            formData.append('nombre_images', JSON.stringify(nombre_images));
+                            formData.append('path', '/../../../public/assets/admin/');
+                            formData.append('pathBd', 'assets/admin/');
+                            formData.append('largeur', 160);
+                            formData.append('lomguer', 160);
+                            var request = {
+                                method: 'POST',
+                                url: '/uploads/file',
+                                data: formData,
+                                headers: {
+                                    'Content-Type': undefined
+                                }
+                            };
+
+                            $http(request)
+                                .then(
+                                    function success(e) {
+                                        formData = new FormData();
+                                        // $scope.filess = []
+                                        //$('#img_modi_profile')[0].files
+                                        if (e.data.status) {
+                                            $scope.function_ajouter_thematique(nouvelle_thematique)
+                                        }
+                                        $('#spinner').hide()
+                                    },
+                                    function (e) {
+                                        $('#spinner').hide()
+                                        toogle_information('Verifier votre connexion')
+                                    }
+                                )
                         }
-
-
-                        formData.append('nombre_images', JSON.stringify(nombre_images));
-                        formData.append('path', '/../../../public/assets/admin/');
-                        formData.append('pathBd', 'assets/admin/');
-                        formData.append('largeur', 160);
-                        formData.append('lomguer', 160);
-                        var request = {
-                            method: 'POST',
-                            url: '/uploads/file',
-                            data: formData,
-                            headers: {
-                                'Content-Type': undefined
-                            }
-                        };
-
-                        $http(request)
-                            .then(
-                            function success(e) {
-                                formData = new FormData();
-                                // $scope.filess = []
-                                //$('#img_modi_profile')[0].files
-                                if (e.data.status) {
-                                    $scope.function_ajouter_thematique(nouvelle_thematique)
-                                }
-                                $('#spinner').hide()
-                            },
-                            function (e) {
-                                $('#spinner').hide()
-                                toogle_information('Verifier votre connexion')
-                            }
-                            )
+                        $('#spinner').hide()
+                    },
+                    function (e) {
+                        $('#spinner').hide()
+                        toogle_information('Verifier votre connexion')
                     }
-                    $('#spinner').hide()
-                },
-                function (e) {
-                    $('#spinner').hide()
-                    toogle_information('Verifier votre connexion')
-                }
                 )
         }
 
@@ -1925,7 +1925,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
         if ($scope.thematiques[thematique.id].nom != thematique.nom || extension || $scope.thematiques[thematique.id].color != thematique.color) {
 
-            
+
 
             if (extension) {
                 thematique.nom_img_modife = 'assets/images/thematiques/' + space2underscore(thematique.nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
@@ -1972,18 +1972,18 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             $('#spinner').show()
             $http(request)
                 .then(
-                function success(e) {
-                    formData = new FormData();
+                    function success(e) {
+                        formData = new FormData();
 
-                    if (e.data.status) {
-                        function_modifier_thematique(thematique, extension)
+                        if (e.data.status) {
+                            function_modifier_thematique(thematique, extension)
+                        }
+                        $('#spinner').hide()
+                    },
+                    function (e) {
+                        $('#spinner').hide()
+                        toogle_information('Verifier votre connexion')
                     }
-                    $('#spinner').hide()
-                },
-                function (e) {
-                    $('#spinner').hide()
-                    toogle_information('Verifier votre connexion')
-                }
                 )
         } else {
             function_modifier_thematique(thematique)
@@ -2478,18 +2478,18 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             $http(request)
                 .then(
-                function success(e) {
-                    formData = new FormData();
+                    function success(e) {
+                        formData = new FormData();
 
-                    if (e.data.status) {
-                        function_ajouter_couches(couches)
+                        if (e.data.status) {
+                            function_ajouter_couches(couches)
+                        }
+                        $('#spinner').hide()
+                    },
+                    function (e) {
+                        $('#spinner').hide()
+                        toogle_information('Verifier votre connexion')
                     }
-                    $('#spinner').hide()
-                },
-                function (e) {
-                    $('#spinner').hide()
-                    toogle_information('Verifier votre connexion')
-                }
                 )
 
         }
@@ -2697,7 +2697,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     }
 
-    $scope.changeColor_addCouche = function (couche,delete_img = true) {
+    $scope.changeColor_addCouche = function (couche, delete_img = true) {
         if ($scope.api) {
             $scope.api.getScope().$parent.myColor = $scope.myColor
         }
@@ -2711,11 +2711,11 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         $('#color_picker').show()
     }
 
-    $scope.changeColor = function (couche) {
+    $scope.changeColor = function (couche, delete_img = true) {
         if ($scope.api) {
             $scope.api.getScope().$parent.myColor = $scope.myColor
         }
-        if (couche.img_temp) {
+        if (couche.img_temp && delete_img) {
             couche.img_temp = null
         }
         couche.myColor = 'change'
@@ -2728,6 +2728,19 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         $('div .color-picker-grid-inner').attr('id', '')
     }
 
+    $scope.refres_style = function (donne) {
+        $('#spinner').show()
+        myfactory.get_data($scope.urlNodejs_backend + '/update_style_couche_qgis/' + $scope.projet_qgis_server + '/' + donne.identifiant).then(
+            function (data) {
+                console.log(data)
+                $('#spinner').hide()
+            },
+            function (err) {
+                $('#spinner').hide()
+                toogle_information('Verifier votre connexion')
+            }
+        )
+    }
     var function_modifier_nom_couche = function (donne, nom_a_ete_change) {
 
         if (nom_a_ete_change == 'false') {
@@ -2737,11 +2750,14 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         myfactory.post_data('/thematique/change_nameCouche/', JSON.stringify(donne)).then(
             function (data) {
                 if (requete_reussi(data)) {
-
-                    if (donne.fileImg || donne.myColor == 'change') {
+                    $('#spinner').hide()
+                    // || donne.myColor == 'change'
+                    if (donne.fileImg && donne.geom =='point' ) {
+                        $('#spinner').show()
                         myfactory.get_data($scope.urlNodejs_backend + '/update_style_couche_qgis/' + $scope.projet_qgis_server + '/' + donne.identifiant).then(
                             function (data) {
                                 console.log(data)
+                                $('#spinner').hide()
                             },
                             function (err) {
                                 $('#spinner').hide()
@@ -2764,7 +2780,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 } else {
                     donne.nom = donne.ancien_nom
                 }
-                $('#spinner').hide()
+                
             },
             function (err) {
                 $('#spinner').hide()
@@ -2801,21 +2817,29 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     $scope.modifier_nom_couche = function (donne) {
         console.log(donne)
 
-        // if(donne.myColor){ 
-        //    a =$scope.color.replace('hsla(', '').replace(')', '').split(',');
+        if (donne.myColor == 'change') {
+            if ($scope.color.indexOf("hsla") != -1) {
+                a = $scope.color.replace('hsla(', '').replace(')', '').split(',');
+                alpha = a[3]
+            } else {
+                a = $scope.color.replace('hsl(', '').replace(')', '').split(',');
+                alpha = 1
+            }
 
-        //     rgb = HSVtoRGB(+a[0].replace('%', '')/360, +a[1].replace('%', '')/100,+a[2].replace('%', '')/100)
-        //     alpha = a[3]
-        //     if (donne.geom == "Polygon") {
-        //         donne.remplir_couleur = rgb
-        //         donne.opacity = alpha
+            rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
 
-        //     }
+            if (donne.geom == "Polygon") {
+                donne.remplir_couleur = rgb
+                donne.opacity = alpha
+                // donne.img_temp = null
+            } else if (donne.geom == "LineString") {
+                donne.contour_couleur = rgb
+                donne.opacity = alpha
+                // donne.img_temp = null
+            }
+        }
 
-        //     console.log(donne)
-        // }
-
-        if (donne.fileImg && donne.myColor != 'change') {
+        if (donne.fileImg) {
             var extension = donne.fileImg.name.split('.')[donne.fileImg.name.split('.').length - 1]
             formData.append('path', '/../../../public/assets/images/icones-couches-modification');
             formData.append('pathBd', 'assets/images/icones-couches-modification/');
@@ -2834,63 +2858,69 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             $('#spinner').show()
             $http(request)
                 .then(
-                function success(e) {
-                    formData = new FormData();
+                    function success(e) {
+                        formData = new FormData();
 
-                    if (e.data.status) {
+                        if (e.data.status) {
 
-                        donne.nom_img_modife = 'assets/images/icones-couches-modification/' + space2underscore(donne.nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
-                        donne.remplir_couleur = null
-                        donne.opacity = null
-                        if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
-                            function_modifier_nom_couche(donne, 'false')
-                        } else {
-                            function_modifier_nom_couche(donne, 'true')
+                            donne.nom_img_modife = 'assets/images/icones-couches-modification/' + space2underscore(donne.nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                            // donne.remplir_couleur = null
+                            // donne.opacity = null
+                            if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
+                                function_modifier_nom_couche(donne, 'false')
+                            } else {
+                                function_modifier_nom_couche(donne, 'true')
+                            }
+
                         }
-
+                        $('#spinner').hide()
+                    },
+                    function (e) {
+                        $('#spinner').hide()
+                        toogle_information('Verifier votre connexion')
                     }
-                    $('#spinner').hide()
-                },
-                function (e) {
-                    $('#spinner').hide()
-                    toogle_information('Verifier votre connexion')
-                }
                 )
         } else {
+            // if (donne.myColor == 'change') {
+
+            //     if ($scope.color.indexOf("hsla") != -1) {
+            //         a = $scope.color.replace('hsla(', '').replace(')', '').split(',');
+            //         alpha = a[3]
+            //     } else {
+            //         a = $scope.color.replace('hsl(', '').replace(')', '').split(',');
+            //         alpha = 1
+            //     }
+
+            //     rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
+
+            //     if (donne.geom == "Polygon") {
+            //         donne.remplir_couleur = rgb
+            //         donne.opacity = alpha
+            //         donne.img_temp = null
+            //     } else if (donne.geom == "LineString") {
+            //         donne.contour_couleur = rgb
+            //         donne.opacity = alpha
+            //         donne.img_temp = null
+            //     }
+
+            //     if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
+            //         function_modifier_nom_couche(donne, 'false')
+            //     } else {
+            //         function_modifier_nom_couche(donne, 'true')
+            //     }
+            // } else {
             if (donne.myColor == 'change') {
-
-                if ($scope.color.indexOf("hsla") != -1) {
-                    a = $scope.color.replace('hsla(', '').replace(')', '').split(',');
-                    alpha = a[3]
-                } else {
-                    a = $scope.color.replace('hsl(', '').replace(')', '').split(',');
-                    alpha = 1
-                }
-
-                rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
-
-                if (donne.geom == "Polygon") {
-                    donne.remplir_couleur = rgb
-                    donne.opacity = alpha
-                    donne.img_temp = null
-                } else if (donne.geom == "LineString") {
-                    donne.contour_couleur = rgb
-                    donne.opacity = alpha
-                    donne.img_temp = null
-                }
-
                 if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
                     function_modifier_nom_couche(donne, 'false')
                 } else {
                     function_modifier_nom_couche(donne, 'true')
                 }
+            }else if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
+                toogle_information("Aucune modification a ete efectue")
             } else {
-                if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
-                    toogle_information("Aucune modification a ete efectue")
-                } else {
-                    function_modifier_nom_couche(donne, 'true')
-                }
+                function_modifier_nom_couche(donne, 'true')
             }
+            // }
 
 
         }
@@ -3247,19 +3277,19 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 $http(request)
                     .then(
-                    function success(e) {
-                        formData = new FormData();
+                        function success(e) {
+                            formData = new FormData();
 
-                        if (e.data.status) {
-                            $scope.function_ajouter_cartes(groupes_cartes)
+                            if (e.data.status) {
+                                $scope.function_ajouter_cartes(groupes_cartes)
+                            }
+
+                            $('#spinner').hide()
+                        },
+                        function (e) {
+                            $('#spinner').hide()
+                            toogle_information('Verifier votre connexion')
                         }
-
-                        $('#spinner').hide()
-                    },
-                    function (e) {
-                        $('#spinner').hide()
-                        toogle_information('Verifier votre connexion')
-                    }
                     )
 
             }
@@ -3327,19 +3357,19 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 $http(request)
                     .then(
-                    function success(e) {
-                        formData = new FormData();
+                        function success(e) {
+                            formData = new FormData();
 
-                        if (e.data.status) {
-                            $scope.function_ajouter_cartes(groupes_cartes)
+                            if (e.data.status) {
+                                $scope.function_ajouter_cartes(groupes_cartes)
+                            }
+
+                            $('#spinner').hide()
+                        },
+                        function (e) {
+                            $('#spinner').hide()
+                            toogle_information('Verifier votre connexion')
                         }
-
-                        $('#spinner').hide()
-                    },
-                    function (e) {
-                        $('#spinner').hide()
-                        toogle_information('Verifier votre connexion')
-                    }
                     )
             }
 
@@ -3423,7 +3453,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     //function pour modifier un groupe de cartes
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    var function_modifier_carte = function (cartes_en_modif,extension){
+    var function_modifier_carte = function (cartes_en_modif, extension) {
 
         if ($scope.cartes[cartes_en_modif.id].color != cartes_en_modif.color || extension || $scope.cartes[cartes_en_modif.id].nom != cartes_en_modif.nom) {
 
@@ -3432,7 +3462,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             if (extension) {
                 cartes_en_modif.nom_img_modife = 'assets/images/cartes/' + space2underscore(cartes_en_modif.nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
             }
-            
+
 
             myfactory.post_data('/cartes/updateGroupeCartes/', JSON.stringify(cartes_en_modif)).then(
                 function (data) {
@@ -3460,7 +3490,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         }
     }
     $scope.modification_cartes = function (cartes_en_modif) {
-        
+
         if (cartes_en_modif.fileImg) {
             var extension = cartes_en_modif.fileImg.name.split('.')[cartes_en_modif.fileImg.name.split('.').length - 1]
             formData.append('path', '/../../../public/assets/images/cartes');
@@ -3478,24 +3508,24 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             $('#spinner').show()
             $http(request)
                 .then(
-                function success(e) {
-                    formData = new FormData();
+                    function success(e) {
+                        formData = new FormData();
 
-                    if (e.data.status) {
-                        function_modifier_carte(cartes_en_modif, extension)
+                        if (e.data.status) {
+                            function_modifier_carte(cartes_en_modif, extension)
+                        }
+                        $('#spinner').hide()
+                    },
+                    function (e) {
+                        $('#spinner').hide()
+                        toogle_information('Verifier votre connexion')
                     }
-                    $('#spinner').hide()
-                },
-                function (e) {
-                    $('#spinner').hide()
-                    toogle_information('Verifier votre connexion')
-                }
                 )
         } else {
             function_modifier_carte(cartes_en_modif)
         }
 
-       
+
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3684,19 +3714,19 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             $http(request)
                 .then(
-                function success(e) {
-                    formData = new FormData();
+                    function success(e) {
+                        formData = new FormData();
 
-                    if (e.data.status) {
-                        $scope.function_ajouter_couches_cartes(couches)
+                        if (e.data.status) {
+                            $scope.function_ajouter_couches_cartes(couches)
+                        }
+
+                        $('#spinner').hide()
+                    },
+                    function (e) {
+                        $('#spinner').hide()
+                        toogle_information('Verifier votre connexion')
                     }
-
-                    $('#spinner').hide()
-                },
-                function (e) {
-                    $('#spinner').hide()
-                    toogle_information('Verifier votre connexion')
-                }
                 )
 
 
@@ -3904,26 +3934,26 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             $('#spinner').show()
             $http(request)
                 .then(
-                function success(e) {
-                    formData = new FormData();
+                    function success(e) {
+                        formData = new FormData();
 
-                    if (e.data.status) {
+                        if (e.data.status) {
 
-                        donne.nom_img_modife = 'assets/images/icones-couches-modification/' + space2underscore(donne.nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                            donne.nom_img_modife = 'assets/images/icones-couches-modification/' + space2underscore(donne.nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
 
-                        if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
-                            function_modifier_nom_couche_cartes(donne, 'false')
-                        } else {
-                            function_modifier_nom_couche_cartes(donne, 'true')
+                            if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
+                                function_modifier_nom_couche_cartes(donne, 'false')
+                            } else {
+                                function_modifier_nom_couche_cartes(donne, 'true')
+                            }
+
                         }
-
+                        $('#spinner').hide()
+                    },
+                    function (e) {
+                        $('#spinner').hide()
+                        toogle_information('Verifier votre connexion')
                     }
-                    $('#spinner').hide()
-                },
-                function (e) {
-                    $('#spinner').hide()
-                    toogle_information('Verifier votre connexion')
-                }
                 )
         } else {
 
@@ -4107,9 +4137,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             var extend3857 = [Amin[0], Amin[1], Amax[0], Amax[1]]
 
             $scope.map.getView().fit(extend3857, $scope.map.getSize());
-            
-        }else if($scope.bbox_projet.length != 0) {
-            view.fit($scope.bbox_projet,$scope.map.getSize())
+
+        } else if ($scope.bbox_projet.length != 0) {
+            view.fit($scope.bbox_projet, $scope.map.getSize())
         }
 
         if (data.zmin) {
@@ -4182,29 +4212,29 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 var tiles = new ol.layer.Vector({
                     source: vectorSource,
-                    style: function(feature){
-                        if (data.geom =='point') {
+                    style: function (feature) {
+                        if (data.geom == 'point') {
                             return new ol.style.Style({
                                 image: new ol.style.Icon({
                                     scale: 0.15,
                                     src: data.img_temp
                                 })
                             })
-                        }else{
-                           return new ol.style.Style({
+                        } else {
+                            return new ol.style.Style({
                                 stroke: new ol.style.Stroke({
                                     color: '#434343',
                                     width: 4
                                 }),
                                 fill: new ol.style.Fill({
-                                    color: [0,0,0,0.3]
+                                    color: [0, 0, 0, 0.3]
                                 }),
                                 //text: createTextStylePolygon(feature, map.getView().getResolution())
-            
+
                             })
                         }
                     }
-                   
+
                 });
             }
 
@@ -5031,62 +5061,62 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 $('#spinner').show()
                 $http(request)
                     .then(
-                    function success(e) {
-                        formData = new FormData();
-                        console.log(e)
-                        if (e.data.status) {
+                        function success(e) {
+                            formData = new FormData();
+                            console.log(e)
+                            if (e.data.status) {
 
-                            $scope.new_pdfs.url = e.data.file
-                            /// si il y'a le raster
-                            if ($scope.new_pdfs.fileRaster) {
-                                var file = $scope.new_pdfs.fileRaster
-                                formData = new FormData();
-                                var extension = file.name.split('.')[file.name.split('.').length - 1]
-                                formData.append('file', $scope.new_pdfs.fileRaster);
-                                console.log($scope.new_pdfs)
-                                var request = {
-                                    method: 'POST',
-                                    url: $scope.urlNodejs_backend + '/downloadRaster',
-                                    data: formData,
-                                    headers: {
-                                        'Content-Type': undefined
-                                    }
-                                };
-
-                                $http(request)
-                                    .then(
-                                    function success(e) {
-                                        formData = new FormData();
-                                        console.log(e)
-                                        if (e.data.status) {
-                                            $scope.new_pdfs.url_raster = e.data.url_raster
-
-                                            $scope.new_pdfs.type = 'wms'
-
-                                            $scope.new_pdfs.identifiant = e.data.identifiant
-
-                                            myfactory.get_data($scope.urlNodejs_backend + "/generateLegend/" + $scope.projet_qgis_server).then(function (resp) {
-
-                                            })
-                                            $scope.new_pdfs.url_tile = e.data.projet_qgis
-                                            function_add_doc_pdf(sous_cartes, id_referent)
+                                $scope.new_pdfs.url = e.data.file
+                                /// si il y'a le raster
+                                if ($scope.new_pdfs.fileRaster) {
+                                    var file = $scope.new_pdfs.fileRaster
+                                    formData = new FormData();
+                                    var extension = file.name.split('.')[file.name.split('.').length - 1]
+                                    formData.append('file', $scope.new_pdfs.fileRaster);
+                                    console.log($scope.new_pdfs)
+                                    var request = {
+                                        method: 'POST',
+                                        url: $scope.urlNodejs_backend + '/downloadRaster',
+                                        data: formData,
+                                        headers: {
+                                            'Content-Type': undefined
                                         }
-                                    },
-                                    function (err) {
-                                        toogle_information('Une erreur, reesayer')
-                                        $('#spinner').hide()
-                                    }
-                                    )
-                            } else {
-                                function_add_doc_pdf(sous_cartes, id_referent)
-                            }
+                                    };
 
+                                    $http(request)
+                                        .then(
+                                            function success(e) {
+                                                formData = new FormData();
+                                                console.log(e)
+                                                if (e.data.status) {
+                                                    $scope.new_pdfs.url_raster = e.data.url_raster
+
+                                                    $scope.new_pdfs.type = 'wms'
+
+                                                    $scope.new_pdfs.identifiant = e.data.identifiant
+
+                                                    myfactory.get_data($scope.urlNodejs_backend + "/generateLegend/" + $scope.projet_qgis_server).then(function (resp) {
+
+                                                    })
+                                                    $scope.new_pdfs.url_tile = e.data.projet_qgis
+                                                    function_add_doc_pdf(sous_cartes, id_referent)
+                                                }
+                                            },
+                                            function (err) {
+                                                toogle_information('Une erreur, reesayer')
+                                                $('#spinner').hide()
+                                            }
+                                        )
+                                } else {
+                                    function_add_doc_pdf(sous_cartes, id_referent)
+                                }
+
+                            }
+                        },
+                        function (err) {
+                            toogle_information('Une erreur, reesayer')
+                            $('#spinner').hide()
                         }
-                    },
-                    function (err) {
-                        toogle_information('Une erreur, reesayer')
-                        $('#spinner').hide()
-                    }
                     )
                 /// si il y'a le raster et pas le pdf ///
             } else if (!$scope.new_pdfs.filePdf && $scope.new_pdfs.fileRaster) {
@@ -5106,25 +5136,25 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 $('#spinner').show()
                 $http(request)
                     .then(
-                    function success(e) {
-                        formData = new FormData();
-                        console.log(e)
-                        if (e.data.status) {
-                            $scope.new_pdfs.url_raster = e.data.url_raster
+                        function success(e) {
+                            formData = new FormData();
+                            console.log(e)
+                            if (e.data.status) {
+                                $scope.new_pdfs.url_raster = e.data.url_raster
 
-                            $scope.new_pdfs.type = 'wms'
+                                $scope.new_pdfs.type = 'wms'
 
-                            $scope.new_pdfs.identifiant = e.data.identifiant
+                                $scope.new_pdfs.identifiant = e.data.identifiant
 
-                            $scope.new_pdfs.url_tile = e.data.projet_qgis
-                            function_add_doc_pdf(sous_cartes, id_referent)
+                                $scope.new_pdfs.url_tile = e.data.projet_qgis
+                                function_add_doc_pdf(sous_cartes, id_referent)
+                            }
+                            $('#spinner').hide()
+                        },
+                        function (err) {
+                            toogle_information('Une erreur, reesayer')
+                            $('#spinner').hide()
                         }
-                        $('#spinner').hide()
-                    },
-                    function (err) {
-                        toogle_information('Une erreur, reesayer')
-                        $('#spinner').hide()
-                    }
                     )
             } else {
                 function_add_doc_pdf(sous_cartes, id_referent)
@@ -5158,77 +5188,77 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
         $http(request)
             .then(
-            function success(e) {
-                formData = new FormData();
+                function success(e) {
+                    formData = new FormData();
 
-                if (e.data.status) {
-                    // donne = {
-                    //     'pdfs': $scope.new_pdfs,
-                    //     'sous_cartes': sous_cartes,
-                    //     'id_referent': id_referent
-                    // }
+                    if (e.data.status) {
+                        // donne = {
+                        //     'pdfs': $scope.new_pdfs,
+                        //     'sous_cartes': sous_cartes,
+                        //     'id_referent': id_referent
+                        // }
 
-                    $scope.new_pdfs.image_src = $scope.new_pdfs.img_temp
-                    $scope.new_pdfs.img_temp = 'assets/admin/' + space2underscore($scope.new_pdfs.fileImg.name.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                        $scope.new_pdfs.image_src = $scope.new_pdfs.img_temp
+                        $scope.new_pdfs.img_temp = 'assets/admin/' + space2underscore($scope.new_pdfs.fileImg.name.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
 
-                    $scope.new_pdfs.id_referent = id_referent
-                    $scope.new_pdfs.sous_cartes = sous_cartes
-                    console.log($scope.new_pdfs)
+                        $scope.new_pdfs.id_referent = id_referent
+                        $scope.new_pdfs.sous_cartes = sous_cartes
+                        console.log($scope.new_pdfs)
 
-                    myfactory.post_data('/cartes/add_doc_pdf/', JSON.stringify($scope.new_pdfs)).then(
+                        myfactory.post_data('/cartes/add_doc_pdf/', JSON.stringify($scope.new_pdfs)).then(
 
-                        function (data) {
-                            if (requete_reussi(data)) {
+                            function (data) {
+                                if (requete_reussi(data)) {
 
-                                $scope.new_pdfs.id = data.id
-                                $scope.new_pdfs.image_src = $scope.new_pdfs.img_temp
+                                    $scope.new_pdfs.id = data.id
+                                    $scope.new_pdfs.image_src = $scope.new_pdfs.img_temp
 
 
-                                for (var i = 0; i < $scope.cartes.length; i++) {
-                                    if (sous_cartes && $scope.cartes[i].sous_cartes) {
-                                        for (var j = 0; j < $scope.cartes[i].sous_cartes.length; j++) {
-                                            for (var k = 0; k < $scope.cartes[i].sous_cartes[j].couches.length; k++) {
-                                                if ($scope.cartes[i].sous_cartes[j].couches[k].key_couche == id_referent) {
+                                    for (var i = 0; i < $scope.cartes.length; i++) {
+                                        if (sous_cartes && $scope.cartes[i].sous_cartes) {
+                                            for (var j = 0; j < $scope.cartes[i].sous_cartes.length; j++) {
+                                                for (var k = 0; k < $scope.cartes[i].sous_cartes[j].couches.length; k++) {
+                                                    if ($scope.cartes[i].sous_cartes[j].couches[k].key_couche == id_referent) {
 
-                                                    if (!$scope.cartes[i].sous_cartes[j].couches[k].cartes_pdf) {
-                                                        $scope.cartes[i].sous_cartes[j].couches[k].cartes_pdf = []
+                                                        if (!$scope.cartes[i].sous_cartes[j].couches[k].cartes_pdf) {
+                                                            $scope.cartes[i].sous_cartes[j].couches[k].cartes_pdf = []
+                                                        }
+                                                        $scope.cartes[i].sous_cartes[j].couches[k].cartes_pdf.push($scope.new_pdfs)
+
                                                     }
-                                                    $scope.cartes[i].sous_cartes[j].couches[k].cartes_pdf.push($scope.new_pdfs)
-
                                                 }
                                             }
-                                        }
-                                    } else if (sous_cartes && !$scope.cartes[i].sous_cartes) {
-                                        for (var j = 0; j < $scope.cartes[i].couches.length; j++) {
-                                            if ($scope.cartes[i].couches[j].key_couche == id_referent) {
-                                                if (!$scope.cartes[i].couches[j].cartes_pdf) {
-                                                    $scope.cartes[i].couches[j].cartes_pdf = []
+                                        } else if (sous_cartes && !$scope.cartes[i].sous_cartes) {
+                                            for (var j = 0; j < $scope.cartes[i].couches.length; j++) {
+                                                if ($scope.cartes[i].couches[j].key_couche == id_referent) {
+                                                    if (!$scope.cartes[i].couches[j].cartes_pdf) {
+                                                        $scope.cartes[i].couches[j].cartes_pdf = []
+                                                    }
+                                                    $scope.cartes[i].couches[j].cartes_pdf.push($scope.new_pdfs)
                                                 }
-                                                $scope.cartes[i].couches[j].cartes_pdf.push($scope.new_pdfs)
                                             }
                                         }
                                     }
+
+                                    $scope.close_add_cartes_pdf()
+                                    toogle_information('Vos cartes pdf ont bien ete enregistres')
                                 }
 
-                                $scope.close_add_cartes_pdf()
-                                toogle_information('Vos cartes pdf ont bien ete enregistres')
+                                $('#spinner').hide()
+                            },
+                            function (err) {
+                                $('#spinner').hide()
+                                toogle_information('Verifier votre connexion')
                             }
+                        )
+                    }
 
-                            $('#spinner').hide()
-                        },
-                        function (err) {
-                            $('#spinner').hide()
-                            toogle_information('Verifier votre connexion')
-                        }
-                    )
+                    $('#spinner').hide()
+                },
+                function (e) {
+                    $('#spinner').hide()
+                    toogle_information('Verifier votre connexion')
                 }
-
-                $('#spinner').hide()
-            },
-            function (e) {
-                $('#spinner').hide()
-                toogle_information('Verifier votre connexion')
-            }
             )
 
 
@@ -5386,64 +5416,64 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             $http(request)
                 .then(
-                function success(e) {
-                    formData = new FormData();
-                    console.log(e)
-                    if (e.data.status) {
+                    function success(e) {
+                        formData = new FormData();
+                        console.log(e)
+                        if (e.data.status) {
 
-                        pdf_edition.url = e.data.file
-                        donne.url = e.data.file
+                            pdf_edition.url = e.data.file
+                            donne.url = e.data.file
 
-                        if (pdf_edition.fileRaster) {
-                            var file = pdf_edition.fileRaster
-                            formData = new FormData();
-                            var extension = file.name.split('.')[file.name.split('.').length - 1]
-                            formData.append('file', pdf_edition.fileRaster);
+                            if (pdf_edition.fileRaster) {
+                                var file = pdf_edition.fileRaster
+                                formData = new FormData();
+                                var extension = file.name.split('.')[file.name.split('.').length - 1]
+                                formData.append('file', pdf_edition.fileRaster);
 
-                            var request = {
-                                method: 'POST',
-                                url: $scope.urlNodejs_backend + '/downloadRaster',
-                                data: formData,
-                                headers: {
-                                    'Content-Type': undefined
-                                }
-                            };
-
-                            $http(request)
-                                .then(
-                                function success(e) {
-                                    formData = new FormData();
-                                    console.log(e)
-                                    if (e.data.status) {
-                                        pdf_edition.url_raster = e.data.url_raster
-                                        donne.url_raster = e.data.url_raster
-
-                                        pdf_edition.type = 'wms'
-                                        donne.type = 'wms'
-
-                                        pdf_edition.identifiant = e.data.identifiant
-                                        donne.identifiant = e.data.identifiant
-
-                                        pdf_edition.url_tile = e.data.projet_qgis
-                                        donne.url_tile = e.data.projet_qgis
-                                        function_updatePdfcarte(pdf_edition, donne)
+                                var request = {
+                                    method: 'POST',
+                                    url: $scope.urlNodejs_backend + '/downloadRaster',
+                                    data: formData,
+                                    headers: {
+                                        'Content-Type': undefined
                                     }
-                                },
-                                function (err) {
-                                    toogle_information('Une erreur, reesayer')
-                                    $('#spinner').hide()
-                                }
-                                )
-                        } else {
-                            function_updatePdfcarte(pdf_edition, donne)
-                        }
+                                };
 
+                                $http(request)
+                                    .then(
+                                        function success(e) {
+                                            formData = new FormData();
+                                            console.log(e)
+                                            if (e.data.status) {
+                                                pdf_edition.url_raster = e.data.url_raster
+                                                donne.url_raster = e.data.url_raster
+
+                                                pdf_edition.type = 'wms'
+                                                donne.type = 'wms'
+
+                                                pdf_edition.identifiant = e.data.identifiant
+                                                donne.identifiant = e.data.identifiant
+
+                                                pdf_edition.url_tile = e.data.projet_qgis
+                                                donne.url_tile = e.data.projet_qgis
+                                                function_updatePdfcarte(pdf_edition, donne)
+                                            }
+                                        },
+                                        function (err) {
+                                            toogle_information('Une erreur, reesayer')
+                                            $('#spinner').hide()
+                                        }
+                                    )
+                            } else {
+                                function_updatePdfcarte(pdf_edition, donne)
+                            }
+
+                        }
+                    },
+                    function (err) {
+                        toogle_information('Une erreur, reesayer')
+                        $('#spinner').hide()
                     }
-                },
-                function (err) {
-                    toogle_information('Une erreur, reesayer')
-                    $('#spinner').hide()
-                }
                 )
         } else if (!pdf_edition.filePdf && pdf_edition.fileRaster) {
             var file = pdf_edition.fileRaster
@@ -5462,29 +5492,29 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             $http(request)
                 .then(
-                function success(e) {
-                    formData = new FormData();
-                    console.log(e)
-                    if (e.data.status) {
-                        pdf_edition.url_raster = e.data.url_raster
-                        donne.url_raster = e.data.url_raster
+                    function success(e) {
+                        formData = new FormData();
+                        console.log(e)
+                        if (e.data.status) {
+                            pdf_edition.url_raster = e.data.url_raster
+                            donne.url_raster = e.data.url_raster
 
-                        pdf_edition.type = 'wms'
-                        donne.type = 'wms'
+                            pdf_edition.type = 'wms'
+                            donne.type = 'wms'
 
-                        pdf_edition.identifiant = e.data.identifiant
-                        donne.identifiant = e.data.identifiant
+                            pdf_edition.identifiant = e.data.identifiant
+                            donne.identifiant = e.data.identifiant
 
-                        pdf_edition.url_tile = e.data.projet_qgis
-                        donne.url_tile = e.data.projet_qgis
-                        function_updatePdfcarte(pdf_edition, donne)
+                            pdf_edition.url_tile = e.data.projet_qgis
+                            donne.url_tile = e.data.projet_qgis
+                            function_updatePdfcarte(pdf_edition, donne)
+                        }
+                        // $('#spinner').hide()
+                    },
+                    function (err) {
+                        toogle_information('Une erreur, reesayer')
+                        $('#spinner').hide()
                     }
-                    // $('#spinner').hide()
-                },
-                function (err) {
-                    toogle_information('Une erreur, reesayer')
-                    $('#spinner').hide()
-                }
                 )
         } else {
             function_updatePdfcarte(pdf_edition, donne)
@@ -5647,71 +5677,71 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             $http(request)
                 .then(
-                function success(e) {
-                    formData = new FormData();
+                    function success(e) {
+                        formData = new FormData();
 
-                    if (e.data.status) {
-                        $('#spinner').hide()
-                        donne.image_src = donne.img_temp
-                        donne.img_temp = 'assets/admin/' + space2underscore(donne.fileImg.name.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                        if (e.data.status) {
+                            $('#spinner').hide()
+                            donne.image_src = donne.img_temp
+                            donne.img_temp = 'assets/admin/' + space2underscore(donne.fileImg.name.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
 
-                        myfactory.post_data('/cartes/updatePdfcarte/', JSON.stringify(donne)).then(
-                            function (data) {
+                            myfactory.post_data('/cartes/updatePdfcarte/', JSON.stringify(donne)).then(
+                                function (data) {
 
-                                if (requete_reussi(data)) {
-                                    pdf_edition.filePdf = undefined
-                                    pdf_edition.fileRaster = undefined
-                                    pdf_edition.fileImg = undefined
-                                    for (var i = 0; i < $scope.cartes.length; i++) {
-                                        if (donne.sous_cartes == true && $scope.cartes[i].sous_cartes) {
-                                            for (var j = 0; j < $scope.cartes[i].sous_cartes.length; j++) {
-                                                for (var k = 0; k < $scope.cartes[i].sous_cartes[j].couches.length; k++) {
-                                                    if ($scope.cartes[i].sous_cartes[j].couches[k].key_couche == donne.key_couche) {
-                                                        for (var index = 0; index < $scope.cartes[i].sous_cartes[j].couches[k].cartes_pdf.length; index++) {
-                                                            if ($scope.cartes[i].sous_cartes[j].couches[k].cartes_pdf[index].id == donne.id) {
-                                                                $scope.cartes[i].sous_cartes[j].couches[k].cartes_pdf[index] = pdf_edition
+                                    if (requete_reussi(data)) {
+                                        pdf_edition.filePdf = undefined
+                                        pdf_edition.fileRaster = undefined
+                                        pdf_edition.fileImg = undefined
+                                        for (var i = 0; i < $scope.cartes.length; i++) {
+                                            if (donne.sous_cartes == true && $scope.cartes[i].sous_cartes) {
+                                                for (var j = 0; j < $scope.cartes[i].sous_cartes.length; j++) {
+                                                    for (var k = 0; k < $scope.cartes[i].sous_cartes[j].couches.length; k++) {
+                                                        if ($scope.cartes[i].sous_cartes[j].couches[k].key_couche == donne.key_couche) {
+                                                            for (var index = 0; index < $scope.cartes[i].sous_cartes[j].couches[k].cartes_pdf.length; index++) {
+                                                                if ($scope.cartes[i].sous_cartes[j].couches[k].cartes_pdf[index].id == donne.id) {
+                                                                    $scope.cartes[i].sous_cartes[j].couches[k].cartes_pdf[index] = pdf_edition
+                                                                }
+
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            } else if (donne.sous_cartes == false && !$scope.cartes[i].sous_cartes) {
+                                                for (var j = 0; j < $scope.cartes[i].couches.length; j++) {
+                                                    if ($scope.cartes[i].couches[j].key_couche == donne.key_couche) {
+
+                                                        for (var index = 0; index < $scope.cartes[i].couches[j].cartes_pdf.length; index++) {
+                                                            if ($scope.cartes[i].couches[j].cartes_pdf[index].id == donne.id) {
+                                                                $scope.cartes[i].couches[j].cartes_pdf[index] = pdf_edition
                                                             }
 
                                                         }
                                                     }
                                                 }
                                             }
-                                        } else if (donne.sous_cartes == false && !$scope.cartes[i].sous_cartes) {
-                                            for (var j = 0; j < $scope.cartes[i].couches.length; j++) {
-                                                if ($scope.cartes[i].couches[j].key_couche == donne.key_couche) {
-
-                                                    for (var index = 0; index < $scope.cartes[i].couches[j].cartes_pdf.length; index++) {
-                                                        if ($scope.cartes[i].couches[j].cartes_pdf[index].id == donne.id) {
-                                                            $scope.cartes[i].couches[j].cartes_pdf[index] = pdf_edition
-                                                        }
-
-                                                    }
-                                                }
-                                            }
                                         }
+
+                                        toogle_information('Operation reussi')
+                                        $scope.close_edit_cartes_pdf()
+
                                     }
 
-                                    toogle_information('Operation reussi')
-                                    $scope.close_edit_cartes_pdf()
-
+                                    $('#spinner').hide()
+                                },
+                                function (err) {
+                                    $('#spinner').hide()
+                                    toogle_information('Verifier votre connexion')
                                 }
+                            )
 
-                                $('#spinner').hide()
-                            },
-                            function (err) {
-                                $('#spinner').hide()
-                                toogle_information('Verifier votre connexion')
-                            }
-                        )
+                        }
 
+                        $('#spinner').hide()
+                    },
+                    function (e) {
+                        $('#spinner').hide()
+                        toogle_information('Verifier votre connexion')
                     }
-
-                    $('#spinner').hide()
-                },
-                function (e) {
-                    $('#spinner').hide()
-                    toogle_information('Verifier votre connexion')
-                }
                 )
         } else {
             myfactory.post_data('/cartes/updatePdfcarte/', JSON.stringify(donne)).then(
@@ -6006,7 +6036,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     $scope.delete_cles_vals_osm = function (cle_val_osm, couche) {
         console.log(cle_val_osm, couche.cles_vals_osm)
 
-       var id_cat = couche.cles_vals_osm[0].id_cat
+        var id_cat = couche.cles_vals_osm[0].id_cat
         $('#spinner').show()
 
         myfactory.post_data('/thematique/delete_cles_vals_osm/', JSON.stringify(cle_val_osm)).then(
@@ -6025,51 +6055,51 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     $scope.toogle_confirmation('false')
 
 
-                        myfactory.post_data('/thematique/genrateJsonFileByCat/', JSON.stringify({ 'id_cat': id_cat })).then(
-                            function (data) {
-                                if (requete_reussi(data)) {
-                                    couche.number = data.number
-                                    couche.status = data.statut
+                    myfactory.post_data('/thematique/genrateJsonFileByCat/', JSON.stringify({ 'id_cat': id_cat })).then(
+                        function (data) {
+                            if (requete_reussi(data)) {
+                                couche.number = data.number
+                                couche.status = data.statut
 
-                                    if (couche.wms_type == 'osm') {
-                                        myfactory.get_data($scope.urlNodejs_backend + '/generateShapeFromOsmBuilder/' + $scope.projet_qgis_server + '/' + id_cat + '/false').then(
-                                            function (data) {
-                                                if (requete_reussi(data)) {
-                                                    toogle_information('La condition a bien ete supprimer')
-                                                    
-                                                    if(couche.cles_vals_osm.length== 0) {
-                                                        couche.number = 0
-                                                        couche.status = true
-                                                    }
+                                if (couche.wms_type == 'osm') {
+                                    myfactory.get_data($scope.urlNodejs_backend + '/generateShapeFromOsmBuilder/' + $scope.projet_qgis_server + '/' + id_cat + '/false').then(
+                                        function (data) {
+                                            if (requete_reussi(data)) {
+                                                toogle_information('La condition a bien ete supprimer')
 
-                                                    $('#spinner').hide()
-                                                } else {
-                                                    toogle_information('un problème est survenu, contacter administrateur')
-                                                    $('#spinner').hide()
+                                                if (couche.cles_vals_osm.length == 0) {
+                                                    couche.number = 0
+                                                    couche.status = true
                                                 }
-                                            }, function (err) {
-                                                alert('un problème est survenu, contacter administrateur')
+
+                                                $('#spinner').hide()
+                                            } else {
+                                                toogle_information('un problème est survenu, contacter administrateur')
                                                 $('#spinner').hide()
                                             }
-                                        )
-                                    } else {
-                                        toogle_information('La condition a bien ete supprimer')
-                                        $('#spinner').hide()
-                                    }
-
-
+                                        }, function (err) {
+                                            alert('un problème est survenu, contacter administrateur')
+                                            $('#spinner').hide()
+                                        }
+                                    )
                                 } else {
-                                    alert('Verifier votre requete, et supprimer vos modifications avant de quitter svp ')
+                                    toogle_information('La condition a bien ete supprimer')
+                                    $('#spinner').hide()
                                 }
-                                $('#spinner').hide()
-                            }, function (err) {
-                                alert('Verifier votre requete, et supprimer vos modifications avant de quitter svp ')
-                                $('#spinner').hide()
 
+
+                            } else {
+                                alert('Verifier votre requete, et supprimer vos modifications avant de quitter svp ')
                             }
-                        )
-                    
-                    
+                            $('#spinner').hide()
+                        }, function (err) {
+                            alert('Verifier votre requete, et supprimer vos modifications avant de quitter svp ')
+                            $('#spinner').hide()
+
+                        }
+                    )
+
+
                 }
 
 
@@ -6570,6 +6600,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             $scope.getFileNode(sous_thematique_couche)
         } else if (option == "tester") {
             $scope.testCarte(sous_thematique_couche)
+        } else if (option == "refres_style") {
+            $scope.refres_style(sous_thematique_couche)
         }
         $scope.submitSelectedItem = null
     }
@@ -6613,11 +6645,11 @@ var adaptiveInput = app.directive('tagListInput', [function () {
     return {
         priority: 0,
         template: '<div class="tag-list--container">' +
-        '  <input type="text" ng-model="inputModel" ng-change="updateList()" ng-blur="cleanList()">' +
-        '  <ul class="tag-list--list">' +
-        '    <li class="tag-list--item" ng-repeat="item in model track by $index"  ng-click="removeItem($index)"><span ng-bind="item"></span></li>' +
-        '  </ul>' +
-        '</div>',
+            '  <input type="text" ng-model="inputModel" ng-change="updateList()" ng-blur="cleanList()">' +
+            '  <ul class="tag-list--list">' +
+            '    <li class="tag-list--item" ng-repeat="item in model track by $index"  ng-click="removeItem($index)"><span ng-bind="item"></span></li>' +
+            '  </ul>' +
+            '</div>',
         replace: true,
         transclude: false,
         restrict: 'E',

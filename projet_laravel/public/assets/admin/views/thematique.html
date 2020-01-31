@@ -168,15 +168,15 @@
                     <!--<span style="font-weight: normal;">({{couche.geom}})</span> -->
                 </span>
                     <div class="clash-card__image clash-card__image--barbarian" ng-init="couche.rang_thema=thematique_couche.id;couche.rang_sous=sous_thematique_active.id;couche.shema=thematique_couche.shema;couche.sous_thematiques=true">
-                        <img src="{{couche.img}}" ng-if='couche.geom=="point"' style="height: 87px;width: 87px"/>
+                        <img src="{{couche.img}}" style="height: 87px;width: 87px"/>
                         
-                        <div ng-if='couche.geom=="Polygon" && ( couche.img == "" || couche.img == null ) '  ng-style="{'width':'87px','height': '87px','background':'{{couche.remplir_couleur}}','opacity':'{{couche.opacity}}','border':'3px solid black','display': 'inline-block'}"></div>
+                        <!-- <div ng-if='couche.geom=="Polygon" && ( couche.img == "" || couche.img == null ) '  ng-style="{'width':'87px','height': '87px','background':'{{couche.remplir_couleur}}','opacity':'{{couche.opacity}}','border':'3px solid black','display': 'inline-block'}"></div> -->
 
-                           <div ng-if='couche.geom=="Polygon" && couche.img != "" && couche.img!=null  ' ng-style="{'height': '87px','width': '87px','border':'3px solid black','display': 'inline-block','background-size': '32px','margin-bottom': '5px','background-image': 'url('+ couche.img + ')'}" >
-                                 <!-- <img  ng-src="{{couche.img}}" style="width: 25px;height: 25px;" /> -->
-                           </div>
+                           <!-- <div ng-if='couche.geom=="Polygon" && couche.img != "" && couche.img!=null  ' ng-style="{'height': '87px','width': '87px','border':'3px solid black','display': 'inline-block','background-size': '32px','margin-bottom': '5px','background-image': 'url('+ couche.img + ')'}" >
+                                
+                           </div> -->
 
-                           <hr ng-if='couche.geom=="LineString"' ng-style="{'border':'2px solid ','margin-left': '10px','margin-right': '10px','margin-top': '60px','border-color':couche.contour_couleur}">
+                           <!-- <hr ng-if='couche.geom=="LineString"' ng-style="{'border':'2px solid ','margin-left': '10px','margin-right': '10px','margin-top': '60px','border-color':couche.contour_couleur}"> -->
                     </div>
                     <div class="clash-card__unit-name" style="font-size:16px">{{couche.nom}}</div>
                     <div class="clash-card__unit-stats clash-card__unit-stats--barbarian clearfix back_white pointer" style="border-radius:0px">
@@ -204,15 +204,14 @@
                      <!--<span style="font-weight: normal;">({{couche.geom}})</span> -->
                 </span>
                     <div class="clash-card__image clash-card__image--barbarian" ng-init="couche.rang_thema=thematique_couche.id;couche.shema=thematique_couche.shema;couche.sous_thematiques=false">
-                        <img src="{{couche.img}}" ng-if='couche.geom=="point"' class="" />
+                        <img src="{{couche.img}}" class="" />
 
-                        <div ng-if='couche.geom=="Polygon" && couche.img==null'  ng-style="{'width':'87px','height': '87px','background':'{{couche.remplir_couleur}}','opacity':'{{couche.opacity}}','border':'3px solid black','display': 'inline-block'}"></div>
+                        <!-- <div ng-if='couche.geom=="Polygon" && couche.img==null'  ng-style="{'width':'87px','height': '87px','background':'{{couche.remplir_couleur}}','opacity':'{{couche.opacity}}','border':'3px solid black','display': 'inline-block'}"></div> -->
 
-                          <div ng-if='couche.geom=="Polygon" && couche.img!=null' ng-style="{'height': '87px','width': '87px','border':'3px solid black','display': 'inline-block','margin-bottom': '5px','background-image': 'url('+ couche.img + ')'}" >
-                                 <!-- <img  ng-src="{{couche.img}}" style="width: 25px;height: 25px;" /> -->
-                           </div>
+                          <!-- <div ng-if='couche.geom=="Polygon" && couche.img!=null' ng-style="{'height': '87px','width': '87px','border':'3px solid black','display': 'inline-block','margin-bottom': '5px','background-image': 'url('+ couche.img + ')'}" >
+                           </div> -->
 
-                          <hr ng-if='couche.geom=="LineString"' ng-style="{'border':'2px solid ','margin-left': '10px','margin-right': '10px','margin-top': '60px','border-color':couche.contour_couleur}">
+                          <!-- <hr ng-if='couche.geom=="LineString"' ng-style="{'border':'2px solid ','margin-left': '10px','margin-right': '10px','margin-top': '60px','border-color':couche.contour_couleur}"> -->
 
                     </div>
                     <div class="clash-card__unit-name" style="font-size:20px">{{couche.nom}}</div>
@@ -305,32 +304,38 @@
                                     <div class="user-content" style="margin-top: 15px;" ng-init="sous_thematique_couche.img_temp = sous_thematique_couche.img">
 
                                         <!-- <img src="{{sous_thematique_couche.img_temp}}" class="thumb-lg" alt="img"> -->
-                                        <img src="{{sous_thematique_couche.img_temp}}" class="thumb-lg" ng-if='sous_thematique_couche.geom=="point"' style="height: 87px;width: 87px"/>
+                                        <img src="{{sous_thematique_couche.img_temp}}" class="thumb-lg" style="height: 87px;width: 87px"/>
                                         
-                        
-                                        <div ng-init="getColor(sous_thematique_couche.remplir_couleur,sous_thematique_couche.opacity)" ng-if='sous_thematique_couche.geom=="Polygon" && ( sous_thematique_couche.img_temp == "" || sous_thematique_couche.img_temp == null ) '  ng-style="{'width':'87px','height': '87px','background':color,'border':'3px solid black','display': 'inline-block'}">
-                                        </div>
+                                        
+                                        <div style="display: inline-block;">
+                                            <div ng-init="getColor(sous_thematique_couche.remplir_couleur,sous_thematique_couche.opacity)" ng-if='sous_thematique_couche.geom =="Polygon"'  ng-style="{'width':'40px','height': '40px','background':color,'border':'3px solid black','display': 'inline-block'}">
+                                            </div>
 
+                                            <div ng-init="getColor(sous_thematique_couche.contour_couleur,1)" ng-if='sous_thematique_couche.geom =="LineString"'  ng-style="{'width':'40px','height': '40px','background':color,'border':'3px solid black','display': 'inline-block'}">
+                                            </div>
 
-                                         <div ng-if='sous_thematique_couche.geom=="Polygon" && sous_thematique_couche.img_temp != "" && sous_thematique_couche.img_temp!=null' ng-style="{'height': '87px','width': '87px','border':'3px solid black','display': 'inline-block','background-size': '32px','margin-bottom': '5px','background-image': 'url('+ sous_thematique_couche.img_temp + ')'}" >
                                         </div>
-                                           <hr ng-init="getColor(sous_thematique_couche.contour_couleur,1)" ng-if='sous_thematique_couche.geom=="LineString"'
-                                            ng-style="{'border':'2px solid ','margin-left': '20px','margin-right': '20px','margin-top': '60px','border-color':color}">
+                                       
+
+                                         <!-- <div ng-if='sous_thematique_couche.geom=="Polygon" && sous_thematique_couche.img_temp != "" && sous_thematique_couche.img_temp!=null' ng-style="{'height': '87px','width': '87px','border':'3px solid black','display': 'inline-block','background-size': '32px','margin-bottom': '5px','background-image': 'url('+ sous_thematique_couche.img_temp + ')'}" >
+                                        </div> -->
+                                           <!-- <hr ng-init="getColor(sous_thematique_couche.contour_couleur,1)" ng-if='sous_thematique_couche.geom=="LineString"' ng-style="{'border':'2px solid ','margin-left': '20px','margin-right': '20px','margin-top': '60px','border-color':color}"> -->
 
                                         <input type="file" ng-files="setTheFiles($files,sous_thematique_couche)" id="img_modifier_couche" style="display: none;" accept="image/*">
                                         
-                                        <div class="col-md-12 text-center" style="margin-top:15px" ng-if='sous_thematique_couche.geom=="Polygon"'>
+                                        <div class="col-md-12 text-center" style="margin-top:15px" ng-if='sous_thematique_couche.geom!="point"'>
                                             <button class="btn btn-primary col-md-4 col-md-offset-2" style="margin-right: 20px"  ng-click="file('img_modifier_couche',sous_thematique_couche,'img_temp')">Icone</button>
-                                           <button class="btn btn-primary col-md-4 " ng-click="changeColor(sous_thematique_couche)" > Couleur </button>
+                                           <button class="btn btn-primary col-md-4 " ng-click="changeColor(sous_thematique_couche,false)" > Couleur </button>
                                         </div>
+
                                         <!-- <span class="black" >{{color}}</span> -->
                                         <div class="col-md-12 text-center" style="margin-top:15px" ng-if='sous_thematique_couche.geom == "point"'>
                                             <button class="btn btn-primary" ng-click="file('img_modifier_couche',sous_thematique_couche,'img_temp')">Changer d'icone</button>
                                         </div>
 
-                                         <div class="col-md-12 text-center" style="margin-top:15px" ng-if='sous_thematique_couche.geom == "LineString"'>
+                                         <!-- <div class="col-md-12 text-center" style="margin-top:15px" ng-if='sous_thematique_couche.geom == "LineString"'>
                                             <button class="btn btn-primary" ng-click="changeColor(sous_thematique_couche)">Changer la Couleur</button>
-                                        </div>
+                                        </div> -->
 
                                     </div>
                                 </div>
@@ -372,10 +377,11 @@
                         <div >
                             <select name="Actions" ng-model="submitSelectedItem" ng-change="submitActions(submitSelectedItem,sous_thematique_couche)">
                                 <option value=""></option>
-                                <option value="fiche" ng-click="openMetadata_thematiques(sous_thematique_couche)" >Fiche descriptive</option>
+                                <option ng-if="displayTestMap(sous_thematique_couche)" ng-click="testCarte(sous_thematique_couche)" value="tester">Tester</option>
+                                <option ng-if="displayTestMap(sous_thematique_couche) && sous_thematique_couche.geom=='point'" ng-click="refres_style(sous_thematique_couche)" value="refres_style">Rafraishir son style</option>
                                 <option ng-if="displayTestMap(sous_thematique_couche) && sous_thematique_couche.wms_type =='osm'" ng-click="file('style_importation',sous_thematique_couche,'style_importation')" value="style">Charger une feuille de style QGIS</option>
                                 <option ng-if="displayTestMap(sous_thematique_couche) && sous_thematique_couche.wms_type =='osm'" ng-click="getFileNode(sous_thematique_couche)" value="telechargez"> Telechargez la donnée</option>
-                                <option ng-if="displayTestMap(sous_thematique_couche)" ng-click="testCarte(sous_thematique_couche)" value="tester">Tester</option>
+                                <option value="fiche" ng-click="openMetadata_thematiques(sous_thematique_couche)" >Fiche descriptive</option>
                             </select>
                         </div>
                          <!--
@@ -1007,7 +1013,7 @@
                             </td>
                             <td  class="text-center" ng-init="couche.type_couche = 'wms'" >
                                 <select ng-model="couche.type_couche" required>
-                                    <!-- <option value="couche">Couche (shp,geojson,kml,etc..)</option> -->
+                                    <option value="couche">Couche (shp en zip et rar,geojson,GPKG)</option>
                                     <!-- <option value="requete">requete (OSM) </option> -->
                                     <!-- <option value="api">API STRATEGIS </option> -->
                                     <option value="wms">WMS / WFS OSM </option>
@@ -1076,7 +1082,7 @@
 
                         <td  class="text-center" ng-init="couche.type_couche = 'wms'" >
                                 <select ng-model="couche.type_couche" required>
-                                    <!-- <option value="couche">Couche (shp,geojson,kml,etc..)</option> -->
+                                    <option value="couche">Couche (shp en zip et rar,geojson,GPKG)</option>
                                     <!-- <option value="requete">requete (OSM) </option> -->
                                     <option value="wms">WMS / WFS OSM </option>
                                     <!-- <option value="api">API STRATEGIS </option> -->
@@ -1175,13 +1181,11 @@
                         </td>
                         <td  class="text-center" ng-init="couche.type_couche = 'wms'" >
                                 <select ng-model="couche.type_couche" required>
-                                    <!-- <option value="couche">Couche (shp,geojson,kml,etc..)</option> -->
+                                    <option value="couche">Couche (shp en zip et rar,geojson,GPKG)</option>
                                     <!-- <option value="requete">requete (OSM) </option> -->
                                     <option value="wms">WMS / WFS OSM </option>
                                      <!-- <option value="api">API STRATEGIS </option> -->
                                 </select>
-
-
                         </td>
                         <td class="pull-right" style="display: -webkit-inline-box;">
                             <div class="col-md-4">
