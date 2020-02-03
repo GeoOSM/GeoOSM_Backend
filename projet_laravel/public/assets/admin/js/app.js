@@ -825,7 +825,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     }
 
 
-    $scope.file = function (id, couche, propertie) {
+    $scope.file = function (id, couche, propertie, type_data = "") {
         console.log(couche, id.indexOf('raster_modifier_cartes_pdf'))
         // $("#"+id)[0].files=[]
         var evt = document.createEvent("MouseEvents");
@@ -834,7 +834,16 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
         $("#" + id).on('change', function (e) {
 
-            if (id.indexOf('raster_modifier_cartes_pdf') == -1 && id.indexOf('doc_modifier_cartes_pdf') == -1 && id.indexOf('doc_modifier_cartes_new_pdf') == -1 && id != 'style_importation' && id != 'couche_importation' && ($("#" + id)[0].files[0].size / 1048576) < 7.5) {
+            if (type_data == "logo") {
+                couche.fileLogoImg = couche.file
+                if (!couche.fileLogoImg) {
+                    couche.fileLogoImg = $("#" + id)[0].files[0]
+                }
+
+                var objectURL = window.URL.createObjectURL($("#" + id)[0].files[0]);
+                couche[propertie] = objectURL
+
+            } else if (id.indexOf('raster_modifier_cartes_pdf') == -1 && id.indexOf('doc_modifier_cartes_pdf') == -1 && id.indexOf('doc_modifier_cartes_new_pdf') == -1 && id != 'style_importation' && id != 'couche_importation' && ($("#" + id)[0].files[0].size / 1048576) < 7.5) {
 
                 couche.fileImg = couche.file
                 if (!couche.fileImg) {
@@ -846,7 +855,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 if (couche.geom) {
                     if (couche.geom == 'Polygon') {
-                        couche.myColor = undefined
+                        // couche.myColor = undefined
                     }
                 }
             } else if (id.indexOf('doc_modifier_cartes_new_pdf') != -1 || id.indexOf('doc_modifier_cartes_pdf') != -1 || id.indexOf('raster_modifier_cartes_pdf') != -1) {
@@ -2752,7 +2761,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 if (requete_reussi(data)) {
                     $('#spinner').hide()
                     // || donne.myColor == 'change'
-                    if (donne.fileImg && donne.geom =='point' ) {
+                    if (donne.fileImg && donne.geom == 'point') {
                         $('#spinner').show()
                         myfactory.get_data($scope.urlNodejs_backend + '/update_style_couche_qgis/' + $scope.projet_qgis_server + '/' + donne.identifiant).then(
                             function (data) {
@@ -2780,7 +2789,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 } else {
                     donne.nom = donne.ancien_nom
                 }
-                
+
             },
             function (err) {
                 $('#spinner').hide()
@@ -2915,7 +2924,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 } else {
                     function_modifier_nom_couche(donne, 'true')
                 }
-            }else if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
+            } else if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
                 toogle_information("Aucune modification a ete efectue")
             } else {
                 function_modifier_nom_couche(donne, 'true')
@@ -2927,6 +2936,66 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     }
 
+
+    $scope.save_logo = function (donne) {
+        console.log(donne)
+        if (donne.fileLogoImg) {
+            var extension = donne.fileLogoImg.name.split('.')[donne.fileLogoImg.name.split('.').length - 1]
+            formData.append('path', '/../../../public/assets/images/logo-couches-modification');
+            formData.append('pathBd', 'assets/images/logo-couches-modification/');
+            formData.append('image_file', donne.fileLogoImg);
+            formData.append('nom', space2underscore(donne.nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension));
+            formData.append('largeur', 160);
+            formData.append('lomguer', 160);
+            var request = {
+                method: 'POST',
+                url: '/upload/file',
+                data: formData,
+                headers: {
+                    'Content-Type': undefined
+                }
+            };
+            $('#spinner').show()
+            $http(request)
+                .then(
+                    function success(e) {
+                        formData = new FormData();
+
+                        if (e.data.status) {
+
+                            donne.nom_logo_modife = 'assets/images/logo-couches-modification/' + space2underscore(donne.nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+
+                            myfactory.post_data('/thematique/save_logo/', JSON.stringify(donne)).then(
+                                function (data) {
+                                    if (requete_reussi(data)) {
+                                       
+                                        toogle_information("Le logo de la couche " + donne.nom + " a ete bien modifié")
+                                       
+                                        donne.fileLogoImg = undefined
+
+                                        donne.logo_src = donne.logo_temp
+
+                                        $('#spinner').hide()
+                                    }
+                                },
+                                function (error) {
+                                    $('#spinner').hide()
+                                    toogle_information('Verifier votre connexion')
+                                }
+                            )
+
+                        }
+                        $('#spinner').hide()
+                    },
+                    function (e) {
+                        $('#spinner').hide()
+                        toogle_information('Verifier votre connexion')
+                    }
+                )
+        } else {
+            toogle_information("Modifiez l'icone avant de sauvegarder")
+        }
+    }
     $scope.nouvelles_colonnes = []
     $scope.add_colomnes = function (colonnes, shema, key_couche, table, ancienne_colomnes, nom_couche, sous_thematiques) {
 

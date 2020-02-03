@@ -958,7 +958,7 @@ public function updateAttribute(Request $request)
               $donnes = $Requests->input('donnes',null);
 
               $users = DB::table('utilisateur')->select('nom', 'src_photo','email','id_utilisateur')
-              ->where("id_instances_gc","=",$this-$this->id_instance_gc)
+              ->where("id_instances_gc","=",$this->id_instance_gc)
               ->whereIn('id_utilisateur',$donnes)
               ->get();
 

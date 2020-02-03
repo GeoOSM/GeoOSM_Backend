@@ -278,7 +278,22 @@
         <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - - - - 
                        Modification des  couches  
 - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
-        <div class="row" ng-if="mode_modification_couche  ">
+        <div class="row" ng-if="mode_modification_couche">
+            <div class="col-md-3 col-xs-12" ng-if='sous_thematique_couche.geom == "point"' style="text-align: center;width: 100%;padding: 15px;">
+
+                <div ng-init="sous_thematique_couche.logo_temp = sous_thematique_couche.logo_src ? sous_thematique_couche.logo_src :sous_thematique_couche.img " >
+                        <img src="{{sous_thematique_couche.logo_temp}}" class="thumb-lg" style="height: 87px;width: 87px"/>
+                </div>
+
+                <div class="col-md-12 text-center" style="margin-top:15px">
+                        <input type="file" ng-files="setTheFiles($files,sous_thematique_couche)" id="logo_modifier_couche" style="display: none;" accept="image/*">
+
+                        <button class="btn btn-primary" ng-click="file('logo_modifier_couche',sous_thematique_couche,'logo_temp','logo')">Changer le logo</button>
+                        <button class="btn btn-primary" ng-click="save_logo(sous_thematique_couche)">Sauvegarder le logo</button>
+                </div>
+
+            </div>
+
             <div class="col-md-3 col-xs-12" ng-if="sous_thematique_couche.type_couche == 'couche' ">
                 <div class="white-box" style="padding: 25px 0px;">
                     <div class="user-bg" style="height: 190px">
@@ -1016,7 +1031,7 @@
                                     <option value="couche">Couche (shp en zip et rar,geojson,GPKG)</option>
                                     <!-- <option value="requete">requete (OSM) </option> -->
                                     <!-- <option value="api">API STRATEGIS </option> -->
-                                    <option value="wms">WMS / WFS OSM </option>
+                                    <option value="wms">WMS / WFS (OSM) </option>
                                 </select>
                             </td>
                             <td class="pull-right" style="display: -webkit-inline-box;">
@@ -1084,7 +1099,7 @@
                                 <select ng-model="couche.type_couche" required>
                                     <option value="couche">Couche (shp en zip et rar,geojson,GPKG)</option>
                                     <!-- <option value="requete">requete (OSM) </option> -->
-                                    <option value="wms">WMS / WFS OSM </option>
+                                    <option value="wms">WMS / WFS (OSM) </option>
                                     <!-- <option value="api">API STRATEGIS </option> -->
                                 </select>
                         </td>
@@ -1183,7 +1198,7 @@
                                 <select ng-model="couche.type_couche" required>
                                     <option value="couche">Couche (shp en zip et rar,geojson,GPKG)</option>
                                     <!-- <option value="requete">requete (OSM) </option> -->
-                                    <option value="wms">WMS / WFS OSM </option>
+                                    <option value="wms">WMS / WFS (OSM) </option>
                                      <!-- <option value="api">API STRATEGIS </option> -->
                                 </select>
                         </td>

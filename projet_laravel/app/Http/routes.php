@@ -100,7 +100,8 @@ Route::group(['prefix' => '/thematique'],function(){
 
 	Route::get('getCatalogueDonne/','thematiqueController@getCatalogueDonne');
 
-
+	
+	
 
 	Route::post('updateThematique/','thematiqueController@updateThematique');
 	
@@ -124,6 +125,7 @@ Route::group(['prefix' => '/thematique'],function(){
 
 	Route::post('change_nameCouche/','thematiqueController@change_nameCouche');
 
+	Route::post('save_logo/','thematiqueController@save_logo');
 	
 
 
