@@ -2761,7 +2761,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 if (requete_reussi(data)) {
                     $('#spinner').hide()
                     // || donne.myColor == 'change'
-                    if (donne.fileImg && donne.geom == 'point' && donne.type_couche == 'requete') {
+                    if (donne.fileImg && donne.geom == 'point' && donne.wms_type == "osm") {
                         $('#spinner').show()
                         myfactory.get_data($scope.urlNodejs_backend + '/update_style_couche_qgis/' + $scope.projet_qgis_server + '/' + donne.identifiant).then(
                             function (data) {

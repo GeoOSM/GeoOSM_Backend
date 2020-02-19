@@ -7,6 +7,9 @@
 /.vscode
 /.vagrant
 /public/assets/config.js
+/public/assets/icones-couches-modification
+/public/assets/logo-couches-modification
+/public/assets/icones-couches
 Homestead.json
 Homestead.yaml
 npm-debug.log
