@@ -1,3 +1,4 @@
 projet_laravel/public/upload/catalogue.json
 projet_laravel/public/assets/config.js
-projet_laravel/public/upload/catalogue.json
+projet_laravel/public/download/*
+projet_laravel/.env

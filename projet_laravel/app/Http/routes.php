@@ -166,6 +166,8 @@ Route::group(['prefix' => '/thematique'],function(){
 	Route::post('addMetadata/','thematiqueController@addMetadata');
 	
 	Route::post('editMetadata/','thematiqueController@editMetadata');
+
+	Route::post('donwload/','exportController@exportDataOsm');
 	
 });
 
