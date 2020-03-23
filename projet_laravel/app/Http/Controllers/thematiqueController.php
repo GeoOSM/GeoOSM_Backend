@@ -40,8 +40,8 @@ class thematiqueController extends Controller
 			$sous_sous_thematique = $Requests->input('sousthematique', null);
 
 
-
-			$schema = strtolower(str_replace(" ", "_", $nom));
+			
+			$schema = strtolower(str_replace(" ", "_", preg_replace("/[^a-zA-Z]/", "", $nom)));
 			$image_src = str_replace(" ", "_", $image_src);
 
 			$rps = array();
