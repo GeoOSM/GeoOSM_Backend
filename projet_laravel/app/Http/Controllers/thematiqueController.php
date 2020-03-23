@@ -57,76 +57,17 @@ class thematiqueController extends Controller
 
 			if ($sous_sous_thematique === 'true') {
 
-				$sous_thematique = $Requests->input('sous_thematiques', null);
+				// $sous_thematique = $Requests->input('sous_thematiques', null);
 
 				$data['sous_thematiques'] = array();
-
-				if ($querry) {
-
-
-
-					$querry1 = DB::select('CREATE SCHEMA ' . $schema);
-
-
-
-					$i = 0;
-					foreach ($sous_thematique as $sous_them) {
-						$querry2 = DB::table('sous-thematique')->insertGetId(
-							['nom' => $sous_them['nom'], 'id-thematique' => $querry],
-							'id'
-						);
-
-						array_push($data['sous_thematiques'], ["key" => $querry2, "couches" => []]);
-						$j = 0;
-						foreach ($sous_them['couches'] as $couche) {
-							$oldVariable = $sous_them['nom'] . ' ' . $couche['nom'];
-							$newVariable = strtolower(str_replace(" ", "_", $oldVariable));
-							$img = str_replace(" ", "_", $couche['nom_img_modife']);
-
-							$querry3 = DB::table('couche-sous-thematique')->insertGetId(
-								['type_couche' => $couche['type_couche'], 'remplir_couleur' => $couche['remplir_couleur'], 'contour_couleur' => $couche['contour_couleur'], 'opacity' => $couche['opacity'], 'nom' => $couche['nom'], 'geom' => $couche['geom'], 'id-sous-thematique' => $querry2, 'id_couche' => $newVariable, 'image_src' => $img]
-							);
-
-							array_push($data['sous_thematiques'][$i]['couches'], ["key_couche" => $querry3, "id_couche" => $newVariable]);
-
-							$querry4 = DB::select(' CREATE TABLE ' . $schema . '.' . $newVariable . ' ()with(OIDS = FALSE)');
-
-							$j++;
-						}
-
-						$i++;
-					}
-
-					DB::select('COMMIT;');
-					array_push($rps, $querry, $querry1, $querry2, $querry3, $querry4, 'ok');
-					return $data;
-				} else {
-					array_push($rps, $querry, 'ko');
-					return $rps;
-				}
+				$querry1 = DB::select('CREATE SCHEMA ' . $schema);
+				DB::select('COMMIT;');
+				return $data;
 			} else {
-				$couches = $Requests->input('couches', null);
-
+				// $couches = $Requests->input('couches', null);
 				$querry1 = DB::select('CREATE SCHEMA ' . $schema);
 				$data['couches'] = array();
-
-				$i = 0;
-
-				foreach ($couches as $couche) {
-					$oldVariable = $nom . ' ' . $couche['nom'];
-					$newVariable = strtolower(str_replace(" ", "_", $oldVariable));
-					$img = str_replace(" ", "_", $couche['nom_img_modife']);
-
-					$querry3 = DB::table('couche-thematique')->insertGetId(
-						['type_couche' => $couche['type_couche'], 'remplir_couleur' => $couche['remplir_couleur'], 'contour_couleur' => $couche['contour_couleur'], 'opacity' => $couche['opacity'], 'nom' => $couche['nom'], 'geom' => $couche['geom'], 'id-thematique' => $querry, 'id_couche' => $newVariable, 'image_src' => $img]
-					);
-
-					$querry4 = DB::select(' CREATE TABLE ' . $schema . '.' . $newVariable . ' ()with(OIDS = FALSE)');
-
-					array_push($data['couches'], ["key_couche" => $querry3, "id_couche" => $newVariable]);
-
-					$i++;
-				}
+				
 				DB::select('COMMIT;');
 				return $data;
 			}

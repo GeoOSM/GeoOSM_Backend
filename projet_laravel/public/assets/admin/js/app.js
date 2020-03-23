@@ -342,12 +342,17 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         for (var i = 0; i < data.length; i++) {
             if (data[i].sous_thematiques != false) {
                 for (var j = 0; j < data[i].sous_thematiques.length; j++) {
-
-                    nombre = nombre + data[i].sous_thematiques[j].couches.length
+                    if (data[i].sous_thematiques[j].couches) {
+                        nombre = nombre + data[i].sous_thematiques[j].couches.length
+                    }
+                    // Array.isArray(data[i].sous_thematiques)
 
                 }
             } else {
-                nombre = nombre + data[i].couches.length
+                if (data[i].couches) {
+                    nombre = nombre + data[i].couches.length
+                }
+
             }
         }
 
@@ -749,7 +754,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     function cataloguerColones(data) {
 
         for (var i = 0; i < data.length; i++) {
-            if (data[i].sous_thematiques != false) {
+
+            if (Array.isArray(data[i].sous_thematiques)) {
                 for (var j = 0; j < data[i].sous_thematiques.length; j++) {
 
                     for (var k = 0; k < data[i].sous_thematiques[j].couches.length; k++) {
@@ -1596,16 +1602,27 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     $scope.page_principale_thematique = true
 
     $scope.sous_ou_pas_ajouter_thematique = function (nouvelle_thematique, nouvelles_sous_thematique) {
-        nouvelle_thematique.fileImg = nouvelle_thematique.file
-        if (nouvelle_thematique.sousthematique == 'true') {
-            $scope.ajouter_thematique(nouvelle_thematique)
-        } else {
-            nouvelles_sous_thematique.nom = nouvelle_thematique.nom
-            nouvelles_sous_thematique.fileImg = nouvelle_thematique.fileImg
-            nouvelles_sous_thematique.sousthematique = nouvelle_thematique.sousthematique
-            $scope.ajouter_thematique(nouvelles_sous_thematique, nouvelle_thematique)
-        }
 
+        if (nouvelle_thematique.sousthematique != 'true' && nouvelle_thematique.sousthematique != 'false') {
+            toogle_information("Créer des Sous-thématiques ? ")
+        } else {
+
+            nouvelle_thematique.fileImg = nouvelle_thematique.file
+            if (nouvelle_thematique.sousthematique == 'true') {
+                if (nouvelle_thematique['sous_thematiques']) {
+                    nouvelle_thematique['sous_thematiques'] = []
+                }
+                $scope.ajouter_thematique(nouvelle_thematique)
+            } else {
+                nouvelles_sous_thematique.nom = nouvelle_thematique.nom
+                nouvelles_sous_thematique.fileImg = nouvelle_thematique.fileImg
+                nouvelles_sous_thematique.sousthematique = nouvelle_thematique.sousthematique
+                if (nouvelles_sous_thematique['couches']) {
+                    nouvelles_sous_thematique['couches'] = []
+                }
+                $scope.ajouter_thematique(nouvelles_sous_thematique, nouvelle_thematique)
+            }
+        }
     }
 
     $scope.function_ajouter_thematique = function (nouvelle_thematique) {
@@ -1628,14 +1645,14 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                             nouvelle_thematique.sous_thematiques[i].key = data.sous_thematiques[i].key
                             nouvelle_thematique.sous_thematiques[i].les_id_couches = []
 
-                            for (var j = 0; j < nouvelle_thematique.sous_thematiques[i].couches.length; j++) {
-                                nouvelle_thematique.sous_thematiques[i].les_id_couches.push(data.sous_thematiques[i].couches[j].key_couche)
-                                nouvelle_thematique.sous_thematiques[i].couches[j].check = false
-                                nouvelle_thematique.sous_thematiques[i].couches[j].img = nouvelle_thematique.sous_thematiques[i].couches[j].img_temp
-                                nouvelle_thematique.sous_thematiques[i].couches[j].id = j
-                                nouvelle_thematique.sous_thematiques[i].couches[j].id_couche = data.sous_thematiques[i].couches[j].id_couche
-                                nouvelle_thematique.sous_thematiques[i].couches[j].key_couche = data.sous_thematiques[i].couches[j].key_couche
-                            }
+                            // for (var j = 0; j < nouvelle_thematique.sous_thematiques[i].couches.length; j++) {
+                            //     nouvelle_thematique.sous_thematiques[i].les_id_couches.push(data.sous_thematiques[i].couches[j].key_couche)
+                            //     nouvelle_thematique.sous_thematiques[i].couches[j].check = false
+                            //     nouvelle_thematique.sous_thematiques[i].couches[j].img = nouvelle_thematique.sous_thematiques[i].couches[j].img_temp
+                            //     nouvelle_thematique.sous_thematiques[i].couches[j].id = j
+                            //     nouvelle_thematique.sous_thematiques[i].couches[j].id_couche = data.sous_thematiques[i].couches[j].id_couche
+                            //     nouvelle_thematique.sous_thematiques[i].couches[j].key_couche = data.sous_thematiques[i].couches[j].key_couche
+                            // }
 
                         }
 
@@ -1648,13 +1665,13 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                         nouvelle_thematique.shema = data.shema
                         nouvelle_thematique.sous_thematiques = false
 
-                        for (var i = 0; i < nouvelle_thematique.couches.length; i++) {
-                            nouvelle_thematique.couches[i].id_couche = data.couches[i].id_couche
-                            nouvelle_thematique.couches[i].key_couche = data.couches[i].key_couche
-                            nouvelle_thematique.couches[i].id = i
-                            nouvelle_thematique.couches[i].img = nouvelle_thematique.couches[i].img_temp
-                            nouvelle_thematique.couches[i].check = false
-                        }
+                        // for (var i = 0; i < nouvelle_thematique.couches.length; i++) {
+                        //     nouvelle_thematique.couches[i].id_couche = data.couches[i].id_couche
+                        //     nouvelle_thematique.couches[i].key_couche = data.couches[i].key_couche
+                        //     nouvelle_thematique.couches[i].id = i
+                        //     nouvelle_thematique.couches[i].img = nouvelle_thematique.couches[i].img_temp
+                        //     nouvelle_thematique.couches[i].check = false
+                        // }
 
                         $scope.thematiques.push(nouvelle_thematique)
                         $scope.page_principale_thematique = !$scope.page_principale_thematique
@@ -1683,37 +1700,35 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             nouvelle_thematique.img_temp = second_data.img_temp
         }
 
-        if (nouvelle_thematique.sousthematique == 'true') {
-            for (var i = 0; i < nouvelle_thematique.sous_thematiques.length; i++) {
-                for (var j = 0; j < nouvelle_thematique.sous_thematiques[i].couches.length; j++) {
+        // if (nouvelle_thematique.sousthematique == 'true') {
+        //     for (var i = 0; i < nouvelle_thematique.sous_thematiques.length; i++) {
+        //         for (var j = 0; j < nouvelle_thematique.sous_thematiques[i].couches.length; j++) {
 
-                    if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'point' && !nouvelle_thematique.sous_thematiques[i].couches[j].file) {
-                        no_icone.push(i)
-                    } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'LineString' && !nouvelle_thematique.sous_thematiques[i].couches[j].color) {
-                        no_icone.push(i)
-                    } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'Polygon' && !nouvelle_thematique.sous_thematiques[i].couches[j].color && !nouvelle_thematique.sous_thematiques[i].couches[j].file) {
-                        no_icone.push(i)
-                    }
-                }
-            }
-        } else {
-            for (var j = 0; j < nouvelle_thematique.couches.length; j++) {
+        //             if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'point' && !nouvelle_thematique.sous_thematiques[i].couches[j].file) {
+        //                 no_icone.push(i)
+        //             } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'LineString' && !nouvelle_thematique.sous_thematiques[i].couches[j].color) {
+        //                 no_icone.push(i)
+        //             } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'Polygon' && !nouvelle_thematique.sous_thematiques[i].couches[j].color && !nouvelle_thematique.sous_thematiques[i].couches[j].file) {
+        //                 no_icone.push(i)
+        //             }
+        //         }
+        //     }
+        // } else {
+        //     for (var j = 0; j < nouvelle_thematique.couches.length; j++) {
 
-                if (nouvelle_thematique.couches[j].geom == 'point' && !nouvelle_thematique.couches[j].file) {
-                    no_icone.push(j)
-                } else if (nouvelle_thematique.couches[j].geom == 'LineString' && !nouvelle_thematique.couches[j].color) {
-                    no_icone.push(j)
-                } else if (nouvelle_thematique.couches[j].geom == 'Polygon' && !nouvelle_thematique.couches[j].color && !nouvelle_thematique.couches[j].file) {
-                    no_icone.push(j)
-                }
-            }
-        }
+        //         if (nouvelle_thematique.couches[j].geom == 'point' && !nouvelle_thematique.couches[j].file) {
+        //             no_icone.push(j)
+        //         } else if (nouvelle_thematique.couches[j].geom == 'LineString' && !nouvelle_thematique.couches[j].color) {
+        //             no_icone.push(j)
+        //         } else if (nouvelle_thematique.couches[j].geom == 'Polygon' && !nouvelle_thematique.couches[j].color && !nouvelle_thematique.couches[j].file) {
+        //             no_icone.push(j)
+        //         }
+        //     }
+        // }
 
 
         if (!nouvelle_thematique.fileImg) {
             toogle_information("veillez mettre une icone pour la thematique")
-        } else if (no_icone.length != 0) {
-            toogle_information("Veillez mettre des icones ou des couleurs sur chaque couches")
         } else {
 
             var nombre = 0
@@ -1746,174 +1761,175 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                         nouvelle_thematique.nom_img_modife = 'assets/images/thematiques/' + space2underscore(nouvelle_thematique.nom).replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension
                         if (e.data.status) {
                             var nombre_images = []
-                            if (nouvelle_thematique.sousthematique == 'true') {
+                            // if (nouvelle_thematique.sousthematique == 'true') {
 
-                                for (var i = 0; i < nouvelle_thematique.sous_thematiques.length; i++) {
-                                    for (var j = 0; j < nouvelle_thematique.sous_thematiques[i].couches.length; j++) {
+                            //     for (var i = 0; i < nouvelle_thematique.sous_thematiques.length; i++) {
+                            //         for (var j = 0; j < nouvelle_thematique.sous_thematiques[i].couches.length; j++) {
 
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].nom_img_modife = null
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].remplir_couleur = null
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].opacity = null
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].contour_couleur = null
-                                        nouvelle_thematique.sous_thematiques[i].couches[j].nom = nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase()
-                                        if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'point') {
+                            //             nouvelle_thematique.sous_thematiques[i].couches[j].nom_img_modife = null
+                            //             nouvelle_thematique.sous_thematiques[i].couches[j].remplir_couleur = null
+                            //             nouvelle_thematique.sous_thematiques[i].couches[j].opacity = null
+                            //             nouvelle_thematique.sous_thematiques[i].couches[j].contour_couleur = null
+                            //             nouvelle_thematique.sous_thematiques[i].couches[j].nom = nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase()
+                            //             if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'point') {
 
-                                            var extension = nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.')[nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.').length - 1]
-                                            formData.append('image_file' + i + '' + j, nouvelle_thematique.sous_thematiques[i].couches[j].fileImg);
+                            //                 var extension = nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.')[nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.').length - 1]
+                            //                 formData.append('image_file' + i + '' + j, nouvelle_thematique.sous_thematiques[i].couches[j].fileImg);
 
-                                            nouvelle_thematique.sous_thematiques[i].couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
-                                            nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.nom = space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
+                            //                 nouvelle_thematique.sous_thematiques[i].couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                            //                 nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.nom = space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
 
-                                            nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.appendId = 'image_file' + i + '' + j
-                                            nombre_images.push(nouvelle_thematique.sous_thematiques[i].couches[j].fileImg)
+                            //                 nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.appendId = 'image_file' + i + '' + j
+                            //                 nombre_images.push(nouvelle_thematique.sous_thematiques[i].couches[j].fileImg)
 
-                                        } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'Polygon' && nouvelle_thematique.sous_thematiques[i].couches[j].fileImg) {
+                            //             } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'Polygon' && nouvelle_thematique.sous_thematiques[i].couches[j].fileImg) {
 
-                                            var extension = nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.')[nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.').length - 1]
-                                            formData.append('image_file' + i + '' + j, nouvelle_thematique.sous_thematiques[i].couches[j].fileImg);
+                            //                 var extension = nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.')[nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.name.split('.').length - 1]
+                            //                 formData.append('image_file' + i + '' + j, nouvelle_thematique.sous_thematiques[i].couches[j].fileImg);
 
-                                            nouvelle_thematique.sous_thematiques[i].couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
-                                            nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.nom = space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
-                                            nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.appendId = 'image_file' + i + '' + j
-                                            nombre_images.push(nouvelle_thematique.sous_thematiques[i].couches[j].fileImg)
+                            //                 nouvelle_thematique.sous_thematiques[i].couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                            //                 nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.nom = space2underscore(nouvelle_thematique.sous_thematiques[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
+                            //                 nouvelle_thematique.sous_thematiques[i].couches[j].fileImg.appendId = 'image_file' + i + '' + j
+                            //                 nombre_images.push(nouvelle_thematique.sous_thematiques[i].couches[j].fileImg)
 
-                                        } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'Polygon' && nouvelle_thematique.sous_thematiques[i].couches[j].color) {
+                            //             } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'Polygon' && nouvelle_thematique.sous_thematiques[i].couches[j].color) {
 
-                                            if (nouvelle_thematique.sous_thematiques[i].couches[j].color.indexOf("hsla") != -1) {
-                                                a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsla(', '').replace(')', '').split(',');
-                                                alpha = a[3]
-                                            } else {
-                                                a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsl(', '').replace(')', '').split(',');
-                                                alpha = 1
-                                            }
+                            //                 if (nouvelle_thematique.sous_thematiques[i].couches[j].color.indexOf("hsla") != -1) {
+                            //                     a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsla(', '').replace(')', '').split(',');
+                            //                     alpha = a[3]
+                            //                 } else {
+                            //                     a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsl(', '').replace(')', '').split(',');
+                            //                     alpha = 1
+                            //                 }
 
-                                            rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
+                            //                 rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
 
-                                            nouvelle_thematique.sous_thematiques[i].couches[j].remplir_couleur = rgb
-                                            nouvelle_thematique.sous_thematiques[i].couches[j].opacity = alpha
-                                            nouvelle_thematique.sous_thematiques[i].couches[j].img_temp = null
+                            //                 nouvelle_thematique.sous_thematiques[i].couches[j].remplir_couleur = rgb
+                            //                 nouvelle_thematique.sous_thematiques[i].couches[j].opacity = alpha
+                            //                 nouvelle_thematique.sous_thematiques[i].couches[j].img_temp = null
 
-                                        } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'LineString') {
+                            //             } else if (nouvelle_thematique.sous_thematiques[i].couches[j].geom == 'LineString') {
 
-                                            if (nouvelle_thematique.sous_thematiques[i].couches[j].color.indexOf("hsla") != -1) {
-                                                a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsla(', '').replace(')', '').split(',');
-                                                alpha = a[3]
-                                            } else {
-                                                a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsl(', '').replace(')', '').split(',');
-                                                alpha = 1
-                                            }
+                            //                 if (nouvelle_thematique.sous_thematiques[i].couches[j].color.indexOf("hsla") != -1) {
+                            //                     a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsla(', '').replace(')', '').split(',');
+                            //                     alpha = a[3]
+                            //                 } else {
+                            //                     a = nouvelle_thematique.sous_thematiques[i].couches[j].color.replace('hsl(', '').replace(')', '').split(',');
+                            //                     alpha = 1
+                            //                 }
 
-                                            rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
+                            //                 rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
 
-                                            nouvelle_thematique.sous_thematiques[i].couches[j].contour_couleur = rgb
-                                            nouvelle_thematique.sous_thematiques[i].couches[j].opacity = alpha
-                                            nouvelle_thematique.sous_thematiques[i].couches[j].img_temp = null
+                            //                 nouvelle_thematique.sous_thematiques[i].couches[j].contour_couleur = rgb
+                            //                 nouvelle_thematique.sous_thematiques[i].couches[j].opacity = alpha
+                            //                 nouvelle_thematique.sous_thematiques[i].couches[j].img_temp = null
 
-                                        }
-
-
-                                    }
-                                }
-
-                            } else {
-
-                                for (var j = 0; j < nouvelle_thematique.couches.length; j++) {
-
-                                    nouvelle_thematique.couches[j].nom_img_modife = null
-                                    nouvelle_thematique.couches[j].remplir_couleur = null
-                                    nouvelle_thematique.couches[j].opacity = null
-                                    nouvelle_thematique.couches[j].contour_couleur = null
-                                    nouvelle_thematique.couches[j].nom = nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase()
-                                    if (nouvelle_thematique.couches[j].geom == 'point') {
-
-                                        var extension = nouvelle_thematique.couches[j].fileImg.name.split('.')[nouvelle_thematique.couches[j].fileImg.name.split('.').length - 1]
-                                        formData.append('image_file' + j, nouvelle_thematique.couches[j].fileImg);
-
-                                        nouvelle_thematique.couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
-                                        nouvelle_thematique.couches[j].fileImg.nom = space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
-                                        nouvelle_thematique.couches[j].fileImg.appendId = 'image_file' + j
-                                        nombre_images.push(nouvelle_thematique.couches[j].fileImg)
-
-                                    } else if (nouvelle_thematique.couches[j].geom == 'Polygon' && nouvelle_thematique.couches[j].fileImg) {
-
-                                        var extension = nouvelle_thematique.couches[j].fileImg.name.split('.')[nouvelle_thematique.couches[j].fileImg.name.split('.').length - 1]
-                                        formData.append('image_file' + j, nouvelle_thematique.couches[j].fileImg);
-
-                                        nouvelle_thematique.couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
-                                        nouvelle_thematique.couches[j].fileImg.nom = space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
-
-                                        nouvelle_thematique.couches[j].fileImg.appendId = 'image_file' + j
-                                        nombre_images.push(nouvelle_thematique.couches[j].fileImg)
-
-                                    } else if (nouvelle_thematique.couches[j].geom == 'Polygon' && nouvelle_thematique.couches[j].color) {
-
-                                        if (nouvelle_thematique.couches[j].color.indexOf("hsla") != -1) {
-                                            a = nouvelle_thematique.couches[j].color.replace('hsla(', '').replace(')', '').split(',');
-                                            alpha = a[3]
-                                        } else {
-                                            a = nouvelle_thematique.couches[j].color.replace('hsl(', '').replace(')', '').split(',');
-                                            alpha = 1
-                                        }
-
-                                        rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
-
-                                        nouvelle_thematique.couches[j].remplir_couleur = rgb
-                                        nouvelle_thematique.couches[j].opacity = alpha
-                                        nouvelle_thematique.couches[j].img_temp = null
-
-                                    } else if (nouvelle_thematique.couches[j].geom == 'LineString') {
-
-                                        if (nouvelle_thematique.couches[j].color.indexOf("hsla") != -1) {
-                                            a = nouvelle_thematique.couches[j].color.replace('hsla(', '').replace(')', '').split(',');
-                                            alpha = a[3]
-                                        } else {
-                                            a = nouvelle_thematique.couches[j].color.replace('hsl(', '').replace(')', '').split(',');
-                                            alpha = 1
-                                        }
-
-                                        rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
-
-                                        nouvelle_thematique.couches[j].contour_couleur = rgb
-                                        nouvelle_thematique.couches[j].opacity = alpha
-                                        nouvelle_thematique.couches[j].img_temp = null
-
-                                    }
-
-                                }
-
-                            }
+                            //             }
 
 
-                            formData.append('nombre_images', JSON.stringify(nombre_images));
-                            formData.append('path', '/../../../public/assets/admin/');
-                            formData.append('pathBd', 'assets/admin/');
-                            formData.append('largeur', 160);
-                            formData.append('lomguer', 160);
-                            var request = {
-                                method: 'POST',
-                                url: '/uploads/file',
-                                data: formData,
-                                headers: {
-                                    'Content-Type': undefined
-                                }
-                            };
+                            //         }
+                            //     }
 
-                            $http(request)
-                                .then(
-                                    function success(e) {
-                                        formData = new FormData();
-                                        // $scope.filess = []
-                                        //$('#img_modi_profile')[0].files
-                                        if (e.data.status) {
-                                            $scope.function_ajouter_thematique(nouvelle_thematique)
-                                        }
-                                        $('#spinner').hide()
-                                    },
-                                    function (e) {
-                                        $('#spinner').hide()
-                                        toogle_information('Verifier votre connexion')
-                                    }
-                                )
+                            // } else {
+
+                            //     for (var j = 0; j < nouvelle_thematique.couches.length; j++) {
+
+                            //         nouvelle_thematique.couches[j].nom_img_modife = null
+                            //         nouvelle_thematique.couches[j].remplir_couleur = null
+                            //         nouvelle_thematique.couches[j].opacity = null
+                            //         nouvelle_thematique.couches[j].contour_couleur = null
+                            //         nouvelle_thematique.couches[j].nom = nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase()
+                            //         if (nouvelle_thematique.couches[j].geom == 'point') {
+
+                            //             var extension = nouvelle_thematique.couches[j].fileImg.name.split('.')[nouvelle_thematique.couches[j].fileImg.name.split('.').length - 1]
+                            //             formData.append('image_file' + j, nouvelle_thematique.couches[j].fileImg);
+
+                            //             nouvelle_thematique.couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                            //             nouvelle_thematique.couches[j].fileImg.nom = space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
+                            //             nouvelle_thematique.couches[j].fileImg.appendId = 'image_file' + j
+                            //             nombre_images.push(nouvelle_thematique.couches[j].fileImg)
+
+                            //         } else if (nouvelle_thematique.couches[j].geom == 'Polygon' && nouvelle_thematique.couches[j].fileImg) {
+
+                            //             var extension = nouvelle_thematique.couches[j].fileImg.name.split('.')[nouvelle_thematique.couches[j].fileImg.name.split('.').length - 1]
+                            //             formData.append('image_file' + j, nouvelle_thematique.couches[j].fileImg);
+
+                            //             nouvelle_thematique.couches[j].nom_img_modife = 'assets/admin/' + space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                            //             nouvelle_thematique.couches[j].fileImg.nom = space2underscore(nouvelle_thematique.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
+
+                            //             nouvelle_thematique.couches[j].fileImg.appendId = 'image_file' + j
+                            //             nombre_images.push(nouvelle_thematique.couches[j].fileImg)
+
+                            //         } else if (nouvelle_thematique.couches[j].geom == 'Polygon' && nouvelle_thematique.couches[j].color) {
+
+                            //             if (nouvelle_thematique.couches[j].color.indexOf("hsla") != -1) {
+                            //                 a = nouvelle_thematique.couches[j].color.replace('hsla(', '').replace(')', '').split(',');
+                            //                 alpha = a[3]
+                            //             } else {
+                            //                 a = nouvelle_thematique.couches[j].color.replace('hsl(', '').replace(')', '').split(',');
+                            //                 alpha = 1
+                            //             }
+
+                            //             rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
+
+                            //             nouvelle_thematique.couches[j].remplir_couleur = rgb
+                            //             nouvelle_thematique.couches[j].opacity = alpha
+                            //             nouvelle_thematique.couches[j].img_temp = null
+
+                            //         } else if (nouvelle_thematique.couches[j].geom == 'LineString') {
+
+                            //             if (nouvelle_thematique.couches[j].color.indexOf("hsla") != -1) {
+                            //                 a = nouvelle_thematique.couches[j].color.replace('hsla(', '').replace(')', '').split(',');
+                            //                 alpha = a[3]
+                            //             } else {
+                            //                 a = nouvelle_thematique.couches[j].color.replace('hsl(', '').replace(')', '').split(',');
+                            //                 alpha = 1
+                            //             }
+
+                            //             rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
+
+                            //             nouvelle_thematique.couches[j].contour_couleur = rgb
+                            //             nouvelle_thematique.couches[j].opacity = alpha
+                            //             nouvelle_thematique.couches[j].img_temp = null
+
+                            //         }
+
+                            //     }
+
+                            // }
+
+                            $scope.function_ajouter_thematique(nouvelle_thematique)
+
+                            // formData.append('nombre_images', JSON.stringify(nombre_images));
+                            // formData.append('path', '/../../../public/assets/admin/');
+                            // formData.append('pathBd', 'assets/admin/');
+                            // formData.append('largeur', 160);
+                            // formData.append('lomguer', 160);
+                            // var request = {
+                            //     method: 'POST',
+                            //     url: '/uploads/file',
+                            //     data: formData,
+                            //     headers: {
+                            //         'Content-Type': undefined
+                            //     }
+                            // };
+
+                            // $http(request)
+                            //     .then(
+                            //         function success(e) {
+                            //             formData = new FormData();
+                            //             // $scope.filess = []
+                            //             //$('#img_modi_profile')[0].files
+                            //             if (e.data.status) {
+                            //                 $scope.function_ajouter_thematique(nouvelle_thematique)
+                            //             }
+                            //             $('#spinner').hide()
+                            //         },
+                            //         function (e) {
+                            //             $('#spinner').hide()
+                            //             toogle_information('Verifier votre connexion')
+                            //         }
+                            //     )
                         }
                         $('#spinner').hide()
                     },
@@ -2968,9 +2984,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                             myfactory.post_data('/thematique/save_logo/', JSON.stringify(donne)).then(
                                 function (data) {
                                     if (requete_reussi(data)) {
-                                       
+
                                         toogle_information("Le logo de la couche " + donne.nom + " a ete bien modifié")
-                                       
+
                                         donne.fileLogoImg = undefined
 
                                         donne.logo_src = donne.logo_temp
