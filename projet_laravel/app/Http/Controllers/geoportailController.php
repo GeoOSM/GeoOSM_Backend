@@ -973,6 +973,17 @@ public function updateAttribute(Request $request)
           }
   }
 
+  public function searchLimiteInTable(Request $Requests)
+  {
+    $word = $Requests->input('word',null);
+    $table = $Requests->input('table',null);
+    $limitResults = 10;
+    
+    $limites = DB::select("SELECT id ,name,hstore_to_json->'ref:INSEE' as ref FROM public.$table where strpos(regexp_replace(regexp_replace(lower(name), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g'), regexp_replace(regexp_replace(lower('".$word."'), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g')) >0 LIMIT $limitResults " );
+   
+    return $limites;
+  }
+
   public function searchLimite(Request $Requests)
   {
           try{
@@ -981,15 +992,21 @@ public function updateAttribute(Request $request)
               DB::select('SAVEPOINT mon_pointdesauvegarde;');
 
               $word = $Requests->input('word',null);
+              $all_limites = DB::table('limite_admin')->select('nom_table','nom','sous_thematiques','key_couche','id_limite')->get();
 
-              $communes = DB::select("SELECT id ,name,hstore_to_json->'ref:INSEE' as ref FROM public.communes where strpos(regexp_replace(regexp_replace(lower(name), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g'), regexp_replace(regexp_replace(lower('".$word."'), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g')) >0");
-              $departements = DB::select("SELECT id ,name,hstore_to_json->'ref:INSEE' as ref FROM public.departements where strpos(regexp_replace(regexp_replace(lower(name), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g'), regexp_replace(regexp_replace(lower('".$word."'), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g')) >0");
+              foreach ($all_limites as $one_limite) {
+                $limites = DB::select("SELECT id ,name,hstore_to_json->'ref:INSEE' as ref FROM public.$one_limite->nom_table where strpos(regexp_replace(regexp_replace(lower(name), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g'), regexp_replace(regexp_replace(lower('".$word."'), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g')) >0");
+                $data[$one_limite->nom_table] =$limites;
+              }
+
+              // $communes = DB::select("SELECT id ,name,hstore_to_json->'ref:INSEE' as ref FROM public.communes where strpos(regexp_replace(regexp_replace(lower(name), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g'), regexp_replace(regexp_replace(lower('".$word."'), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g')) >0");
+              // $departements = DB::select("SELECT id ,name,hstore_to_json->'ref:INSEE' as ref FROM public.departements where strpos(regexp_replace(regexp_replace(lower(name), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g'), regexp_replace(regexp_replace(lower('".$word."'), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g')) >0");
               // $regions = DB::select("SELECT id ,name,hstore_to_json->'ref:INSEE' as ref FROM public.regions where strpos(regexp_replace(regexp_replace(lower(name), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g'), regexp_replace(regexp_replace(lower('".$word."'), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g')) >0");
               // $quartiers = DB::select("SELECT id ,name,hstore_to_json->'ref:INSEE' as ref FROM public.quartiers where strpos(regexp_replace(regexp_replace(lower(name), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g'), regexp_replace(regexp_replace(lower('".$word."'), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g')) >0");
               
               $data['status'] ='ok';
-              $data['communes'] =$communes;
-              $data['departements'] =$departements;
+              // $data['communes'] =$communes;
+              // $data['departements'] =$departements;
               // $data['quartiers'] =$quartiers;
               // $data['regions'] =$regions;
 

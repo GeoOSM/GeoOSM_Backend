@@ -41,6 +41,7 @@ Route::post('getListLimit', 'geoportailController@getListLimit');
 Route::post('getLimitById', 'geoportailController@getLimitById'); 
 
 Route::post('searchLimite', 'geoportailController@searchLimite'); 
+Route::post('searchLimiteInTable', 'geoportailController@searchLimiteInTable'); 
 Route::post('getLimiteById', 'geoportailController@getLimiteById'); 
 Route::get('getZoneInteret', 'geoportailController@getZoneInteret');
 
