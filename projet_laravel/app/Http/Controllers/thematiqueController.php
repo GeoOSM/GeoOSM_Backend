@@ -40,7 +40,7 @@ class thematiqueController extends Controller
 			$sous_sous_thematique = $Requests->input('sousthematique', null);
 
 
-			
+
 			$schema = strtolower(str_replace(" ", "_", preg_replace("/[^a-zA-Z]/", "", $nom)));
 			$image_src = str_replace(" ", "_", $image_src);
 
@@ -67,7 +67,7 @@ class thematiqueController extends Controller
 				// $couches = $Requests->input('couches', null);
 				$querry1 = DB::select('CREATE SCHEMA ' . $schema);
 				$data['couches'] = array();
-				
+
 				DB::select('COMMIT;');
 				return $data;
 			}
@@ -520,14 +520,14 @@ class thematiqueController extends Controller
 					$querry = DB::table('couche-sous-thematique')
 						->where('id', $id)
 						->update(['logo_src' => $imgN]);
-				} 
+				}
 			} else {
 
 				if ($image_src) {
 					$imgN = str_replace(" ", "_", $image_src);
 					$querry = DB::table('couche-thematique')
 						->where('id', $id)
-						->update([ 'logo_src' => $imgN]);
+						->update(['logo_src' => $imgN]);
 				}
 			}
 
@@ -1086,204 +1086,28 @@ class thematiqueController extends Controller
 		}
 	}
 
-
+	/**
+	 * Mettre à jour une  catégorie pour une couche provenant d'osm avec (nombres d'enttités, distance, surface) en bd + stocker la requete sql
+	 * cette requete sql qui sera utilisé par ogr2ogr
+	 */
 	public function genrateJsonFileByCat(Request $Requests)
 	{
 		$id_cat = $Requests->input('id_cat', null);
+		$responseSql = $this->genrateSqlForLayer($id_cat, 'instances_gc', 1);
+		if ($responseSql['status'] == 'ok') {
 
-		$where = '';
-
-		$getOperateur = function ($keyO) {
-
-			if ($keyO == 0) {
-				$operateur = '=';
-			} else if ($keyO == 1) {
-				$operateur = '!=';
-			} else if ($keyO == 2) {
-				$operateur = 'is not null';
-			} else if ($keyO == 3) {
-				$operateur = 'is null';
-			}
-
-			return $operateur;
-		};
-
-		$file_name = DB::table("categorie")->select("nom_cat", "type_couche")
-			->where("id_cat", "=", $id_cat)->get();
-
-		$key_val_osm = DB::table("sous_categorie")->select("action", "type_geom", "nom", "operateur", "condition")
-			->where("id_cat", "=", $id_cat)->get();
-
-		$geom = $key_val_osm[0]->type_geom;
-
-		foreach ($key_val_osm as $key) {
-
-			if (sizeof($key_val_osm) > 1) {
-
-				if ($key->operateur != 2 && $key->operateur != 3) {
-
-					if ($where == '') {
-						$where = $key->action . ' ' . $getOperateur($key->operateur) . " '" . $key->nom . "'";
-					} else {
-						$where = $where . ' ' . $key->condition . ' ' . $key->action . ' ' . $getOperateur($key->operateur) . " '" . $key->nom . "'";
-					}
-				} else {
-
-					if ($where == '') {
-						$where = $key->action . ' ' . $getOperateur($key->operateur);
-					} else {
-						$where = $where . ' ' . $key->condition . ' ' . $key->action . ' ' . $getOperateur($key->operateur);
-					}
-				}
-			} else {
-
-				if ($key->operateur != 2 && $key->operateur != 3) {
-
-					$where = $key->action . ' ' . $getOperateur($key->operateur) . " '" . $key->nom . "'";
-				} else {
-
-					$where = $key->action . ' ' . $getOperateur($key->operateur);
-				}
-			}                               	# code...
-		}
-
-		$msg = false;
-		$sql = '';
-		if ($geom == 'point') {
-			$nbrePt = DB::select('select count(*) from (select A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_point  as A ,instances_gc as B where B.id = ' . $this->id_instance_gc . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geom,4326) )) AND ( ' . $where . ' )  ) src');
-
-
-			$nbrePl = DB::select('select count(*) from (select A.name,hstore_to_json(A.tags),ST_AsGeoJSON(ST_Centroid(ST_TRANSFORM(A.way,4326))) as geometry from planet_osm_polygon as A ,instances_gc as B where B.id = ' . $this->id_instance_gc . ' and (ST_Contains( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' )  ) src');
-
-			$sql = 'select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,instances_gc as B where (B.id = ' . $this->id_instance_gc . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geom,4326) ))) AND ( ' . $where . ' )' . ';' . 'select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,instances_gc as B where (B.id = ' . $this->id_instance_gc . ' and (ST_Contains( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' ) ';
-
-			$msg = true;
-			$data = $nbrePt[0]->count + $nbrePl[0]->count;
-
-			// if ( ($nbrePt[0]->count + $nbrePl[0]->count) < 20000 ) {
-
-			// 	$d0=DB::select('select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_point as A ,instances_gc as B where (B.id = '.$this->id_instance_gc.' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geom,4326) ))) AND ( '. $where .' ) '  );
-
-			// 	$d1=DB::select('select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON(ST_Centroid(ST_TRANSFORM(A.way,4326))) as geometry from planet_osm_polygon as A ,instances_gc as B where (B.id = '.$this->id_instance_gc.' and (ST_Contains( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) ))) AND ( '. $where .' ) '  );
-
-			// 	$r0=json_encode(array_merge( json_decode(json_encode($d0), true),json_decode(json_encode($d1), true)));
-			// 	$data=json_decode($r0);
-
-			// }else{
-			// 	$msg = true;
-			// 	$data = $nbrePt[0]->count + $nbrePl[0]->count;
-			// 	//return $where;
-
-			// }
-
-
-		} else if ($geom == 'Polygon') {
-
-			//$nbrePl = DB::select( 'select count(*) from (select A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON( ST_TRANSFORM(A.way,4326) ) as geometry from planet_osm_polygon as A ,instances_gc as B where (B.id = '.$this->id_instance_gc.' and ST_Contains ( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) )) AND ( '. $where .' )  ) src' );
-
-			$surface = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A ,instances_gc as B where  (B.id = ' . $this->id_instance_gc . ' and (ST_Contains ( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
-
-			$nbrePl = $surface[0]->nbre_pt;
-
-			$sql = 'select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags), ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A ,instances_gc as B where  (B.id = ' . $this->id_instance_gc . ' and (ST_Contains ( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )';
-
-			$msg = true;
-			$data = $surface[0]->count;
-
-			// if ($nbrePl < 20000) {
-
-			// 	$d0=DB::select('select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON( ST_TRANSFORM(A.way,4326) ) as geometry from planet_osm_polygon  as A ,instances_gc as B where  (B.id = '.$this->id_instance_gc.' and (ST_Contains ( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) ))) AND ( '. $where .' )');
-			// 	$data=$d0;
-
-			// } else {
-
-			// 	$msg = true;
-			// 	$data = $surface[0]->count;
-			// }
-
-
-		} else if ($geom == 'LineString') {
-
-			//$nbreL = DB::select( 'select count(*) from (select A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_roads as A ,instances_gc as B where (B.id = '.$this->id_instance_gc.' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geom,4326) ))) AND ( '. $where .' )  ) src' );
-
-			$distance = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A ,instances_gc as B where  (B.id = ' . $this->id_instance_gc . ' and (ST_Intersects ( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
-
-			$nbreL = $distance[0]->nbre_pt;
-
-			$sql = 'select A.osm_id,A.highway,A.bridge,A.name,A.oneway,A.junction,A.amenity,hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,instances_gc as B where (B.id = ' . $this->id_instance_gc . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geom,4326) ))) AND ( ' . $where . ' ) ';
-
-			$msg = true;
-			$data = $distance[0]->count;
-
-			// if ($nbreL < 20000) {
-
-			// 	$d0=DB::select('select A.osm_id,A.highway,A.bridge,A.name,A.oneway,A.junction,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_line as A ,instances_gc as B where (B.id = '.$this->id_instance_gc.' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geom,4326) ))) AND ( '. $where .' ) ');
-			// 	$data=$d0;
-
-			// } else {
-			// 	$msg = true;
-			// 	$data = $distance[0]->count;
-			// }
-
-		}
-
-		if ($msg || $file_name[0]->type_couche == 'wms') {
-
-			$surface_totale = null;
-			$distance_totale = null;
-
-			if ($geom == 'Polygon') {
-				$surface_totale = $surface[0]->surface;
-				$reponse['surface'] = $surface_totale;
-			} else if ($geom == 'LineString') {
-				$distance_totale = $distance[0]->distance;
-				$reponse['distance'] = $distance_totale;
-			}
-
-
-			if (!is_numeric($data)) {
-				$data = sizeof($data);
-			}
+			$reponse['number'] = $responseSql['number'];
+			$reponse['sql'] = $responseSql['sql'];
+			$reponse['nom_cat'] = $responseSql['nom_cat'];
+			$reponse['surface'] =$responseSql['surface'];
+			$reponse['distance'] = $responseSql['distance'];
 
 			$querry = DB::table('categorie')
 				->where('id_cat', $id_cat)
-				->update(['sql' => $sql, 'file_json' => null, 'status' => false, 'number' => $data, 'surface' => $surface_totale, 'distance' => $distance_totale]);
+				->update(['sql' => $reponse['sql'], 'file_json' => null, 'status' => false, 'number' => $reponse['number'], 'surface' => $reponse['surface'], 'distance' => $reponse['distance']]);
 
 			$reponse['status'] = 'ok';
-			$reponse['number'] = $data;
 			$reponse['statut'] = false;
-			return $reponse;
-		} else {
-
-			$surface_totale = null;
-			$distance_totale = null;
-
-			if ($geom == 'Polygon') {
-				$surface_totale = $surface[0]->surface;
-				$reponse['surface'] = $surface_totale;
-			} else if ($geom == 'LineString') {
-				$distance_totale = $distance[0]->distance;
-				$reponse['distance'] = $distance_totale;
-			}
-
-			$r = json_encode($data);
-			$file = strtolower(str_replace(" ", "_", $file_name[0]->nom_cat)) . '.json';
-			$destinationPath = public_path() . "/upload/json/";
-
-			if (!is_dir($destinationPath)) {
-				mkdir($destinationPath, 0777, true);
-			}
-
-			File::put($destinationPath . $file, $r);
-
-			$querry = DB::table('categorie')
-				->where('id_cat', $id_cat)
-				->update(['sql' => null, 'file_json' => $file, 'status' => true, 'number' => sizeof($data), 'surface' => $surface_totale, 'distance' => $distance_totale]);
-
-			$reponse['status'] = 'ok';
-			$reponse['number'] = sizeof($data);
-			$reponse['statut'] = true;
-			$reponse['file_json'] = $file;
 			return $reponse;
 		}
 	}
@@ -1294,16 +1118,11 @@ class thematiqueController extends Controller
 	 * @param string $lim_adm nom de la table
 	 * @param int $id_lim_adm id dans la table
 	 */
-	public function genrateSqlForLayer(int $id_cat,string $lim_adm,string $id_lim_adm)
+	public function genrateSqlForLayer(int $id_cat, string $lim_adm, string $id_lim_adm,string $geomColum)
 	{
-		// $id_cat = $Requests->input('id_cat', null);
-
-		// $lim_adm = $Requests->input('lim_adm', null);
-
-		// $id_lim_adm = $Requests->input('id_lim_adm', null);
 
 		try {
-			DB::select("ALTER TABLE ".$lim_adm." DROP amenity;");
+			DB::select("ALTER TABLE " . $lim_adm . " DROP amenity;");
 		} catch (\Throwable $th) {
 			//throw $th;
 		}
@@ -1367,87 +1186,49 @@ class thematiqueController extends Controller
 		$msg = false;
 		$sql = '';
 		if ($geom == 'point') {
-			$nbrePt = DB::select('select count(*) from (select A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_point  as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geometry,4326) )) AND ( ' . $where . ' )  ) src');
+			$nbrePt = DB::select('select count(*) from (select A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_point  as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.'.$geomColum.',4326) )) AND ( ' . $where . ' )  ) src');
 
 
-			$nbrePl = DB::select('select count(*) from (select A.name,hstore_to_json(A.tags),ST_AsGeoJSON(ST_Centroid(ST_TRANSFORM(A.way,4326))) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.geometry,4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' )  ) src');
+			$nbrePl = DB::select('select count(*) from (select A.name,hstore_to_json(A.tags),ST_AsGeoJSON(ST_Centroid(ST_TRANSFORM(A.way,4326))) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.'.$geomColum.',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' )  ) src');
 
-			$sql = 'select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm. ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geometry,4326) ))) AND ( ' . $where . ' )' . ';' . 'select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' ) ';
+			$sql = 'select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.'.$geomColum.',4326) ))) AND ( ' . $where . ' )' . ';' . 'select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.'.$geomColum.',4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' ) ';
 
 			$msg = true;
 			$data = $nbrePt[0]->count + $nbrePl[0]->count;
-
-
-
-
 		} else if ($geom == 'Polygon') {
 
-			// $nbrePl = DB::select( 'select count(*) from (select A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON( ST_TRANSFORM(A.way,4326) ) as geometry from planet_osm_polygon as A ,instances_gc as B where (B.id = '.$this->id_instance_gc.' and ST_Contains ( ST_TRANSFORM(B.geometry,4326), ST_TRANSFORM(A.way,4326) )) AND ( '. $where .' )  ) src' );
+			$surface = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.geom::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
 
-			$surface = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(B.geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
-
-			// $nbrePl = $surface[0]->nbre_pt;
-
-			$sql = 'select A.osm_id,A.name,A.amenity, A.hstore_to_json(A.tags), ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(B.geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )';
+			$sql = 'select A.osm_id,A.name,A.amenity, A.hstore_to_json(A.tags), ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.geom::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )';
 
 			$msg = true;
 			$data = $surface[0]->count;
-
-			// if ($nbrePl < 20000) {
-
-			// 	$d0=DB::select('select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON( ST_TRANSFORM(A.way,4326) ) as geometry from planet_osm_polygon  as A ,instances_gc as B where  (B.id = '.$this->id_instance_gc.' and (ST_Contains ( ST_TRANSFORM(B.geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( '. $where .' )');
-			// 	$data=$d0;
-
-			// } else {
-
-			// 	$msg = true;
-			// 	$data = $surface[0]->count;
-			// }
-
-
 		} else if ($geom == 'LineString') {
 
-			//$nbreL = DB::select( 'select count(*) from (select A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_roads as A ,instances_gc as B where (B.id = '.$this->id_instance_gc.' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geometry,4326) ))) AND ( '. $where .' )  ) src' );
+			$distance = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Intersects ( ST_TRANSFORM(B.'.$geomColum.',4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
 
-			$distance = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm. ' and (ST_Intersects ( ST_TRANSFORM(B.geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
-
-			// $nbreL = $distance[0]->nbre_pt;
-
-			$sql = 'select A.osm_id,A.highway,A.bridge,A.name,A.oneway,A.junction,A.amenity, A.hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geometry,4326) ))) AND ( ' . $where . ' ) ';
+			$sql = 'select A.osm_id,A.highway,A.bridge,A.name,A.oneway,A.junction,A.amenity, A.hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.'.$geomColum.',4326) ))) AND ( ' . $where . ' ) ';
 
 			$msg = true;
 			$data = $distance[0]->count;
-
-			// if ($nbreL < 20000) {
-
-			// 	$d0=DB::select('select A.osm_id,A.highway,A.bridge,A.name,A.oneway,A.junction,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_line as A ,instances_gc as B where (B.id = '.$this->id_instance_gc.' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geometry,4326) ))) AND ( '. $where .' ) ');
-			// 	$data=$d0;
-
-			// } else {
-			// 	$msg = true;
-			// 	$data = $distance[0]->count;
-			// }
-
 		}
 
 		if ($msg || $file_name[0]->type_couche == 'wms') {
 
-			// $surface_totale = null;
-			// $distance_totale = null;
-
-			// if ($geom == 'Polygon') {
-			// 	$surface_totale = $surface[0]->surface;
-			// 	$reponse['surface'] = $surface_totale;
-			// } else if ($geom == 'LineString') {
-			// 	$distance_totale = $distance[0]->distance;
-			// 	$reponse['distance'] = $distance_totale;
-			// }
-
+			$reponse['surface'] = null;
+			$reponse['distance'] = null;
+			if ($geom == 'Polygon') {
+				$surface_totale = $surface[0]->surface;
+				$reponse['surface'] = $surface_totale;
+			} else if ($geom == 'LineString') {
+				$distance_totale = $distance[0]->distance;
+				$reponse['distance'] = $distance_totale;
+			}
 
 			if (!is_numeric($data)) {
 				$data = sizeof($data);
 			}
-			
+
 			$reponse['status'] = 'ok';
 			$reponse['number'] = $data;
 			$reponse['sql'] = $sql;
@@ -1457,206 +1238,40 @@ class thematiqueController extends Controller
 		}
 	}
 
+	/**
+	 * Mettre à jour toutes les catégories des couches provenant d'osm avec (nombres d'enttités, distance, surface) en bd + stocker la requete sql
+	 * cette requete sql qui sera utilisé par ogr2ogr
+	 */
 	public function genrateAutomaticJsonFileByCat()
 	{
-		$getOperateur = function ($keyO) {
-
-			if ($keyO == 0) {
-				$operateur = '=';
-			} else if ($keyO == 1) {
-				$operateur = '!=';
-			} else if ($keyO == 2) {
-				$operateur = 'is not null';
-			} else if ($keyO == 3) {
-				$operateur = 'is null';
-			}
-
-			return $operateur;
-		};
-
+		
 		$categories = DB::table("categorie")->select("id_cat", "nom_cat", "type_couche")->get();
 
 		foreach ($categories as $categorie) {
 
-			$where = '';
-
 			$id_cat = $categorie->id_cat;
-
-			$file_name = $categorie->nom_cat;
-
-			$type_couche = $categorie->type_couche;
 
 			$key_val_osm = DB::table("sous_categorie")->select("action", "type_geom", "nom", "operateur", "condition")
 				->where("id_cat", "=", $id_cat)->get();
 
 			if (sizeof($key_val_osm) > 0) {
+				$responseSql = $this->genrateSqlForLayer($id_cat, 'instances_gc', $this->id_instance_gc,'geom');
+				if ($responseSql['status'] == 'ok') {
 
-				$geom = $key_val_osm[0]->type_geom;
-
-				foreach ($key_val_osm as $key) {
-
-					if (sizeof($key_val_osm) > 1) {
-
-						if ($key->operateur != 2 && $key->operateur != 3) {
-
-							if ($where == '') {
-								$where = $key->action . ' ' . $getOperateur($key->operateur) . " '" . $key->nom . "'";
-							} else {
-								$where = $where . ' ' . $key->condition . ' ' . $key->action . ' ' . $getOperateur($key->operateur) . " '" . $key->nom . "'";
-							}
-						} else {
-
-							if ($where == '') {
-								$where = $key->action . ' ' . $getOperateur($key->operateur);
-							} else {
-								$where = $where . ' ' . $key->condition . ' ' . $key->action . ' ' . $getOperateur($key->operateur);
-							}
-						}
-					} else {
-
-						if ($key->operateur != 2 && $key->operateur != 3) {
-
-							$where = $key->action . ' ' . $getOperateur($key->operateur) . " '" . $key->nom . "'";
-						} else {
-
-							$where = $key->action . ' ' . $getOperateur($key->operateur);
-						}
-					}                               	# code...
-				}
-
-				$msg = false;
-				$sql = '';
-				if ($geom == 'point') {
-					$nbrePt = DB::select('select count(*) from (select A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_point  as A ,instances_gc as B where B.id = ' . $this->id_instance_gc . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geom,4326) )) AND ( ' . $where . ' )  ) src');
-
-
-					$nbrePl = DB::select('select count(*) from (select A.name,hstore_to_json(A.tags),ST_AsGeoJSON(ST_Centroid(ST_TRANSFORM(A.way,4326))) as geometry from planet_osm_polygon as A ,instances_gc as B where B.id = ' . $this->id_instance_gc . ' and (ST_Contains( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' )  ) src');
-
-					$sql = 'select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,instances_gc as B where (B.id = ' . $this->id_instance_gc . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geom,4326) ))) AND ( ' . $where . ' )' . ';' . 'select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,instances_gc as B where (B.id = ' . $this->id_instance_gc . ' and (ST_Contains( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' ) ';
-
-					$msg = true;
-					$data = $nbrePt[0]->count + $nbrePl[0]->count;
-
-					// if ( ($nbrePt[0]->count + $nbrePl[0]->count) < 20000 ) {
-
-					// 	$d0=DB::select('select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_point as A ,instances_gc as B where (B.id = '.$this->id_instance_gc.' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geom,4326) ))) AND ( '. $where .' ) '  );
-
-
-
-					// 	$d1=DB::select('select A.osm_id,A.name,hstore_to_json(A.tags),ST_AsGeoJSON(ST_Centroid(ST_TRANSFORM(A.way,4326))) as geometry from planet_osm_polygon as A ,instances_gc as B where (B.id = '.$this->id_instance_gc.' and (ST_Contains( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) ))) AND ( '. $where .' ) '  );
-
-					// 	$r0=json_encode(array_merge( json_decode(json_encode($d0), true),json_decode(json_encode($d1), true)));
-					// 	$data=json_decode($r0);
-
-					// }else{
-					// 	$msg = true;
-					// 	$data = $nbrePt[0]->count + $nbrePl[0]->count;
-					// 	//return $where;
-
-					// }
-
-
-				} else if ($geom == 'Polygon') {
-
-					//$nbrePl = DB::select( 'select count(*) from (select A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON( ST_TRANSFORM(A.way,4326) ) as geometry from planet_osm_polygon as A ,instances_gc as B where (B.id = '.$this->id_instance_gc.' and ST_Contains ( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) )) AND ( '. $where .' )  ) src' );
-
-					$surface = DB::select('select count(*) as count,sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A ,instances_gc as B where  (B.id = ' . $this->id_instance_gc . ' and (ST_Contains ( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
-
-					$nbrePl = $surface[0]->nbre_pt;
-
-					$sql = 'select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags), ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A ,instances_gc as B where  (B.id = ' . $this->id_instance_gc . ' and (ST_Contains ( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )';
-
-					$msg = true;
-					$data = $surface[0]->count;
-
-					// if ($nbrePl < 20000) {
-
-					// 	$d0=DB::select('select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON( ST_TRANSFORM(A.way,4326) ) as geometry from planet_osm_polygon  as A ,instances_gc as B where  (B.id = '.$this->id_instance_gc.' and (ST_Contains ( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) ))) AND ( '. $where .' )');
-					// 	$data=$d0;
-
-					// } else {
-
-					// 	$msg = true;
-					// 	$data = $surface[0]->count;
-					// }
-
-
-				} else if ($geom == 'LineString') {
-
-					//$nbreL = DB::select( 'select count(*) from (select A.name,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_roads as A ,instances_gc as B where (B.id = '.$this->id_instance_gc.' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geom,4326) ))) AND ( '. $where .' )  ) src' );
-
-					$distance = DB::select('select count(*) as count,sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A ,instances_gc as B where  (B.id = ' . $this->id_instance_gc . ' and (ST_Intersects ( ST_TRANSFORM(B.geom,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
-
-					$nbreL = $distance[0]->nbre_pt;
-
-					$sql = 'select A.osm_id,A.highway,A.bridge,A.name,A.oneway,A.junction,A.amenity,hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,instances_gc as B where (B.id = ' . $this->id_instance_gc . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geom,4326) ))) AND ( ' . $where . ' ) ';
-
-					$msg = true;
-					$data = $distance[0]->count;
-
-					// if ($nbreL < 20000) {
-
-					// 	$d0=DB::select('select A.osm_id,A.highway,A.bridge,A.name,A.oneway,A.junction,A.amenity,hstore_to_json(A.tags),ST_AsGeoJSON(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_line as A ,instances_gc as B where (B.id = '.$this->id_instance_gc.' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.geom,4326) ))) AND ( '. $where .' ) ');
-					// 	$data=$d0;
-
-					// } else {
-					// 	$msg = true;
-					// 	$data = $distance[0]->count;
-					// }
-
-				}
-
-				if ($msg || $type_couche == 'wms') {
-
-					$surface_totale = null;
-					$distance_totale = null;
-
-					if (!is_numeric($data)) {
-						$data = sizeof($data);
-					}
-
-					if ($geom == 'Polygon') {
-						$surface_totale = $surface[0]->surface;
-						$reponse['surface'] = $surface_totale;
-					} else if ($geom == 'LineString') {
-						$distance_totale = $distance[0]->distance;
-						$reponse['distance'] = $distance_totale;
-					}
+					$reponse['number'] = $responseSql['number'];
+					$reponse['sql'] = $responseSql['sql'];
+					$reponse['nom_cat'] = $responseSql['nom_cat'];
+					$reponse['surface'] =$responseSql['surface'];
+					$reponse['distance'] = $responseSql['distance'];
 
 					$querry = DB::table('categorie')
 						->where('id_cat', $id_cat)
-						->update(['sql' => $sql, 'file_json' => null, 'status' => false, 'number' => $data, 'surface' => $surface_totale, 'distance' => $distance_totale]);
-				} else {
-
-					$surface_totale = null;
-					$distance_totale = null;
-
-
-
-					if ($geom == 'Polygon') {
-						$surface_totale = $surface[0]->surface;
-						$reponse['surface'] = $surface_totale;
-					} else if ($geom == 'LineString') {
-						$distance_totale = $distance[0]->distance;
-						$reponse['distance'] = $distance_totale;
-					}
-
-					$r = json_encode($data);
-					$file = strtolower(str_replace(" ", "_", $file_name)) . '.json';
-					$destinationPath = public_path() . "/upload/json/";
-
-					if (!is_dir($destinationPath)) {
-						mkdir($destinationPath, 0777, true);
-					}
-
-					File::put($destinationPath . $file, $r);
-
-					$querry = DB::table('categorie')
-						->where('id_cat', $id_cat)
-						->update(['sql' => null, 'file_json' => $file, 'status' => true, 'number' => sizeof($data), 'surface' => $surface_totale, 'distance' => $distance_totale]);
-
-					//var_dump($querry);
+						->update(['sql' => $reponse['sql'], 'file_json' => null, 'status' => false, 'number' => $reponse['number'], 'surface' => $reponse['surface'], 'distance' => $reponse['distance']]);
+					
+					$reponse['status'] = 'ok';
+					$reponse['statut'] = false;
 				}
+				
 			}
 		}
 
