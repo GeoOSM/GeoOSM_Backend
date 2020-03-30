@@ -1093,7 +1093,7 @@ class thematiqueController extends Controller
 	public function genrateJsonFileByCat(Request $Requests)
 	{
 		$id_cat = $Requests->input('id_cat', null);
-		$responseSql = $this->genrateSqlForLayer($id_cat, 'instances_gc', 1);
+		$responseSql = $this->genrateSqlForLayer($id_cat, 'instances_gc', 1,'geom');
 		if ($responseSql['status'] == 'ok') {
 
 			$reponse['number'] = $responseSql['number'];
@@ -1197,17 +1197,32 @@ class thematiqueController extends Controller
 			$data = $nbrePt[0]->count + $nbrePl[0]->count;
 		} else if ($geom == 'Polygon') {
 
+			/**
+			 *  gros pays avec de faible ressources, on annule l'intersection geographique
+			 * $surface = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where" );
+			 *  $sql = "select A.osm_id,A.name,A.amenity, hstore_to_json(A.tags), ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where" ;
+			 *  
+			*/
+
 			$surface = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.geom::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
 
-			$sql = 'select A.osm_id,A.name,A.amenity, A.hstore_to_json(A.tags), ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.geom::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )';
+			$sql = 'select A.osm_id,A.name,A.amenity, hstore_to_json(A.tags), ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.geom::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )';
 
 			$msg = true;
 			$data = $surface[0]->count;
 		} else if ($geom == 'LineString') {
 
+			/**
+			 *  gros pays avec de faible ressources, on annule l'intersection geographique
+			 * 
+			 * $distance = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where" );
+			 *	$sql = "select A.osm_id,A.highway,A.bridge,A.name,A.oneway,A.junction,A.amenity, hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,  $lim_adm  as B where B.id =  $id_lim_adm  AND  $where" ;
+			 *  
+			*/
+
 			$distance = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Intersects ( ST_TRANSFORM(B.'.$geomColum.',4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
 
-			$sql = 'select A.osm_id,A.highway,A.bridge,A.name,A.oneway,A.junction,A.amenity, A.hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.'.$geomColum.',4326) ))) AND ( ' . $where . ' ) ';
+			$sql = 'select A.osm_id,A.highway,A.bridge,A.name,A.oneway,A.junction,A.amenity, hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.'.$geomColum.',4326) ))) AND ( ' . $where . ' ) ';
 
 			$msg = true;
 			$data = $distance[0]->count;
