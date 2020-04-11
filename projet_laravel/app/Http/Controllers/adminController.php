@@ -95,7 +95,7 @@ class AdminController extends Controller
 
                          $data[$i]["sous_thematiques"][$k]["couches"][$idcouche]['cles_vals_osm'] = array();
 
-                        $id_cat=DB::table("categorie")->select("id_cat","key_couche","sous_thematiques","status","number","file_json","surface","distance")
+                        $id_cat=DB::table("categorie")->select("id_cat","key_couche","nom_cat","sous_thematiques","status","number","file_json","surface","distance")
                                                ->where("sous_thematiques","=",true)->where("key_couche","=",$keycouchethemetique->id)->get();
                                                
                          $sous_categorie = false;                 
@@ -115,6 +115,12 @@ class AdminController extends Controller
                             $data[$i]["sous_thematiques"][$k]["couches"][$idcouche]['distance_totale'] =$id_cat[0]->distance;
                             $data[$i]["sous_thematiques"][$k]["couches"][$idcouche]['id_cat'] =$id_cat[0]->id_cat;
                             $data[$i]["sous_thematiques"][$k]["couches"][$idcouche]['file_json'] =$id_cat[0]->file_json;
+                            $data[$i]["sous_thematiques"][$k]["couches"][$idcouche]['params_files'] =[
+                                "nom_cat"=>$id_cat[0]->nom_cat,
+                                "sous_thematiques"=>$id_cat[0]->sous_thematiques,
+                                "key_couche"=>$id_cat[0]->key_couche,
+                                "id_cat"=>$id_cat[0]->id_cat,
+                            ];
                         }
                     }
                   
@@ -178,7 +184,7 @@ class AdminController extends Controller
 
                    if ($keycouchethematique->type_couche == 'requete' || $keycouchethematique->wms_type == 'osm') {
                         $data[$i]["couches"][$idcouche]['cles_vals_osm'] = array();
-                        $id_cat=DB::table("categorie")->select("id_cat","key_couche","sous_thematiques","status","number","file_json","surface","distance")
+                        $id_cat=DB::table("categorie")->select("id_cat","key_couche","nom_cat","sous_thematiques","status","number","file_json","surface","distance")
                                                ->where("sous_thematiques","=",false)->where("key_couche","=",$keycouchethematique->id)->get();
                           $sous_categorie = false;                          
                         if ($id_cat) {
@@ -197,6 +203,12 @@ class AdminController extends Controller
                              $data[$i]["couches"][$idcouche]['distance_totale'] =$id_cat[0]->distance;
                              $data[$i]["couches"][$idcouche]['id_cat'] =$id_cat[0]->id_cat;
                              $data[$i]["couches"][$idcouche]['file_json'] =$id_cat[0]->file_json;
+                             $data[$i]["couches"][$idcouche]['params_files'] =[
+                                 "nom_cat"=>$id_cat[0]->nom_cat,
+                                 "sous_thematiques"=>$id_cat[0]->sous_thematiques,
+                                 "key_couche"=>$id_cat[0]->key_couche,
+                                 "id_cat"=>$id_cat[0]->id_cat,
+                             ];
                           }
                   
                     }
@@ -487,6 +499,9 @@ class AdminController extends Controller
         $querry = DB::select('create table '.$nom_table.' as '.$sql);
         DB::select("ALTER TABLE ".$nom_table." ADD COLUMN id serial");
         DB::select("ALTER TABLE ".$nom_table." ADD PRIMARY KEY (id)");
+
+        DB::select("DROP INDEX IF EXISTS ".$nom_table."_geometry_idx ");
+        DB::select("CREATE INDEX ".$nom_table."_geometry_idx ON $nom_table  USING GIST(geometry)");
         
         $id_limite = DB::table('limite_admin')->insertGetId(
             ['nom_table' => $nom_table,'nom' => $nom, 'sous_thematiques' => $sous_thematiques,'key_couche'=>$key_couche],'id_limite'
@@ -536,6 +551,7 @@ class AdminController extends Controller
         if (sizeof($nom_table)>0) {
             DB::select("DROP TABLE ".$nom_table[0]->nom_table);
             DB::table('limite_admin')->where("id_limite","=",$id_limite)->delete();
+            DB::select("DROP INDEX IF EXISTS ".$nom_table[0]->nom_table."_geometry_idx ");
         }
 
         DB::select('COMMIT;');

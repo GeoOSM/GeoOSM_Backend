@@ -23,7 +23,7 @@ class exportController extends Controller
 
         $all_sql = [];
         foreach ($querry as $one_querry) {
-            $sql = $thematiqueController->genrateSqlForLayer($one_querry['id_cat'], $lim_adm, $id_lim,'geometry');
+            $sql = $thematiqueController->genrateSqlForLayer($one_querry['id_cat'], $lim_adm, $id_lim,'geometry',true);
             array_push($all_sql, ['index'=>$one_querry['index'],'nom' => $one_querry['nom'],'number' => $sql['number'],'nom_file' => $this->sqlToFile( $sql['sql'],$one_querry['nom'])]);
         }
 
