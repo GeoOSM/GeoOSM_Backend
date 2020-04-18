@@ -152,7 +152,8 @@ Route::group(['prefix' => '/thematique'],function(){
 	Route::post('save_properties_couche_api/','thematiqueController@save_properties_couche_api');
 	
 	Route::post('save_properties_couche_osm/','thematiqueController@save_properties_couche_osm');
-
+	Route::post('save_properties_couche_sql_complete_osm/','thematiqueController@save_properties_couche_sql_complete_osm');
+	
 
 	Route::post('delete_cles_vals_osm/','thematiqueController@delete_cles_vals_osm');
 	

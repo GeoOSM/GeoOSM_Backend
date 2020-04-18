@@ -5978,6 +5978,37 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //function pour modifier les proprietes d'une couche osm
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    $scope.saveSqlCouche = function (couche,new_sql_complete) {
+        
+        if (new_sql_complete.length < 4) {
+            toogle_information('Aucune requète entrée !')
+        }else{
+            $('#spinner').show()
+
+            var donne = {}
+            donne.sous_thematiques = couche.sous_thematiques
+            donne.key_couche = couche.key_couche
+            donne.geom = couche.geom
+            donne.nom = couche.nom
+            donne.type_couche = couche.type_couche
+            donne.sql_complete = new_sql_complete 
+
+            myfactory.post_data('/thematique/save_properties_couche_sql_complete_osm/', JSON.stringify(donne)).then(
+                function (data) {
+                    if (data.status) {
+                        couche.categorie.sql_complete = new_sql_complete
+                        couche.categorie.mode_sql = true
+                        $scope.generateSqlByCat(data.id_cat,couche)
+                    }else{
+                        alert(data.message.errorInfo.join('-'))
+                        toogle_information('Impossible de terminer l opération')
+                        $('#spinner').hide()
+                    }
+                }
+            )
+        }
+        // couche.categorie.mode_sql
+    }
 
     $scope.nouvelles_cles_vals_osm = []
 
@@ -6024,7 +6055,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             myfactory.post_data('/thematique/save_properties_couche_osm/', JSON.stringify(donne)).then(
                 function (data) {
-                    if (requete_reussi(data)) {
+                    if (data.status) {
 
                         for (var i = $scope.nouvelles_cles_vals_osm.length - 1; i >= 0; i--) {
                             $scope.nouvelles_cles_vals_osm[i].id = data.data[i]
@@ -6044,67 +6075,12 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                         console.log(couche.cles_vals_osm[0])
                         $scope.nouvelles_cles_vals_osm = []
 
-                        myfactory.post_data('/thematique/genrateJsonFileByCat/', JSON.stringify({ 'id_cat': couche.cles_vals_osm[0].id_cat })).then(
-                            function (data) {
-                                if (requete_reussi(data)) {
-                                    couche.number = data.number
-                                    couche.status = data.statut
-                                    couche.file_json = data.file_json
-
-                                    if (couche.geom == "Polygon") {
-                                        couche.surface_totale = data.surface
-                                    } else if (couche.geom == "LineString") {
-                                        couche.distance_totale = data.distance
-                                    }
-                                    console.log(couche)
-
-                                    if (couche.wms_type == 'osm') {
-                                        if (couche.identifiant) {
-                                            var addToWms = 'false'
-                                        } else {
-                                            var addToWms = 'true'
-                                        }
-                                        myfactory.get_data($scope.urlNodejs_backend + '/generateShapeFromOsmBuilder/' + $scope.projet_qgis_server + '/' + couche.cles_vals_osm[0].id_cat + '/' + addToWms).then(
-                                            function (data) {
-                                                console.log(data)
-                                                if (requete_reussi(data)) {
-
-                                                    if (!couche.identifiant) {
-                                                        couche.identifiant = data.identifiant
-                                                        couche.url = data.projet_qgis
-                                                    }
-
-                                                    toogle_information('la couche a bien ete modifiee')
-                                                    $('#spinner').hide()
-                                                    // myfactory.get_data($scope.urlNodejs_backend+"/generateLegend/"+$scope.projet_qgis_server).then(function (resp) {
-
-                                                    //  })
-                                                } else {
-                                                    toogle_information('un problème est survenu, contacter administrateur')
-                                                    $('#spinner').hide()
-                                                }
-                                            }, function (err) {
-                                                alert('un problème est survenu, contacter administrateur')
-                                                $('#spinner').hide()
-                                            }
-                                        )
-                                    } else {
-                                        toogle_information('la couche a bien ete modifiee')
-                                        $('#spinner').hide()
-                                    }
-
-
-                                } else {
-                                    alert('Verifier votre requete, et supprimer vos modifications avant de quitter svp ')
-                                    $('#spinner').hide()
-                                }
-
-                            }, function (err) {
-                                alert('Verifier votre requete, et supprimer vos modifications avant de quitter svp ')
-                                $('#spinner').hide()
-
-                            }
-                        )
+                        $scope.generateSqlByCat(couche.cles_vals_osm[0].id_cat,couche)
+                        
+                    }else{
+                        alert(data.message.errorInfo.join('-'))
+                        toogle_information('Impossible de terminer l opération')
+                        $('#spinner').hide()
                     }
 
                 },
@@ -6116,6 +6092,70 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
         }
 
+    }
+
+    $scope.generateSqlByCat = function(id_cat,couche){ 
+        myfactory.post_data('/thematique/genrateJsonFileByCat/', JSON.stringify({ 'id_cat': id_cat })).then(
+            function (data) {
+                if (requete_reussi(data)) {
+                    couche.number = data.number
+                    couche.status = data.statut
+                    couche.file_json = data.file_json
+
+                    if (couche.geom == "Polygon") {
+                        couche.surface_totale = data.surface
+                    } else if (couche.geom == "LineString") {
+                        couche.distance_totale = data.distance
+                    }
+                    console.log(couche)
+
+                    if (couche.wms_type == 'osm') {
+                        if (couche.identifiant) {
+                            var addToWms = 'false'
+                        } else {
+                            var addToWms = 'true'
+                        }
+                        myfactory.get_data($scope.urlNodejs_backend + '/generateShapeFromOsmBuilder/' + $scope.projet_qgis_server + '/' + id_cat + '/' + addToWms).then(
+                            function (data) {
+                                console.log(data)
+                                if (requete_reussi(data)) {
+
+                                    if (!couche.identifiant) {
+                                        couche.identifiant = data.identifiant
+                                        couche.url = data.projet_qgis
+                                    }
+
+                                    toogle_information('la couche a bien ete modifiee')
+                                    $('#spinner').hide()
+                                    // myfactory.get_data($scope.urlNodejs_backend+"/generateLegend/"+$scope.projet_qgis_server).then(function (resp) {
+
+                                    //  })
+                                } else {
+                                    toogle_information('un problème est survenu, contacter administrateur')
+                                    $('#spinner').hide()
+                                }
+                            }, function (err) {
+                                alert('un problème est survenu, contacter administrateur')
+                                $('#spinner').hide()
+                            }
+                        )
+                    } else {
+                        toogle_information('la couche a bien ete modifiee')
+                        $('#spinner').hide()
+                    }
+
+
+                } else {
+                    alert('Verifier votre requete, et supprimer vos modifications avant de quitter svp ')
+                    $('#spinner').hide()
+                }
+
+            }, function (err) {
+                alert('Verifier votre requete, et supprimer vos modifications avant de quitter svp ')
+                $('#spinner').hide()
+
+            }
+        )
     }
 
     $scope.delete_cles_vals_osm = function (cle_val_osm, couche) {
