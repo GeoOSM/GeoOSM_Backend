@@ -490,7 +490,7 @@
                             <select name="Actions" ng-model="submitSelectedItem"
                                 ng-change="submitActions(submitSelectedItem,sous_thematique_couche)">
                                 <option value=""></option>
-                                <option ng-if="displayTestMap(sous_thematique_couche)" sous_thematique_couche.categorie.mode_sql
+                                <option ng-if="displayTestMap(sous_thematique_couche)" 
                                     ng-click="testCarte(sous_thematique_couche)" value="tester">Tester</option>
                                 <option
                                     ng-if="displayTestMap(sous_thematique_couche) && sous_thematique_couche.geom=='point'"
