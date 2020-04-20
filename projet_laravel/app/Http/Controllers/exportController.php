@@ -41,8 +41,9 @@ class exportController extends Controller
         }
 
         if( sizeof( explode(";", $sql)) > 1 ){
-            $ogr_cmd = system('ogr2ogr -f "GPKG" "' . $file_path . '" PG:"host='.env("DB_HOST").' port='.env("DB_PORT").' user='.env("DB_USERNAME").' dbname='.env("DB_DATABASE").' password='.env("DB_PASSWORD").'" ' . ' -sql "' . explode(";", $sql)[0].'"');
-            $ogr_cmd = system('ogr2ogr -append -f "GPKG" "' . $file_path . '" PG:"host='.env("DB_HOST").' port='.env("DB_PORT").' user='.env("DB_USERNAME").' dbname='.env("DB_DATABASE").' password='.env("DB_PASSWORD").'" ' . ' -sql "' . explode(";", $sql)[1].'"');
+            $requete =  explode(";", $sql)[0]." union all ". explode(";", $sql)[1];
+            $ogr_cmd = system('ogr2ogr -f "GPKG" "' . $file_path . '" PG:"host='.env("DB_HOST").' port='.env("DB_PORT").' user='.env("DB_USERNAME").' dbname='.env("DB_DATABASE").' password='.env("DB_PASSWORD").'" ' . ' -sql "' . $requete.'"');
+            // $ogr_cmd = system('ogr2ogr -append -f "GPKG" "' . $file_path . '" PG:"host='.env("DB_HOST").' port='.env("DB_PORT").' user='.env("DB_USERNAME").' dbname='.env("DB_DATABASE").' password='.env("DB_PASSWORD").'" ' . ' -sql "' . explode(";", $sql)[1].'"');
             
         }else{
             $ogr_cmd = system('ogr2ogr -f "GPKG" "' . $file_path . '" PG:"host='.env("DB_HOST").' port='.env("DB_PORT").' user='.env("DB_USERNAME").' dbname='.env("DB_DATABASE").' password='.env("DB_PASSWORD").'" ' . ' -sql "' . $sql.'"');
