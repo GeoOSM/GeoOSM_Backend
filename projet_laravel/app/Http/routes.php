@@ -201,8 +201,9 @@ Route::post("upload/file", "FilesController@upload");
 
 Route::post("uploads/file", "FilesController@uploads");
  
+Route::get('/geoportail/getCatalogue', 'adminController@DataCatalog');
+// Route::get('/geoportail/getCatalogue', 'geoportailController@getCatalogue');
 
-Route::get('/geoportail/getCatalogue', 'geoportailController@getCatalogue');
 Route::post('/geoportail/saveDraw', 'geoportailController@saveDraw');
 Route::post('/geoportail/getDraw', 'geoportailController@getDraw');
 Route::post('/geoportail/drapeline', 'geoportailController@drapeline');

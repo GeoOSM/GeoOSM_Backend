@@ -230,6 +230,7 @@ class AdminController extends Controller
             }
 
             $r = json_encode($data);
+            return $data;
             $file = 'catalogue.json';
             $destinationPath=public_path()."/upload/";
 
