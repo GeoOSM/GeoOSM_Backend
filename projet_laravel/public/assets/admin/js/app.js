@@ -2439,7 +2439,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     var extension = couches.couches[i].fileImg.name.split('.')[couches.couches[i].fileImg.name.split('.').length - 1]
                     formData.append('image_file' + i, couches.couches[i].fileImg);
 
-                    couches.couches[i].nom_img_modife = 'assets/admin/' + space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                    couches.couches[i].nom_img_modife = 'assets/images/icones-couches/' + space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
                     couches.couches[i].fileImg.nom = space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
                     couches.couches[i].fileImg.appendId = 'image_file' + i
                     nombre_images.push(couches.couches[i].fileImg)
@@ -2448,7 +2448,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     var extension = couches.couches[i].fileImg.name.split('.')[couches.couches[i].fileImg.name.split('.').length - 1]
                     formData.append('image_file' + i, couches.couches[i].fileImg);
 
-                    couches.couches[i].nom_img_modife = 'assets/admin/' + space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                    couches.couches[i].nom_img_modife = 'assets/images/icones-couches/' + space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
                     couches.couches[i].fileImg.nom = space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
                     couches.couches[i].fileImg.appendId = 'image_file' + i
                     nombre_images.push(couches.couches[i].fileImg)
@@ -2488,8 +2488,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             }
             formData.append('nombre_images', JSON.stringify(nombre_images));
-            formData.append('path', '/../../../public/assets/admin/');
-            formData.append('pathBd', 'assets/admin/');
+            formData.append('path', '/../../../public/assets/images/icones-couches/');
+            formData.append('pathBd', 'assets/images/icones-couches/');
             formData.append('largeur', 160);
             formData.append('lomguer', 160);
             var request = {
