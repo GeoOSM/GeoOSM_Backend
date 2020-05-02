@@ -93,17 +93,17 @@
                     </div>
                     <div class="clash-card__unit-stats clash-card__unit-stats--barbarian clearfix back_white pointer" ng-if="utilisateur.statut == 'utilisateur'" style="border-radius:0px">
                         
-                         <div class="one-third border_black" ng-click="function_utilisateur(utilisateur.id,'droit')" >
+                         <div class="one-third border_black" style="display: none !important;" ng-click="function_utilisateur(utilisateur.id,'droit')" >
                             <!-- fa-flash -->
                             <i class="fa fa-flash red " style="font-size:xx-large;margin:0 auto;"></i>
                             <div class="stat-value black">Droits</div>
                         </div>
 
-                        <div class="one-third border_black" ng-click="function_utilisateur(utilisateur.id,'modification')">
+                        <div class="one-third border_black" style="display: none !important;" ng-click="function_utilisateur(utilisateur.id,'modification')">
                             <i class="fa fa-pencil red " style="font-size:xx-large;margin:0 auto;"></i>
                             <div class="stat-value black">Modifier</div>
                         </div>
-                        <div class="one-third no-border " type="button"  ng-click="toogle_confirmation('utilisateur',utilisateur)">
+                        <div class="one-third no-border " type="button" style="width: 100%;"  ng-click="toogle_confirmation('utilisateur',utilisateur)">
                             <i class="fa fa-trash-o red" style="font-size:xx-large;margin:0 auto;"></i>
                             <div class="stat-value black">Supprimer</div>
                         </div>
@@ -112,11 +112,11 @@
                     <div class="clash-card__unit-stats clash-card__unit-stats--barbarian clearfix back_white pointer" style="border-radius:0px" ng-if="utilisateur.statut == 'administrateur'">
                         
 
-                        <div class="one-third border_black" ng-click="function_utilisateur(utilisateur.id,'modification')" style="width: 50%">
+                        <div class="one-third border_black" ng-click="function_utilisateur(utilisateur.id,'modification')" style="display: none !important;width: 50%">
                             <i class="fa fa-pencil red " style="font-size:xx-large;margin:0 auto;"></i>
                             <div class="stat-value black">Modifier</div>
                         </div>
-                        <div class="one-third no-border " type="button"  ng-click="toogle_confirmation('utilisateur',utilisateur)" style="width: 50%">
+                        <div class="one-third no-border " type="button"  ng-click="toogle_confirmation('utilisateur',utilisateur)" style="width: 100%">
                             <i class="fa fa-trash-o red" style="font-size:xx-large;margin:0 auto;"></i>
                             <div class="stat-value black">Supprimer</div>
                         </div>
