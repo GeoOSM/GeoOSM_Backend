@@ -420,21 +420,33 @@
                                     <input type="file" ng-files="setTheFiles($files,sous_thematique_couche)"
                                         id="img_modifier_couche" style="display: none;" accept="image/*">
 
-                                    <div class="col-md-12 text-center" style="margin-top:15px"
+                                    <!-- <div class="col-md-12 text-center" style="margin-top:15px"
                                         ng-if='sous_thematique_couche.geom!="point"'>
                                         <button class="btn btn-primary col-md-4 col-md-offset-2"
                                             style="margin-right: 20px"
                                             ng-click="file('img_modifier_couche',sous_thematique_couche,'img_temp')">Icone</button>
                                         <button class="btn btn-primary col-md-4 "
                                             ng-click="changeColor(sous_thematique_couche,false)"> Couleur </button>
-                                    </div>
+                                    </div> -->
 
                                     <!-- <span class="black" >{{color}}</span> -->
-                                    <div class="col-md-12 text-center" style="margin-top:15px"
-                                        ng-if='sous_thematique_couche.geom == "point"'>
-                                        <button class="btn btn-primary"
-                                            ng-click="file('img_modifier_couche',sous_thematique_couche,'img_temp')">Changer
-                                            d'icone</button>
+                                    <div class="col-md-12 text-center" style="margin-top:15px">
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button"
+                                                id="dropdownMenuChangerIcone" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                                Changer d'icone
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuChangerIcone">
+                                                <button class="dropdown-item"
+                                                    ng-click="openGenerateIcons(sous_thematique_couche,['img_temp','logo_temp'])"
+                                                    type="button">Générer une icone</button>
+                                                <button class="dropdown-item"
+                                                ng-click="file('img_modifier_couche',sous_thematique_couche,'img_temp')"
+                                                    type="button">Téléverser une icone</button>
+                                            </div>
+                                        </div>
+                                        
                                     </div>
 
                                     <!-- <div class="col-md-12 text-center" style="margin-top:15px" ng-if='sous_thematique_couche.geom == "LineString"'>
@@ -490,7 +502,7 @@
                             <select name="Actions" ng-model="submitSelectedItem"
                                 ng-change="submitActions(submitSelectedItem,sous_thematique_couche)">
                                 <option value=""></option>
-                                <option ng-if="displayTestMap(sous_thematique_couche)" 
+                                <option ng-if="displayTestMap(sous_thematique_couche)"
                                     ng-click="testCarte(sous_thematique_couche)" value="tester">Tester</option>
                                 <option
                                     ng-if="displayTestMap(sous_thematique_couche) && sous_thematique_couche.geom=='point'"
@@ -661,18 +673,21 @@
 
                 </div>
 
-                <div ng-if="sous_thematique_couche.wms_type == 'osm' " style="position:relative" ng-init="sous_thematique_couche.categorie.temp_mode_sql=sous_thematique_couche.categorie.mode_sql;" >
-                 
-                    <p class="toggle" style="padding-top: 6px;text-align: center;" ng-if="!sous_thematique_couche.categorie.mode_sql" >
+                <div ng-if="sous_thematique_couche.wms_type == 'osm' " style="position:relative"
+                    ng-init="sous_thematique_couche.categorie.temp_mode_sql=sous_thematique_couche.categorie.mode_sql;">
+
+                    <p class="toggle" style="padding-top: 6px;text-align: center;"
+                        ng-if="!sous_thematique_couche.categorie.mode_sql">
                         <label class="switch" style="padding-top: 8px;">
-                            <input ng-model="sous_thematique_couche.categorie.temp_mode_sql"  type="checkbox">
+                            <input ng-model="sous_thematique_couche.categorie.temp_mode_sql" type="checkbox">
                             <span class="slider round"></span>
                         </label>
 
-                        <span style="font-weight: 500;" >Entrer la requète en mode SQL  </span>
+                        <span style="font-weight: 500;">Entrer la requète en mode SQL </span>
                     </p>
 
-                    <div ng-if="!sous_thematique_couche.categorie.mode_sql && !sous_thematique_couche.categorie.temp_mode_sql ">
+                    <div
+                        ng-if="!sous_thematique_couche.categorie.mode_sql && !sous_thematique_couche.categorie.temp_mode_sql ">
 
                         <table class="table table_colonne">
                             <thead>
@@ -778,18 +793,22 @@
                     </div>
 
 
-                    <div ng-if="sous_thematique_couche.categorie.mode_sql || sous_thematique_couche.categorie.temp_mode_sql" ng-init="new_sql_complete=sous_thematique_couche.categorie.sql_complete;">
-                        <p style="padding-top: 7px;" >Entrez la clause WHERE : <span style="color: #b5a8b9;font-size: 12px;"> (tags->'government '
+                    <div ng-if="sous_thematique_couche.categorie.mode_sql || sous_thematique_couche.categorie.temp_mode_sql"
+                        ng-init="new_sql_complete=sous_thematique_couche.categorie.sql_complete;">
+                        <p style="padding-top: 7px;">Entrez la clause WHERE : <span
+                                style="color: #b5a8b9;font-size: 12px;"> (tags->'government '
                                 = 'ministry')</span> </p>
-                        <textarea ng-model="new_sql_complete" style="width: calc(100% - 50px); margin-left: 25px;margin-bottom:50px;"></textarea>
-                        
-                        <div class="back_black white ajouter_colonne text-center pointer" ng-click="saveSqlCouche(sous_thematique_couche,new_sql_complete)" >
+                        <textarea ng-model="new_sql_complete"
+                            style="width: calc(100% - 50px); margin-left: 25px;margin-bottom:50px;"></textarea>
+
+                        <div class="back_black white ajouter_colonne text-center pointer"
+                            ng-click="saveSqlCouche(sous_thematique_couche,new_sql_complete)">
                             <i class="fa fa-floppy-o white"></i>
                         </div>
 
                     </div>
                 </div>
-                
+
                 <div ng-if="sous_thematique_couche.wms_type == 'wms' || (sous_thematique_couche.wms_type == 'osm' && sous_thematique_couche.categorie.mode_sql) || (sous_thematique_couche.wms_type == 'osm' && sous_thematique_couche.cles_vals_osm.length > 0) "
                     style="border-top: 5px solid;position:relative">
                     <table class="table table_colonne">
@@ -1279,9 +1298,9 @@
                                 <td ng-init="couche.geom = 'point'" class="text-center">
 
                                     <select ng-model="couche.geom" required>
-                                        <option ng-value="'point'">point & Polygon</option>
-                                        <option ng-value="'Polygon'">Polygon</option>
-                                        <option ng-value="'LineString'">LineString</option>
+                                        <option value="point" selected>point & Polygon</option>
+                                        <option value="Polygon">Polygon</option>
+                                        <option value="LineString">LineString</option>
                                     </select>
                                 </td>
                                 <td class="text-center" ng-init="couche.type_couche = 'wms'">
@@ -1294,32 +1313,44 @@
                                 </td>
                                 <td class="pull-right" style="display: -webkit-inline-box;">
                                     <div class="col-md-4">
-                                        <img src="{{couche.img}}" ng-if='couche.geom=="point"' class="thumb-lg"
-                                            style="height: 35px;width: 35px" />
+                                        <img src="{{couche.img}}" class="thumb-lg" style="height: 35px;width: 35px" />
 
-
-                                        <div ng-if='couche.geom=="Polygon" && couche.img==null'
+                                        <!-- <div ng-if='couche.geom=="Polygon" && couche.img==null'
                                             ng-style="{'width':'35px','height': '35px','background':couche.color,'opacity':'{{couche.opacity}}','border':'3px solid black','display': 'inline-block','margin-top': '22px'}">
 
                                         </div>
 
                                         <div ng-if='couche.geom=="Polygon" && couche.img!=null'
                                             ng-style="{'height': '35px','background-size': '32px','width': '35px','border':'3px solid black','display': 'inline-block','margin-top': '22px','background-image': 'url('+ couche.img + ')'}">
-                                            <!-- <img  ng-src="{{couche.img}}" style="width: 25px;height: 25px;" /> -->
                                         </div>
 
                                         <hr ng-if='couche.geom=="LineString"'
-                                            ng-style="{'border':'2px solid','margin-left': '10px','margin-right': '10px','border-color':couche.color}">
+                                            ng-style="{'border':'2px solid','margin-left': '10px','margin-right': '10px','border-color':couche.color}"> -->
                                     </div>
 
-                                    <div class="col-md-4 text-center" style="" ng-if='couche.geom=="Polygon"'>
-                                        <button class="btn btn-primary " style="margin-bottom: 10px"
-                                            ng-click="file('img_ajout_couche'+$index,couche,'img')">Icone</button>
-                                        <button class="btn btn-primary " ng-click="changeColor_addCouche(couche)">
-                                            Couleur </button>
+                                    <div class="col-md-4 text-center">
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button"
+                                                id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                                Icone
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                                <button class="dropdown-item"
+                                                    ng-click="openGenerateIcons(couche,['img','logo_src'])"
+                                                    type="button">Générer une icone</button>
+                                                <button class="dropdown-item"
+                                                    ng-click="file('img_ajout_couche'+$index,couche,'img')"
+                                                    type="button">Téléverser une icone</button>
+                                            </div>
+                                        </div>
+
+                                        <!-- <button class="btn btn-primary " style="margin-bottom: 10px"
+                                            ng-click="file('img_ajout_couche'+$index,couche,'img')">Icone</button> -->
+                                        <!-- <button class="btn btn-primary " ng-click="changeColor_addCouche(couche)">
+                                            Couleur </button> -->
                                     </div>
-                                    <!-- <span class="black" >{{color}}</span> -->
-                                    <div class="col-md-4 text-center" style="" ng-if='couche.geom == "point" '>
+                                    <!-- <div class="col-md-4 text-center" style="" ng-if='couche.geom == "point" '>
                                         <button class="btn btn-primary"
                                             ng-click="file('img_ajout_couche'+$index,couche,'img')">Icone</button>
                                     </div>
@@ -1327,19 +1358,19 @@
                                     <div class="col-md-4 text-center" style="" ng-if='couche.geom == "LineString"'>
                                         <button class="btn btn-primary"
                                             ng-click="changeColor_addCouche(couche)">Couleur</button>
-                                    </div>
+                                    </div> -->
 
                                     <!-- <button class="btn btn-primary"  ng-click="file('img_ajout_couche'+$index,couche,'img')" >Icone</button> -->
                                     <input type="file" ng-files="setTheFiles($files,couche)"
                                         id="img_ajout_couche{{$index}}" style="display: none;" accept="image/*">
-                                    <div class="col-md-4">
+                                    <!-- <div class="col-md-4">
                                         <i ng-if="couches.couches.length != 1" class="fa fa-trash-o pointer red"
                                             style="font-size:x-large;margin-left:30px"
                                             ng-click="couches.couches.splice($index,1)"></i>
                                         <i ng-if="$index == couches.couches.length-1" class="fa fa-plus  pointer black"
                                             style="font-size:x-large;margin-left:30px"
                                             ng-click="couches.couches.push({'colonnes':[{}]})"></i>
-                                    </div>
+                                    </div> -->
                                 </td>
                             </tr>
                         </tbody>

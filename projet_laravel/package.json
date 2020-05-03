@@ -5,12 +5,13 @@
     "dev": "gulp watch"
   },
   "devDependencies": {
+    "bootstrap-sass": "^3.0.0",
     "gulp": "^3.9.1",
-    "laravel-elixir": "^5.0.0",
-    "bootstrap-sass": "^3.0.0"
+    "laravel-elixir": "^5.0.0"
   },
   "dependencies": {
-    "path": "~0.12.7",
-    "download-file": "~0.1.5"
+    "@mapbox/maki": "^6.2.0",
+    "download-file": "~0.1.5",
+    "path": "~0.12.7"
   }
 }

@@ -51,6 +51,9 @@ Route::post('delete_limite_administrative', 'adminController@delete_limite_admin
 Route::get('config_bd_projet', 'adminController@config_bd_projet'); 
 
 
+Route::post('whriteSvg', 'adminController@whriteSvg'); 
+Route::post('whriteMultipleSvg', 'adminController@whriteMultipleSvg'); 
+
 /*-------------------Web Services RESTFULL API V1---------------------*/
 /*-------------------------------------------------------------------*/
 

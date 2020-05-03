@@ -328,20 +328,24 @@ class thematiqueController extends Controller
 			foreach ($couches as $couche) {
 
 				$oldVariable = $shema . ' ' . $couche['nom'];
-				$newVariable = strtolower(str_replace(" ", "_", $oldVariable));
-
+				$newVariable = strtolower(preg_replace('/[^A-Za-z0-9]/', '', $oldVariable));
 
 				$querry0 = DB::select(' CREATE TABLE ' . $shema . '.' . $newVariable . ' ()with(OIDS = FALSE)');
 
 				$img = str_replace(" ", "_", $couche['nom_img_modife']);
+				$logo_src=null;
+				
+				if (isset($couche['logo_src'])) {
+					$logo_src=$couche['logo_src'];
+				}
 				if ($sous_thematiques) {
 					$querry1 = DB::table('couche-sous-thematique')->insertGetId(
-						['type_couche' => $couche['type_couche'], 'remplir_couleur' => $couche['remplir_couleur'], 'contour_couleur' => $couche['contour_couleur'], 'opacity' => $couche['opacity'], 'nom' => $couche['nom'], 'image_src' => $img, 'geom' => $couche['geom'], 'id-sous-thematique' => $id_sous_thematique, 'id_couche' => $newVariable]
+						['logo_src'=>$logo_src,'type_couche' => $couche['type_couche'], 'remplir_couleur' => $couche['remplir_couleur'], 'contour_couleur' => $couche['contour_couleur'], 'opacity' => $couche['opacity'], 'nom' => $couche['nom'], 'image_src' => $img, 'geom' => $couche['geom'], 'id-sous-thematique' => $id_sous_thematique, 'id_couche' => $newVariable]
 					);
 				} else {
 
 					$querry1 = DB::table('couche-thematique')->insertGetId(
-						['type_couche' => $couche['type_couche'], 'remplir_couleur' => $couche['remplir_couleur'], 'contour_couleur' => $couche['contour_couleur'], 'opacity' => $couche['opacity'], 'nom' => $couche['nom'], 'image_src' => $img, 'geom' => $couche['geom'], 'id-thematique' => $id_thematique, 'id_couche' => $newVariable]
+						['logo_src'=>$logo_src,'type_couche' => $couche['type_couche'], 'remplir_couleur' => $couche['remplir_couleur'], 'contour_couleur' => $couche['contour_couleur'], 'opacity' => $couche['opacity'], 'nom' => $couche['nom'], 'image_src' => $img, 'geom' => $couche['geom'], 'id-thematique' => $id_thematique, 'id_couche' => $newVariable]
 					);
 				}
 
@@ -452,10 +456,10 @@ class thematiqueController extends Controller
 			$remplir_couleur = $Requests->input('remplir_couleur', null);
 			$opacity = $Requests->input('opacity', null);
 			$image_src = $Requests->input('nom_img_modife', null);
+			$logo_src = $Requests->input('logo_src', null);
 			$id = $Requests->input('key_couche', null);
 			$sous_thematique = $Requests->input('sous_thematiques', null);
 			$data['status'] = 'ok';
-
 
 
 			if ($sous_thematique) {
@@ -464,12 +468,12 @@ class thematiqueController extends Controller
 					$imgN = str_replace(" ", "_", $image_src);
 					$querry = DB::table('couche-sous-thematique')
 						->where('id', $id)
-						->update(['contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom, 'image_src' => $imgN]);
+						->update(['logo_src' => $logo_src,'contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom, 'image_src' => $imgN]);
 				} else {
 
 					$querry = DB::table('couche-sous-thematique')
 						->where('id', $id)
-						->update(['contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom]);
+						->update(['logo_src' => $logo_src,'contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom]);
 				}
 			} else {
 
@@ -477,12 +481,12 @@ class thematiqueController extends Controller
 					$imgN = str_replace(" ", "_", $image_src);
 					$querry = DB::table('couche-thematique')
 						->where('id', $id)
-						->update(['contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom, 'image_src' => $imgN]);
+						->update(['logo_src' => $logo_src,'contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom, 'image_src' => $imgN]);
 				} else {
 
 					$querry = DB::table('couche-thematique')
 						->where('id', $id)
-						->update(['contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom]);
+						->update(['logo_src' => $logo_src,'contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom]);
 				}
 			}
 

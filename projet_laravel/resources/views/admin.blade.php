@@ -71,6 +71,7 @@
 <script src="assets/js/textAngular.min.js"></script>
 
 <script type="text/javascript" src="assets/admin/js/app.js"></script>
+<script src="assets/admin/js/generateIcons.js"></script>
 
 <script src="assets/js/bootstrap-colorpicker.min.js"></script>
 <script src="assets/js/bootstrap-colorpicker-plus.js"></script>
@@ -78,7 +79,7 @@
 <script type="text/javascript" src="assets/js/impressionController.js"></script>
 <script type="text/javascript" src="assets/admin/js/tinycolor.min.js " ></script>
 <script type="text/javascript" src="assets/admin/js/angular-color-picker.js " ></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@3.0/dist/svg.min.js"></script>
 <!-- https://www.npmjs.com/package/angularjs-color-picker -->
 
    

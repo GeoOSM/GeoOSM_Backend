@@ -25,9 +25,6 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     }
 
 
-
-
-
     $rootScope.$on('$locationChangeStart', function (event, next, current) {
         myfactory.get_data("check").then(function (resp) {
 
@@ -839,7 +836,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         var canceled = document.getElementById(id).dispatchEvent(evt);
 
         $("#" + id).on('change', function (e) {
-
+            couche.generateIcons = null
             if (type_data == "logo") {
                 couche.fileLogoImg = couche.file
                 if (!couche.fileLogoImg) {
@@ -2335,6 +2332,10 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                                             }
 
+                                            if (couches.couches[i].logo_src) {
+                                                donne.logo_src = couches.couches[i].logo_src
+                                            }
+
                                             $scope.thematiques[j].sous_thematiques[k].couches.push(donne)
 
                                             if (!$scope.thematiques[j].sous_thematiques[k].les_id_couches) {
@@ -2369,6 +2370,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                         'id': $scope.thematiques[j].couches.length
 
                                     }
+                                    if (couches.couches[i].logo_src) {
+                                        donne.logo_src = couches.couches[i].logo_src
+                                    }
                                     $scope.thematiques[j].couches.push(donne)
                                     if ($scope.thematiques[j].les_id_couches) {
                                         $scope.thematiques[j].les_id_couches.push(data.key_couches[i])
@@ -2401,11 +2405,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
 
         for (var i = 0; i < couches.couches.length; i++) {
-            if (couches.couches[i].geom == 'point' && !couches.couches[i].fileImg) {
-                no_icone.push(i)
-            } else if (couches.couches[i].geom == 'LineString' && !couches.couches[i].color) {
-                no_icone.push(i)
-            } else if (couches.couches[i].geom == 'Polygon' && !couches.couches[i].color && !couches.couches[i].fileImg) {
+            if (!couches.couches[i].fileImg && !couches.couches[i].generateIcons) {
                 no_icone.push(i)
             }
         }
@@ -2426,96 +2426,142 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             var nombre = 0
             var nombre_images = []
+            var images_to_save_as_svg = []
             $('#spinner').show()
             for (var i = 0; i < couches.couches.length; i++) {
                 couches.couches[i].nom_img_modife = null
                 couches.couches[i].remplir_couleur = null
                 couches.couches[i].opacity = null
                 couches.couches[i].contour_couleur = null
-                couches.couches[i].nom = couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase()
+                couches.couches[i].nom = couches.couches[i].nom
 
-                if (couches.couches[i].geom == 'point') {
+                var nom_img = space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase())
 
+
+
+                if (couches.couches[i].fileImg) {
+                    nombre_images.push(couches.couches[i].fileImg)
+                    couches.couches[i].fileImg.appendId = 'image_file' + i
                     var extension = couches.couches[i].fileImg.name.split('.')[couches.couches[i].fileImg.name.split('.').length - 1]
                     formData.append('image_file' + i, couches.couches[i].fileImg);
+                    couches.couches[i].nom_img_modife = 'assets/images/icones-couches/' + nom_img + "." + extension
+                    couches.couches[i].fileImg.nom = nom_img + "." + extension
 
-                    couches.couches[i].nom_img_modife = 'assets/images/icones-couches/' + space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
-                    couches.couches[i].fileImg.nom = space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
-                    couches.couches[i].fileImg.appendId = 'image_file' + i
-                    nombre_images.push(couches.couches[i].fileImg)
+                } else if (couches.couches[i].generateIcons) {
+                    couches.couches[i].nom_img_modife = 'assets/images/icones-couches/' + nom_img + "." + 'svg'
+                    couches.couches[i].logo_src = 'assets/images/logo-couches-modification/' + nom_img + "." + 'svg'
+                    // couches.couches[i].fileImg.nom = nom_img+ "." + 'svg'
+                    images_to_save_as_svg.push({
+                        svg: couches.couches[i].generateIcons.circle,
+                        nom: nom_img + "." + 'svg',
+                        path: '/assets/images/icones-couches/'
+                    })
+                    images_to_save_as_svg.push({
+                        svg: couches.couches[i].generateIcons.rect,
+                        nom: nom_img + "." + 'svg',
+                        path: '/assets/images/logo-couches-modification/'
+                    })
                 }
-                else if (couches.couches[i].geom == 'Polygon' && couches.couches[i].fileImg) {
-                    var extension = couches.couches[i].fileImg.name.split('.')[couches.couches[i].fileImg.name.split('.').length - 1]
-                    formData.append('image_file' + i, couches.couches[i].fileImg);
-
-                    couches.couches[i].nom_img_modife = 'assets/images/icones-couches/' + space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
-                    couches.couches[i].fileImg.nom = space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
-                    couches.couches[i].fileImg.appendId = 'image_file' + i
-                    nombre_images.push(couches.couches[i].fileImg)
 
 
-                } else if (couches.couches[i].geom == 'Polygon' && couches.couches[i].color) {
-                    if (couches.couches[i].color.indexOf("hsla") != -1) {
-                        a = couches.couches[i].color.replace('hsla(', '').replace(')', '').split(',');
-                        alpha = a[3]
-                    } else {
+                // if (couches.couches[i].geom == 'point') {
 
-                        a = couches.couches[i].color.replace('hsl(', '').replace(')', '').split(',');
-                        alpha = 1
-                    }
-                    console.log(couches.couches[i].color)
-                    rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
-                    console.log(a, rgb)
-                    couches.couches[i].remplir_couleur = rgb
-                    couches.couches[i].opacity = alpha
-                    couches.couches[i].img_temp = null
+                //     var extension = couches.couches[i].fileImg.name.split('.')[couches.couches[i].fileImg.name.split('.').length - 1]
+                //     formData.append('image_file' + i, couches.couches[i].fileImg);
 
-                } else if (couches.couches[i].geom == 'LineString') {
-                    if (couches.couches[i].color.indexOf("hsla") != -1) {
-                        a = couches.couches[i].color.replace('hsla(', '').replace(')', '').split(',');
-                        alpha = a[3]
-                    } else {
-                        a = couches.couches[i].color.replace('hsl(', '').replace(')', '').split(',');
-                        alpha = 1
-                    }
+                //     couches.couches[i].nom_img_modife = 'assets/images/icones-couches/' + space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                //     couches.couches[i].fileImg.nom = space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
+                //     couches.couches[i].fileImg.appendId = 'image_file' + i
+                //     nombre_images.push(couches.couches[i].fileImg)
+                // }
+                // else if (couches.couches[i].geom == 'Polygon' && couches.couches[i].fileImg) {
+                //     var extension = couches.couches[i].fileImg.name.split('.')[couches.couches[i].fileImg.name.split('.').length - 1]
+                //     formData.append('image_file' + i, couches.couches[i].fileImg);
 
-                    rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
+                //     couches.couches[i].nom_img_modife = 'assets/images/icones-couches/' + space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                //     couches.couches[i].fileImg.nom = space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
+                //     couches.couches[i].fileImg.appendId = 'image_file' + i
+                //     nombre_images.push(couches.couches[i].fileImg)
 
-                    couches.couches[i].contour_couleur = rgb
-                    couches.couches[i].opacity = alpha
-                    couches.couches[i].img_temp = null
-                }
+
+                // } else if (couches.couches[i].geom == 'Polygon' && couches.couches[i].color) {
+                //     if (couches.couches[i].color.indexOf("hsla") != -1) {
+                //         a = couches.couches[i].color.replace('hsla(', '').replace(')', '').split(',');
+                //         alpha = a[3]
+                //     } else {
+
+                //         a = couches.couches[i].color.replace('hsl(', '').replace(')', '').split(',');
+                //         alpha = 1
+                //     }
+                //     console.log(couches.couches[i].color)
+                //     rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
+                //     console.log(a, rgb)
+                //     couches.couches[i].remplir_couleur = rgb
+                //     couches.couches[i].opacity = alpha
+                //     couches.couches[i].img_temp = null
+
+                // } else if (couches.couches[i].geom == 'LineString') {
+                //     if (couches.couches[i].color.indexOf("hsla") != -1) {
+                //         a = couches.couches[i].color.replace('hsla(', '').replace(')', '').split(',');
+                //         alpha = a[3]
+                //     } else {
+                //         a = couches.couches[i].color.replace('hsl(', '').replace(')', '').split(',');
+                //         alpha = 1
+                //     }
+
+                //     rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
+
+                //     couches.couches[i].contour_couleur = rgb
+                //     couches.couches[i].opacity = alpha
+                //     couches.couches[i].img_temp = null
+                // }
 
             }
-            formData.append('nombre_images', JSON.stringify(nombre_images));
-            formData.append('path', '/../../../public/assets/images/icones-couches/');
-            formData.append('pathBd', 'assets/images/icones-couches/');
-            formData.append('largeur', 160);
-            formData.append('lomguer', 160);
-            var request = {
-                method: 'POST',
-                url: '/uploads/file',
-                data: formData,
-                headers: {
-                    'Content-Type': undefined
-                }
-            };
 
-            $http(request)
-                .then(
-                    function success(e) {
-                        formData = new FormData();
-
-                        if (e.data.status) {
-                            function_ajouter_couches(couches)
-                        }
-                        $('#spinner').hide()
-                    },
-                    function (e) {
-                        $('#spinner').hide()
-                        toogle_information('Verifier votre connexion')
+            if (nombre_images.length > 0) {
+                formData.append('nombre_images', JSON.stringify(nombre_images));
+                formData.append('path', '/../../../public/assets/images/icones-couches/');
+                formData.append('pathBd', 'assets/images/icones-couches/');
+                formData.append('largeur', 160);
+                formData.append('lomguer', 160);
+                var request = {
+                    method: 'POST',
+                    url: '/uploads/file',
+                    data: formData,
+                    headers: {
+                        'Content-Type': undefined
                     }
-                )
+                };
+
+                $http(request)
+                    .then(
+                        function success(e) {
+                            formData = new FormData();
+
+                            if (e.data.status) {
+                                function_ajouter_couches(couches)
+                            }
+                            $('#spinner').hide()
+                        },
+                        function (e) {
+                            $('#spinner').hide()
+                            toogle_information('Verifier votre connexion')
+                        }
+                    )
+
+            } else if (images_to_save_as_svg.length > 0) {
+                myfactory.post_data("whriteMultipleSvg", { "data": images_to_save_as_svg }).then(function (e) {
+                    // console.log(e)
+                    if (e.status) {
+                        function_ajouter_couches(couches)
+                    }
+
+                    $('#spinner').hide()
+                }, function (msg) {
+                    toogle_information("Verifier votre connexion")
+                })
+            }
+
 
         }
     }
@@ -2753,42 +2799,44 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         $('div .color-picker-grid-inner').attr('id', '')
     }
 
-    $scope.refres_style = function (donne) {
-        $('#spinner').show()
-        myfactory.get_data($scope.urlNodejs_backend + '/update_style_couche_qgis/' + $scope.projet_qgis_server + '/' + donne.identifiant).then(
+    function refres_style (identifiant,cb){
+        myfactory.get_data($scope.urlNodejs_backend + '/update_style_couche_qgis/' + $scope.projet_qgis_server + '/' + identifiant).then(
             function (data) {
                 console.log(data)
-                $('#spinner').hide()
+               cb(true)
             },
             function (err) {
-                $('#spinner').hide()
+                cb(false)
                 toogle_information('Verifier votre connexion')
             }
         )
     }
+    $scope.refres_style = function (donne) {
+        $('#spinner').show()
+        refres_style( donne.identifiant,function(res){
+            $('#spinner').hide()
+        })
+    }
+
     var function_modifier_nom_couche = function (donne, nom_a_ete_change) {
 
         if (nom_a_ete_change == 'false') {
             donne.nom_modifier = donne.nom
         }
+
+
         $('#spinner').show()
         myfactory.post_data('/thematique/change_nameCouche/', JSON.stringify(donne)).then(
             function (data) {
                 if (requete_reussi(data)) {
                     $('#spinner').hide()
                     // || donne.myColor == 'change'
-                    if (donne.fileImg && donne.geom == 'point' && donne.wms_type == "osm") {
+                    if ((donne.fileImg || donne.generateIcons ) && donne.geom == 'point' && donne.wms_type == "osm" && donne.identifiant) {
                         $('#spinner').show()
-                        myfactory.get_data($scope.urlNodejs_backend + '/update_style_couche_qgis/' + $scope.projet_qgis_server + '/' + donne.identifiant).then(
-                            function (data) {
-                                console.log(data)
-                                $('#spinner').hide()
-                            },
-                            function (err) {
-                                $('#spinner').hide()
-                                toogle_information('Verifier votre connexion')
-                            }
-                        )
+                        refres_style( donne.identifiant,function(res){
+                            $('#spinner').hide()
+                        })
+                       
                     }
 
                     toogle_information("La couche " + donne.nom + " a ete bien modifi�")
@@ -2797,10 +2845,12 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                         donne.nom = donne.nom_modifier
                     }
                     donne.file = undefined
+                    donne.generateIcons = undefined
                     donne.fileImg = undefined
                     donne.myColor = undefined
 
                     donne.img = donne.img_temp
+                    donne.logo_src = donne.logo_temp
 
                 } else {
                     donne.nom = donne.ancien_nom
@@ -2905,35 +2955,40 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                         toogle_information('Verifier votre connexion')
                     }
                 )
-        } else {
-            // if (donne.myColor == 'change') {
+        }else if (donne.generateIcons) {
+            var nom_img = space2underscore(donne.nom.replace(/[^\w\s]/gi, '').toLowerCase())
+           
+            var images_to_save_as_svg = []
+            images_to_save_as_svg.push({
+                svg: donne.generateIcons.circle,
+                nom: nom_img + "." + 'svg',
+                path: '/assets/images/icones-couches-modification/'
+            })
+            images_to_save_as_svg.push({
+                svg: donne.generateIcons.rect,
+                nom: nom_img + "." + 'svg',
+                path: '/assets/images/logo-couches-modification/'
+            })
 
-            //     if ($scope.color.indexOf("hsla") != -1) {
-            //         a = $scope.color.replace('hsla(', '').replace(')', '').split(',');
-            //         alpha = a[3]
-            //     } else {
-            //         a = $scope.color.replace('hsl(', '').replace(')', '').split(',');
-            //         alpha = 1
-            //     }
+            myfactory.post_data("whriteMultipleSvg", { "data": images_to_save_as_svg }).then(function (e) {
+                // console.log(e)
+                if (e.status) {
+                    donne.nom_img_modife = 'assets/images/icones-couches-modification/' + nom_img + '.' + 'svg'
+                    donne.logo_src = 'assets/images/logo-couches-modification/' + nom_img + '.' + 'svg'
+                    if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
+                        function_modifier_nom_couche(donne, 'false')
+                    } else {
+                        function_modifier_nom_couche(donne, 'true')
+                    }
+                }
 
-            //     rgb = HSVtoRGB(+a[0].replace('%', '') / 360, +a[1].replace('%', '') / 100, +a[2].replace('%', '') / 100)
+                $('#spinner').hide()
+            }, function (msg) {
+                toogle_information("Verifier votre connexion")
+            })
+        }
+        else {
 
-            //     if (donne.geom == "Polygon") {
-            //         donne.remplir_couleur = rgb
-            //         donne.opacity = alpha
-            //         donne.img_temp = null
-            //     } else if (donne.geom == "LineString") {
-            //         donne.contour_couleur = rgb
-            //         donne.opacity = alpha
-            //         donne.img_temp = null
-            //     }
-
-            //     if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
-            //         function_modifier_nom_couche(donne, 'false')
-            //     } else {
-            //         function_modifier_nom_couche(donne, 'true')
-            //     }
-            // } else {
             if (donne.myColor == 'change') {
                 if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
                     function_modifier_nom_couche(donne, 'false')
@@ -5978,11 +6033,11 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //function pour modifier les proprietes d'une couche osm
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    $scope.saveSqlCouche = function (couche,new_sql_complete) {
-        
+    $scope.saveSqlCouche = function (couche, new_sql_complete) {
+
         if (new_sql_complete.length < 4) {
             toogle_information('Aucune requète entrée !')
-        }else{
+        } else {
             $('#spinner').show()
 
             var donne = {}
@@ -5991,15 +6046,15 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             donne.geom = couche.geom
             donne.nom = couche.nom
             donne.type_couche = couche.type_couche
-            donne.sql_complete = new_sql_complete 
+            donne.sql_complete = new_sql_complete
 
             myfactory.post_data('/thematique/save_properties_couche_sql_complete_osm/', JSON.stringify(donne)).then(
                 function (data) {
                     if (data.status) {
                         couche.categorie.sql_complete = new_sql_complete
                         couche.categorie.mode_sql = true
-                        $scope.generateSqlByCat(data.id_cat,couche)
-                    }else{
+                        $scope.generateSqlByCat(data.id_cat, couche)
+                    } else {
                         alert(data.message.errorInfo.join('-'))
                         toogle_information('Impossible de terminer l opération')
                         $('#spinner').hide()
@@ -6075,9 +6130,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                         console.log(couche.cles_vals_osm[0])
                         $scope.nouvelles_cles_vals_osm = []
 
-                        $scope.generateSqlByCat(couche.cles_vals_osm[0].id_cat,couche)
-                        
-                    }else{
+                        $scope.generateSqlByCat(couche.cles_vals_osm[0].id_cat, couche)
+
+                    } else {
                         alert(data.message.errorInfo.join('-'))
                         toogle_information('Impossible de terminer l opération')
                         $('#spinner').hide()
@@ -6094,7 +6149,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     }
 
-    $scope.generateSqlByCat = function(id_cat,couche){ 
+    $scope.generateSqlByCat = function (id_cat, couche) {
         myfactory.post_data('/thematique/genrateJsonFileByCat/', JSON.stringify({ 'id_cat': id_cat })).then(
             function (data) {
                 if (requete_reussi(data)) {
@@ -6761,6 +6816,36 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             }
         )
     }
+
+    $scope.openGenerateIcons = function (couche, attr) {
+
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'assets/admin/views/generateIcons.html',
+            controller: 'generateIconsCtrl',
+            size: 'lg',
+            scope: $scope,
+            resolve: {
+                items: function () {
+                    // console.log(10)
+                }
+            }
+        });
+
+        modalInstance.result.then(function (response) {
+            console.log(response)
+            // var encodedData = window.btoa(response.circle);
+            couche[attr[0]] = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(response.circle)))
+            couche[attr[1]] = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(response.rect)))
+            console.log(couche[attr])
+            couche.generateIcons = response
+
+            // $scope.selected = selectedItem;
+        }, function () {
+            console.log('Modal dismissed at: ' + new Date())
+            // $log.info('Modal dismissed at: ' + new Date());
+        });
+    };
 })
 
 

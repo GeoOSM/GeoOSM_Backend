@@ -9,6 +9,7 @@ use App\Http\Requests;
 
 use DB;
 use File;
+use SimpleXMLElement;
 class AdminController extends Controller
 {
 
@@ -652,6 +653,33 @@ class AdminController extends Controller
              
              return $e;
         }
+   }
+
+   public function whriteSvg(Request $Requests)
+   {
+       $svg = $Requests->svg;
+       $file = 'icons.svg';
+       $destinationPath=public_path().'/';
+
+       if (!is_dir($destinationPath)) {  
+           mkdir($destinationPath,0777,true);
+       }
+
+       File::put($destinationPath.$file,$svg);
+       return 'ok';
+   }
+
+   public function whriteMultipleSvg(Request $Requests)
+   {
+        $data = $Requests->data;
+        foreach ($data as $icone) {
+            $svg = $icone['svg'];
+            $nom_file = $icone['nom'];
+            $destinationPath=public_path().'/'.$icone['path'];
+            File::put($destinationPath.$nom_file,$svg);
+        }
+
+        return response()->json(['errors' => [],'status' => true], 200);
    }
 
 }

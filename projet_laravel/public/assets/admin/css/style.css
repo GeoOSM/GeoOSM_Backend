@@ -11046,3 +11046,15 @@ td {
 	  .slider.round:before {
 		border-radius: 50%;
 	  }
+
+.modal-lg{
+	height: 70% !important;
+    width: 80% !important;
+}
+.modal-lg .modal-content{
+	height: 100%;
+}
+
+.modal-open .modal{
+	z-index: 9991050 !important;
+}
