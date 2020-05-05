@@ -63,6 +63,26 @@ angular.module('monapp').controller('generateIconsCtrl', ['$scope', '$http', 'my
   });
 
 
+  $http.get('assets/noun_project/all.json').then(function (data) {
+    var icons = []
+    console.log(data)
+    for (const key in data.data.all) {
+      if (data.data.all.hasOwnProperty(key)) {
+        const element = data.data.all[key];
+        icons.push({
+          nom_icon: element,
+          path: 'assets/noun_project/icons/' + element
+        })
+      }
+    }
+
+    $scope.iconsProviders.push({
+      nom: 'Noun Project',
+      list: icons,
+      attributions: 'https://thenounproject.com/'
+    })
+  });
+
   function loadSvgContents(url) {
     var id = 'iconOrigin'
     document.getElementById(id).innerHTML = ''
