@@ -15,17 +15,16 @@
         <div class="col-md-5" style="overflow-y: auto;" >
             <div style="height: 40px;margin-bottom: 15px;">
               
-               <select ng-model="index_iconsProvider"  class="custom-select custom-select-lg col-md-4" style="height: 80%;" >
-                <!-- <option selected>Choisissez une source d'icones</option> -->
+               <!-- <select ng-model="index_iconsProvider"  class="custom-select custom-select-lg col-md-4" style="height: 80%;" >
                 <option ng-repeat="iconsProvider in iconsProviders" ng-value="$index"> {{iconsProvider.nom}} </option>
-              </select>
+              </select> -->
 
                <input type="text" ng-model="filtre_nom_icon" class="col-md-7 col-md-offset-1" style="height: 80%;" placeholder="Rechercher une icone">
 
             </div>
             
             <div style="max-height: 485px;;width: 100%;overflow-y: auto;" >
-                <img src="{{icon.path}}" ng-click="chooseIcon(icon)"  style="width: 40px; height: 30px;" data-toggle="tooltip"  title="{{icon.nom_icon}}" class="pointer"  ng-repeat="icon in iconsProviders[index_iconsProvider].list | filter:{nom_icon :filtre_nom_icon}" alt="">
+                <img src="{{icon.path}}" ng-click="chooseIcon(icon)"  style="width: 40px; height: 30px;" data-toggle="tooltip"  title="{{icon.nom_icon}}" class="pointer"  ng-repeat="icon in iconsProviders | filter:{nom_icon :filtre_nom_icon}" alt="">
             </div>
         </div>
 
@@ -56,7 +55,7 @@
             </div>
                 
             <p>
-                <a href="{{iconsProviders[index_iconsProvider].attributions}}"> ©  {{iconsProviders[index_iconsProvider].nom}} </a>
+                <!-- <a href="{{iconsProviders[index_iconsProvider].attributions}}"> ©  {{iconsProviders[index_iconsProvider].nom}} </a> -->
             </p>
 
         </div>

@@ -22,66 +22,70 @@ angular.module('monapp').controller('generateIconsCtrl', ['$scope', '$http', 'my
   $scope.iconsProviders = []
   $http.get('assets/maki/all.json').then(function (data) {
     var icons = []
-    console.log(data)
+    // console.log(data)
     for (const key in data.data.all) {
       if (data.data.all.hasOwnProperty(key)) {
         const element = data.data.all[key];
-        icons.push({
+        $scope.iconsProviders.push({
           nom_icon: element,
           path: 'assets/maki/icons/' + element + '-15.svg'
         })
       }
     }
 
-    $scope.iconsProviders.push({
-      nom: 'Maki',
-      list: icons,
-      attributions: 'https://labs.mapbox.com/maki-icons/'
-    })
-    $scope.index_iconsProvider = 0
-    console.log($scope.iconsProviders)
+    //   attributions: 'https://labs.mapbox.com/maki-icons/'
+   
   });
 
   $http.get('assets/temaki/all.json').then(function (data) {
     var icons = []
-    console.log(data)
+    // console.log(data)
     for (const key in data.data.all) {
       if (data.data.all.hasOwnProperty(key)) {
         const element = data.data.all[key];
-        icons.push({
+        $scope.iconsProviders.push({
           nom_icon: element,
           path: 'assets/temaki/icons/' + element
         })
       }
     }
-
-    $scope.iconsProviders.push({
-      nom: 'Temaki',
-      list: icons,
-      attributions: 'https://github.com/ideditor/temaki'
-    })
+    //   attributions: 'https://github.com/ideditor/temaki'
   });
 
-
-  $http.get('assets/noun_project/all.json').then(function (data) {
+  $http.get('assets/osm_icons/all.json').then(function (data) {
     var icons = []
-    console.log(data)
+    // console.log(data)
     for (const key in data.data.all) {
       if (data.data.all.hasOwnProperty(key)) {
         const element = data.data.all[key];
-        icons.push({
+        $scope.iconsProviders.push({
           nom_icon: element,
-          path: 'assets/noun_project/icons/' + element
+          path: 'assets/osm_icons/icons/' + element
         })
       }
     }
-
-    $scope.iconsProviders.push({
-      nom: 'Noun Project',
-      list: icons,
-      attributions: 'https://thenounproject.com/'
-    })
   });
+
+
+  // $http.get('assets/noun_project/all.json').then(function (data) {
+  //   var icons = []
+  //   console.log(data)
+  //   for (const key in data.data.all) {
+  //     if (data.data.all.hasOwnProperty(key)) {
+  //       const element = data.data.all[key];
+  //       icons.push({
+  //         nom_icon: element,
+  //         path: 'assets/noun_project/icons/' + element
+  //       })
+  //     }
+  //   }
+
+  //   // $scope.iconsProviders.push({
+  //   //   nom: 'Noun Project',
+  //   //   list: icons,
+  //   //   attributions: 'https://thenounproject.com/'
+  //   // })
+  // });
 
   function loadSvgContents(url) {
     var id = 'iconOrigin'
