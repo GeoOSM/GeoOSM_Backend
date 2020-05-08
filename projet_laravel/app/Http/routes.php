@@ -156,6 +156,7 @@ Route::group(['prefix' => '/thematique'],function(){
 	
 	Route::post('save_properties_couche_osm/','thematiqueController@save_properties_couche_osm');
 	Route::post('save_properties_couche_sql_complete_osm/','thematiqueController@save_properties_couche_sql_complete_osm');
+	Route::post('save_select_clause/','thematiqueController@save_select_clause');
 	
 
 	Route::post('delete_cles_vals_osm/','thematiqueController@delete_cles_vals_osm');

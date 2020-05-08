@@ -96,7 +96,7 @@ class AdminController extends Controller
 
                          $data[$i]["sous_thematiques"][$k]["couches"][$idcouche]['cles_vals_osm'] = array();
 
-                        $id_cat=DB::table("categorie")->select("id_cat","key_couche","nom_cat","sous_thematiques","status","number","file_json","surface","distance", "sql_complete", "mode_sql")
+                        $id_cat=DB::table("categorie")->select("id_cat","key_couche","nom_cat","sous_thematiques","status","number","file_json","surface","distance", "sql_complete", "mode_sql", "select")
                                                ->where("sous_thematiques","=",true)->where("key_couche","=",$keycouchethemetique->id)->get();
                                                
                          $sous_categorie = false;                 
@@ -115,7 +115,7 @@ class AdminController extends Controller
                             $data[$i]["sous_thematiques"][$k]["couches"][$idcouche]['surface_totale'] =$id_cat[0]->surface;
                             $data[$i]["sous_thematiques"][$k]["couches"][$idcouche]['distance_totale'] =$id_cat[0]->distance;
                             $data[$i]["sous_thematiques"][$k]["couches"][$idcouche]['id_cat'] =$id_cat[0]->id_cat;
-                            $data[$i]["sous_thematiques"][$k]["couches"][$idcouche]['categorie'] = ["mode_sql"=>$id_cat[0]->mode_sql,"sql_complete"=>$id_cat[0]->sql_complete];
+                            $data[$i]["sous_thematiques"][$k]["couches"][$idcouche]['categorie'] = ["select"=>$id_cat[0]->select,"mode_sql"=>$id_cat[0]->mode_sql,"sql_complete"=>$id_cat[0]->sql_complete];
                             $data[$i]["sous_thematiques"][$k]["couches"][$idcouche]['file_json'] =$id_cat[0]->file_json;
                             $data[$i]["sous_thematiques"][$k]["couches"][$idcouche]['params_files'] =[
                                 "nom_cat"=>$id_cat[0]->nom_cat,
@@ -186,7 +186,7 @@ class AdminController extends Controller
 
                    if ($keycouchethematique->type_couche == 'requete' || $keycouchethematique->wms_type == 'osm') {
                         $data[$i]["couches"][$idcouche]['cles_vals_osm'] = array();
-                        $id_cat=DB::table("categorie")->select("id_cat","key_couche","nom_cat","sous_thematiques","status","number","file_json","surface","distance", "sql_complete", "mode_sql")
+                        $id_cat=DB::table("categorie")->select("id_cat","key_couche","nom_cat","sous_thematiques","status","number","file_json","surface","distance", "sql_complete", "mode_sql","select")
                                                ->where("sous_thematiques","=",false)->where("key_couche","=",$keycouchethematique->id)->get();
                           $sous_categorie = false;                          
                         if ($id_cat) {
@@ -205,7 +205,7 @@ class AdminController extends Controller
                              $data[$i]["couches"][$idcouche]['distance_totale'] =$id_cat[0]->distance;
                              $data[$i]["couches"][$idcouche]['id_cat'] =$id_cat[0]->id_cat;
                              $data[$i]["couches"][$idcouche]['categorie'] = [];
-                             $data[$i]["couches"][$idcouche]['categorie'] = ["mode_sql"=>$id_cat[0]->mode_sql,"sql_complete"=>$id_cat[0]->sql_complete];
+                             $data[$i]["couches"][$idcouche]['categorie'] = ["select"=>$id_cat[0]->select,"mode_sql"=>$id_cat[0]->mode_sql,"sql_complete"=>$id_cat[0]->sql_complete];
                              $data[$i]["couches"][$idcouche]['file_json'] =$id_cat[0]->file_json;
                              $data[$i]["couches"][$idcouche]['params_files'] =[
                                  "nom_cat"=>$id_cat[0]->nom_cat,

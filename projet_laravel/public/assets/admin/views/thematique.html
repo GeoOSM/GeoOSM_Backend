@@ -433,8 +433,8 @@
                                     <div class="col-md-12 text-center" style="margin-top:15px">
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
-                                                id="dropdownMenuChangerIcone" data-toggle="dropdown" aria-haspopup="true"
-                                                aria-expanded="false">
+                                                id="dropdownMenuChangerIcone" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
                                                 Changer d'icone
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuChangerIcone">
@@ -442,11 +442,11 @@
                                                     ng-click="openGenerateIcons(sous_thematique_couche,['img_temp','logo_temp'])"
                                                     type="button">Générer une icone</button>
                                                 <button class="dropdown-item"
-                                                ng-click="file('img_modifier_couche',sous_thematique_couche,'img_temp')"
+                                                    ng-click="file('img_modifier_couche',sous_thematique_couche,'img_temp')"
                                                     type="button">Téléverser une icone</button>
                                             </div>
                                         </div>
-                                        
+
                                     </div>
 
                                     <!-- <div class="col-md-12 text-center" style="margin-top:15px" ng-if='sous_thematique_couche.geom == "LineString"'>
@@ -797,7 +797,7 @@
                         ng-init="new_sql_complete=sous_thematique_couche.categorie.sql_complete;">
                         <p style="padding-top: 7px;">Entrez la clause WHERE : <span
                                 style="color: #b5a8b9;font-size: 12px;"> (tags->'government '
-                                = 'ministry')</span> </p>
+                                = 'ministry' ou amenity='bar')</span> </p>
                         <textarea ng-model="new_sql_complete"
                             style="width: calc(100% - 50px); margin-left: 25px;margin-bottom:50px;"></textarea>
 
@@ -805,7 +805,33 @@
                             ng-click="saveSqlCouche(sous_thematique_couche,new_sql_complete)">
                             <i class="fa fa-floppy-o white"></i>
                         </div>
+                    </div>
 
+                </div>
+
+                <span ng-if="(sous_thematique_couche.wms_type == 'osm' && sous_thematique_couche.categorie.mode_sql) || (sous_thematique_couche.wms_type == 'osm' && sous_thematique_couche.cles_vals_osm.length > 0) ">
+                    <div ng-click="toogleDivSelectCause()" 
+                        style="width: 100%;padding: 7px 10px;" class="back_black white pointer">
+                        Editer les colomnes de la couches  
+                        <i class="fa fa-chevron-down pull-right" aria-hidden="true" ng-if="!isCollapsedSelectClause" ></i>
+                        <i class="fa fa-chevron-up pull-right" aria-hidden="true" ng-if="isCollapsedSelectClause" ></i>
+                    </div>
+                </span>
+
+                <div uib-collapse="isCollapsedSelectClause">
+                    <div ng-if="(sous_thematique_couche.wms_type == 'osm' && sous_thematique_couche.categorie.mode_sql) || (sous_thematique_couche.wms_type == 'osm' && sous_thematique_couche.cles_vals_osm.length > 0) "
+                        ng-init="new_select=sous_thematique_couche.categorie.select;" class="enter_select_clause">
+                        <p style="padding-top: 7px;">Entrez la clause SELECT pour définir des colomnes : <span
+                                style="color: #b5a8b9;font-size: 12px;">
+                                (tags->'government ',landuse,tags->'commercial')</span> </p>
+                        <p> NB : par default les colomnes amenity, name, osm_id existent déja. Ils ne sert à rien de les définir en plus ! </p>
+                        <textarea ng-model="new_select" 
+                            style="width: calc(100% - 50px); margin-left: 25px;margin-bottom:50px;"></textarea>
+
+                        <div class="back_black white ajouter_colonne text-center pointer"
+                            ng-click="save_select_clause(sous_thematique_couche,new_select)">
+                            <i class="fa fa-floppy-o white"></i>
+                        </div>
                     </div>
                 </div>
 

@@ -11058,3 +11058,15 @@ td {
 .modal-open .modal{
 	z-index: 999991050 !important;
 }
+
+.enter_select_clause{
+	background-color: #F5F5F5;
+    border-radius: 0px 0px 20px 20px;
+    padding: 0px 30px;
+    margin-bottom: 25px;
+	position: relative;
+}
+
+.enter_select_clause textarea {
+	background-color: transparent;
+}

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use Storage;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 use File;
 use phpDocumentor\Reflection\Types\Boolean;
@@ -333,19 +333,19 @@ class thematiqueController extends Controller
 				$querry0 = DB::select(' CREATE TABLE ' . $shema . '.' . $newVariable . ' ()with(OIDS = FALSE)');
 
 				$img = str_replace(" ", "_", $couche['nom_img_modife']);
-				$logo_src=null;
-				
+				$logo_src = null;
+
 				if (isset($couche['logo_src'])) {
-					$logo_src=$couche['logo_src'];
+					$logo_src = $couche['logo_src'];
 				}
 				if ($sous_thematiques) {
 					$querry1 = DB::table('couche-sous-thematique')->insertGetId(
-						['logo_src'=>$logo_src,'type_couche' => $couche['type_couche'], 'remplir_couleur' => $couche['remplir_couleur'], 'contour_couleur' => $couche['contour_couleur'], 'opacity' => $couche['opacity'], 'nom' => $couche['nom'], 'image_src' => $img, 'geom' => $couche['geom'], 'id-sous-thematique' => $id_sous_thematique, 'id_couche' => $newVariable]
+						['logo_src' => $logo_src, 'type_couche' => $couche['type_couche'], 'remplir_couleur' => $couche['remplir_couleur'], 'contour_couleur' => $couche['contour_couleur'], 'opacity' => $couche['opacity'], 'nom' => $couche['nom'], 'image_src' => $img, 'geom' => $couche['geom'], 'id-sous-thematique' => $id_sous_thematique, 'id_couche' => $newVariable]
 					);
 				} else {
 
 					$querry1 = DB::table('couche-thematique')->insertGetId(
-						['logo_src'=>$logo_src,'type_couche' => $couche['type_couche'], 'remplir_couleur' => $couche['remplir_couleur'], 'contour_couleur' => $couche['contour_couleur'], 'opacity' => $couche['opacity'], 'nom' => $couche['nom'], 'image_src' => $img, 'geom' => $couche['geom'], 'id-thematique' => $id_thematique, 'id_couche' => $newVariable]
+						['logo_src' => $logo_src, 'type_couche' => $couche['type_couche'], 'remplir_couleur' => $couche['remplir_couleur'], 'contour_couleur' => $couche['contour_couleur'], 'opacity' => $couche['opacity'], 'nom' => $couche['nom'], 'image_src' => $img, 'geom' => $couche['geom'], 'id-thematique' => $id_thematique, 'id_couche' => $newVariable]
 					);
 				}
 
@@ -468,12 +468,12 @@ class thematiqueController extends Controller
 					$imgN = str_replace(" ", "_", $image_src);
 					$querry = DB::table('couche-sous-thematique')
 						->where('id', $id)
-						->update(['logo_src' => $logo_src,'contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom, 'image_src' => $imgN]);
+						->update(['logo_src' => $logo_src, 'contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom, 'image_src' => $imgN]);
 				} else {
 
 					$querry = DB::table('couche-sous-thematique')
 						->where('id', $id)
-						->update(['logo_src' => $logo_src,'contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom]);
+						->update(['logo_src' => $logo_src, 'contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom]);
 				}
 			} else {
 
@@ -481,12 +481,12 @@ class thematiqueController extends Controller
 					$imgN = str_replace(" ", "_", $image_src);
 					$querry = DB::table('couche-thematique')
 						->where('id', $id)
-						->update(['logo_src' => $logo_src,'contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom, 'image_src' => $imgN]);
+						->update(['logo_src' => $logo_src, 'contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom, 'image_src' => $imgN]);
 				} else {
 
 					$querry = DB::table('couche-thematique')
 						->where('id', $id)
-						->update(['logo_src' => $logo_src,'contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom]);
+						->update(['logo_src' => $logo_src, 'contour_couleur' => $contour_couleur, 'remplir_couleur' => $remplir_couleur, 'opacity' => $opacity, 'nom' => $nom]);
 				}
 			}
 
@@ -988,7 +988,7 @@ class thematiqueController extends Controller
 			$type_couche = $Requests->input('type_couche', null);
 
 			$sql_complete = $Requests->input('sql_complete', null);
-			
+
 			$data = array();
 			$data['data'] = array();
 
@@ -997,13 +997,13 @@ class thematiqueController extends Controller
 
 			if (!$id_cat) {
 				$querry0 = DB::table('categorie')->insertGetId(
-					["sql_complete"=>$sql_complete,"mode_sql"=>true,'type_geom' => $type_geom,'type_couche' => $type_couche, 'key_couche' => $id, 'nom_cat' => $nom, 'sous_thematiques' => $sous_thematiques],
+					["sql_complete" => $sql_complete, "mode_sql" => true, 'type_geom' => $type_geom, 'type_couche' => $type_couche, 'key_couche' => $id, 'nom_cat' => $nom, 'sous_thematiques' => $sous_thematiques],
 					'id_cat'
 				);
 			} else {
-				$querr= DB::table('categorie')
-				->where('id_cat', $id_cat[0]->id_cat)
-				->update(['mode_sql' => true,'type_geom' => $type_geom,"sql_complete"=>$sql_complete]);
+				$querr = DB::table('categorie')
+					->where('id_cat', $id_cat[0]->id_cat)
+					->update(['mode_sql' => true, 'type_geom' => $type_geom, "sql_complete" => $sql_complete]);
 
 				$querry0 = $id_cat[0]->id_cat;
 			}
@@ -1011,7 +1011,7 @@ class thematiqueController extends Controller
 
 			$data['status'] = true;
 			$data['id_cat'] = $querry0;
-			
+
 			$test = $this->testQuerryOsm($data['id_cat']);
 			if ($test['status']) {
 
@@ -1022,8 +1022,55 @@ class thematiqueController extends Controller
 				DB::select('COMMIT;');
 				return $test;
 			}
-			
-			
+		} catch (\Exception $e) {
+
+			DB::select('ROLLBACK TO mon_pointdesauvegarde;');
+			DB::select('COMMIT;');
+			return $e;
+		}
+	}
+
+	public function save_select_clause(Request $Requests)
+	{
+
+		try {
+
+			DB::select('BEGIN;');
+			DB::select('SAVEPOINT mon_pointdesauvegarde;');
+
+			$sous_thematiques = $Requests->input('sous_thematiques', null);
+			$id = $Requests->input('key_couche', null);
+
+			$select = $Requests->input('select', null);
+
+			$data = array();
+			$data['data'] = array();
+
+			$id_cat = DB::table("categorie")->select("id_cat", "key_couche", "sous_thematiques")
+				->where("sous_thematiques", "=", $sous_thematiques)->where("key_couche", "=", $id)->get();
+
+
+			$querr = DB::table('categorie')
+				->where('id_cat', $id_cat[0]->id_cat)
+				->update(['select' => $select]);
+
+			$querry0 = $id_cat[0]->id_cat;
+
+
+			$data['status'] = true;
+			$data['id_cat'] = $querry0;
+
+			$test = $this->testQuerryOsm($data['id_cat']);
+
+			if ($test['status']) {
+
+				DB::select('COMMIT;');
+				return $data;
+			} else {
+				DB::select('ROLLBACK TO mon_pointdesauvegarde;');
+				DB::select('COMMIT;');
+				return $test;
+			}
 		} catch (\Exception $e) {
 
 			DB::select('ROLLBACK TO mon_pointdesauvegarde;');
@@ -1055,13 +1102,13 @@ class thematiqueController extends Controller
 				->where("sous_thematiques", "=", $sous_thematiques)->where("key_couche", "=", $id)->get();
 			if (!$id_cat) {
 				$querry0 = DB::table('categorie')->insertGetId(
-					['mode_sql' => false,"sql_complete"=>null, 'type_geom' => $type_geom,'type_couche' => $type_couche, 'key_couche' => $id, 'nom_cat' => $nom, 'sous_thematiques' => $sous_thematiques],
+					['mode_sql' => false, "sql_complete" => null, 'type_geom' => $type_geom, 'type_couche' => $type_couche, 'key_couche' => $id, 'nom_cat' => $nom, 'sous_thematiques' => $sous_thematiques],
 					'id_cat'
 				);
 			} else {
-				$querr= DB::table('categorie')
-				->where('id_cat', $id_cat[0]->id_cat)
-				->update(['type_geom' => $type_geom,'mode_sql' => false,"sql_complete"=>null]);
+				$querr = DB::table('categorie')
+					->where('id_cat', $id_cat[0]->id_cat)
+					->update(['type_geom' => $type_geom, 'mode_sql' => false, "sql_complete" => null]);
 				$querry0 = $id_cat[0]->id_cat;
 			}
 
@@ -1076,7 +1123,7 @@ class thematiqueController extends Controller
 
 			$data['status'] = 'ok';
 			$data['id_cat'] = $querry0;
-			
+
 			$test = $this->testQuerryOsm($data['id_cat']);
 			if ($test['status']) {
 				DB::select('COMMIT;');
@@ -1086,8 +1133,6 @@ class thematiqueController extends Controller
 				DB::select('COMMIT;');
 				return $test;
 			}
-			
-			
 		} catch (\Exception $e) {
 
 			DB::select('ROLLBACK TO mon_pointdesauvegarde;');
@@ -1188,28 +1233,34 @@ class thematiqueController extends Controller
 
 		$geom = $completeOsm['geom'];
 		$where = $completeOsm['where'];
+		$select = $completeOsm['select'];
+
+		if (isset($select)) {
+			$select = "osm_id,".$select;
+		}else{
+			$select = "osm_id";
+		}
 
 		if ($geom == 'point') {
-			$sql = 'select osm_id from planet_osm_point where (' . $where . ') union all select osm_id from planet_osm_polygon where (' . $where . ' ) limit 1';
+			$sql = 'select '.$select.' from planet_osm_point where (' . $where . ') union all select '.$select.' from planet_osm_polygon where (' . $where . ' ) limit 1';
 		} else if ($geom == 'Polygon') {
-			$sql = 'select osm_id from planet_osm_polygon where (' . $where . ' ) limit 1';
-		} else if ($geom == 'LineString') { 
-			$sql = 'select osm_id from planet_osm_line where (' . $where . ' ) limit 1';
+			$sql = 'select '.$select.' from planet_osm_polygon where (' . $where . ' ) limit 1';
+		} else if ($geom == 'LineString') {
+			$sql = 'select '.$select.' from planet_osm_line where (' . $where . ' ) limit 1';
 		}
 
 		try {
 			$querry = DB::select($sql);
 			return [
-				'status'=>true
+				'status' => true
 			];
 		} catch (\Throwable $th) {
 			return [
-				'status'=>false,
-				'message'=>$th
+				'status' => false,
+				'message' => $th
 			];
 			//throw $th;
 		}
-
 	}
 	/**
 	 * generer la condition osm pour executer une requete osm
@@ -1237,7 +1288,7 @@ class thematiqueController extends Controller
 		};
 
 
-		$categorie = DB::table("categorie")->select("nom_cat", "type_couche", "sql_complete", "type_geom", "mode_sql")
+		$categorie = DB::table("categorie")->select("nom_cat", "type_couche", "sql_complete", "type_geom", "mode_sql","select")
 			->where("id_cat", "=", $id_cat)->get();
 		$key_val_osm = DB::table("sous_categorie")->select("action", "type_geom", "nom", "operateur", "condition")
 			->where("id_cat", "=", $id_cat)->get();
@@ -1247,8 +1298,8 @@ class thematiqueController extends Controller
 		} else {
 			$geom = $key_val_osm[0]->type_geom;
 		}
-		
-		
+
+
 
 		if ($categorie[0]->mode_sql) {
 			$where = $categorie[0]->sql_complete;
@@ -1285,7 +1336,7 @@ class thematiqueController extends Controller
 			}
 		}
 
-		return ['where' => $where, 'geom' => $geom];
+		return ['where' => $where, 'geom' => $geom,'select' => $categorie[0]->select];
 	}
 
 	/**
@@ -1310,6 +1361,13 @@ class thematiqueController extends Controller
 
 		$geom = $completeOsm['geom'];
 		$where = $completeOsm['where'];
+		$select = $completeOsm['select'];
+
+		if (isset($select)) {
+			$select = "A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),".$select;
+		}else{
+			$select = "A.osm_id,A.name,A.amenity,hstore_to_json(A.tags)";
+		}
 
 		$msg = false;
 		$sql = '';
@@ -1320,33 +1378,31 @@ class thematiqueController extends Controller
 
 				$nbrePt = DB::select('select sum(count) as count , \'a\' as a from (select count(A.osm_id) from planet_osm_point  as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) )) AND ( ' . $where . ' ) union all select count(A.osm_id) from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' ) ) src group by a');
 
-				$sql = 'select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) )) AND ( ' . $where . ' ) union all select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' ) ';
-				
-			}else{
+				$sql = 'select '.$select.',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) )) AND ( ' . $where . ' ) union all select '.$select.',ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' ) ';
+			} else {
 				$nbrePt = DB::select('select sum(count) as count , \'a\' as a from (select count(A.osm_id) from planet_osm_point  as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' AND ( ' . $where . ' ) union all select count(A.osm_id) from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and  ( ' . $where . ' ) ) src group by a');
 
-				$sql = 'select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and  ( ' . $where . ' ) union all select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and ( ' . $where . ' ) ';
-			
+				$sql = 'select '.$select.',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and  ( ' . $where . ' ) union all select '.$select.',ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and ( ' . $where . ' ) ';
 			}
 
 			// $nbrePt = DB::select('select count(*) from (select A.name from planet_osm_point  as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) )) AND ( ' . $where . ' ) union all select A.name from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' ) ) src');
 
 			// // $nbrePl = DB::select('select count(*) from (select A.name from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' )  ) src');
 
-			// $sql = 'select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) ))) AND ( ' . $where . ' ) union all select A.osm_id,A.name,A.amenity,hstore_to_json(A.tags),ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' ) ';
+			// $sql = 'select '.$select.',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) ))) AND ( ' . $where . ' ) union all select '.$select.',ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' ) ';
 
 			$msg = true;
-			$data = $nbrePt[0]->count ;
+			$data = $nbrePt[0]->count;
 			// + $nbrePl[0]->count;
 		} else if ($geom == 'Polygon') {
 
 			if ($intersection) {
-				$surface = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.'. $geomColum .'::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
+				$surface = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.' . $geomColum . '::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
 
-				$sql = 'select A.osm_id,A.name,A.amenity, hstore_to_json(A.tags), ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.'. $geomColum .'::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )';
+				$sql = 'select '.$select.', ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.' . $geomColum . '::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )';
 			} else {
 				$surface = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where");
-				$sql = "select A.osm_id,A.name,A.amenity, hstore_to_json(A.tags), ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where";
+				$sql = "select '.$select.', ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where";
 			}
 			$msg = true;
 			$data = $surface[0]->count;
@@ -1354,10 +1410,10 @@ class thematiqueController extends Controller
 
 			if ($intersection) {
 				$distance = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Intersects ( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
-				$sql = 'select A.osm_id,A.highway,A.bridge,A.name,A.oneway,A.junction,A.amenity, hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) ))) AND ( ' . $where . ' ) ';
+				$sql = 'select '.$select.', hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) ))) AND ( ' . $where . ' ) ';
 			} else {
 				$distance = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where");
-				$sql = "select A.osm_id,A.highway,A.bridge,A.name,A.oneway,A.junction,A.amenity, hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,  $lim_adm  as B where B.id =  $id_lim_adm  AND  $where";
+				$sql = "select '.$select.', hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,  $lim_adm  as B where B.id =  $id_lim_adm  AND  $where";
 			}
 
 			$msg = true;

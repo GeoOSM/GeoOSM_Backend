@@ -815,16 +815,20 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
 
     $scope.getFileNode = function (couche) {
-        myfactory.get_data($scope.urlNodejs_backend + '/get_source_file/' + $scope.projet_qgis_server + '/' + couche.identifiant).then(
-            function (data) {
-                if (data.status == 'ok') {
-                    alert(data.url)
-                } else {
-                    toogle_information('Un probleme est survenu')
-                }
-                $('#spinner').hide()
-            }
-        )
+        var params_files = couche['params_files']
+        var url =$scope.urlNodejs_backend+'/var/www/geosm/'+$scope.projet_qgis_server+'/gpkg/'+params_files.nom_cat.replace(/[^a-zA-Z0-9]/g, '_') + '_' +params_files.sous_thematiques + '_' +params_files.key_couche + '_' +params_files.id_cat+'.gpkg'
+        
+        window.open(url,'_blank');
+        // myfactory.get_data($scope.urlNodejs_backend + '/get_source_file/' + $scope.projet_qgis_server + '/' + couche.identifiant).then(
+        //     function (data) {
+        //         if (data.status == 'ok') {
+        //             alert(data.url)
+        //         } else {
+        //             toogle_information('Un probleme est survenu')
+        //         }
+        //         $('#spinner').hide()
+        //     }
+        // )
     }
 
 
@@ -6053,6 +6057,40 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     if (data.status) {
                         couche.categorie.sql_complete = new_sql_complete
                         couche.categorie.mode_sql = true
+                        $scope.generateSqlByCat(data.id_cat, couche)
+                    } else {
+                        alert(data.message.errorInfo.join('-'))
+                        toogle_information('Impossible de terminer l opération')
+                        $('#spinner').hide()
+                    }
+                }
+            )
+        }
+        // couche.categorie.mode_sql
+    }
+
+    $scope.isCollapsedSelectClause = true
+
+    $scope.toogleDivSelectCause = function(){
+        $scope.isCollapsedSelectClause = !$scope.isCollapsedSelectClause
+    }
+    
+    $scope.save_select_clause = function (couche, new_select) {
+
+        if (new_select.length < 4) {
+            toogle_information('Aucune requète entrée !')
+        } else {
+            $('#spinner').show()
+
+            var donne = {}
+            donne.sous_thematiques = couche.sous_thematiques
+            donne.key_couche = couche.key_couche
+            donne.select = new_select
+
+            myfactory.post_data('/thematique/save_select_clause/', JSON.stringify(donne)).then(
+                function (data) {
+                    if (data.status) {
+                        couche.categorie.select = new_select
                         $scope.generateSqlByCat(data.id_cat, couche)
                     } else {
                         alert(data.message.errorInfo.join('-'))
