@@ -6820,8 +6820,30 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             $scope.testCarte(sous_thematique_couche)
         } else if (option == "refres_style") {
             $scope.refres_style(sous_thematique_couche)
+        }else if(option == 'download_qml'){
+            $scope.download_qml(sous_thematique_couche)
         }
         $scope.submitSelectedItem = null
+    }
+
+    
+    $scope.download_qml = function (donne) {
+        $('#spinner').show()
+        myfactory.get_data($scope.urlNodejs_backend + '/save_and_download_style_qgis/' + $scope.projet_qgis_server + '/' + donne.identifiant).then(
+            function (data) {
+                $('#spinner').hide()
+                if (requete_reussi(data)) {
+                    var url =$scope.urlNodejs_backend+data.data.split("//").join("/")
+                    console.log(url)
+                    window.open(url,'_blank');
+                }
+            },
+            function (err) {
+                $('#spinner').hide()
+                toogle_information('Verifier votre connexion')
+            }
+        )
+        
     }
 
     $scope.define_service = function (service, couche) {
