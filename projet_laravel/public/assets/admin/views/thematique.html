@@ -113,8 +113,9 @@
         <div class="row"
             ng-if="mode_modification_thematique == false && mode_sous_thematique == false && mode_ajout_thematique ==false">
             <div class="wrapper " style="padding-left: calc(50% - 500px)">
-                <div class="clash-card barbarian "
-                    ng-repeat="thematique in thematiques | filter:{nom :filtre_thematique}">
+                <!-- | filter:{nom :filtre_thematique}  | orderBy:'ordre'-->
+                <div class="clash-card barbarian " 
+                    ng-repeat="thematique in thematiques">
                     <div class="clash-card__image clash-card__image--barbarian"
                         ng-style="{'background':thematique.color}">
                         <img src="{{thematique.img}}" alt="barbarian" class="" />
@@ -146,6 +147,11 @@
                 ng-click="function_thematique('undefined','ajout')">
                 <i class="fa fa-plus white"></i>
             </div>
+
+            <div class="back_black white ajouter_utilisateur text-center pointer" style="right: 60px;" ng-click="openOrderThematiques()" >
+                <i class="fa fa-sort-amount-asc white" aria-hidden="true"></i>
+            </div>
+
 
         </div>
         <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - - - - 
@@ -299,6 +305,7 @@
                 <div class="col-md-3 col-xs-12">
                     <div class="user-bg">
                         <div class="overlay-box">
+                            <p> Code couleur : {{thematique_en_modif.color}} </p>
                             <div class="user-content" ng-init="thematique_en_modif.img = thematique_couche.img">
 
                                 <img src="{{thematique_en_modif.img_temp}}"

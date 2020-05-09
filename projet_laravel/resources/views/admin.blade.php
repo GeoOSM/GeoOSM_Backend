@@ -76,6 +76,7 @@
 
 <script type="text/javascript" src="assets/admin/js/app.js?ver=1.1"></script>
 <script src="assets/admin/js/generateIcons.js?ver=1.1"></script>
+<script src="assets/admin/js/ordreThematique.js?ver=1.1"></script>
 
 <script src="assets/js/bootstrap-colorpicker.min.js?ver=1.1"></script>
 <script src="assets/js/bootstrap-colorpicker-plus.js?ver=1.1"></script>

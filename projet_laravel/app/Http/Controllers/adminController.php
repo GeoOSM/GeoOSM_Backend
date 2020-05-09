@@ -34,7 +34,7 @@ class AdminController extends Controller
         $i=0;
         try{
 
-            $themetique=DB::table("thematique")->select("id","nom","image_src","shema","color")
+            $themetique=DB::table("thematique")->select("id","nom","image_src","shema","color","ordre")
                                                ->where("sous-sous-thematique","=",true)->where("id_instances_gc","=",$this->id_instance_gc)->get();
 
             foreach ($themetique as $keythemetique) {
@@ -45,7 +45,7 @@ class AdminController extends Controller
                                      ->where("sous-thematique.id-thematique",$keythemetique->id)->get(); 
 
 
-                $data[$i]=["id"=>$i,"id_thematique"=>$keythemetique->id,"nom"=>$keythemetique->nom,"color"=>$keythemetique->color,"img"=>$keythemetique->image_src,"shema"=>$keythemetique->shema,"sous_thematiques"=>[]];
+                $data[$i]=["ordre"=>$keythemetique->ordre,"id"=>$i,"id_thematique"=>$keythemetique->id,"nom"=>$keythemetique->nom,"color"=>$keythemetique->color,"img"=>$keythemetique->image_src,"shema"=>$keythemetique->shema,"sous_thematiques"=>[]];
                 
              
                 $k=0;
@@ -144,7 +144,7 @@ class AdminController extends Controller
             }
 
 
-            $themetique=DB::table("thematique")->select("id","nom","image_src","shema","color")
+            $themetique=DB::table("thematique")->select("id","nom","image_src","shema","color","ordre")
                                                ->where("sous-sous-thematique","=",false)->where("id_instances_gc","=",$this->id_instance_gc)->get();
 
 
@@ -155,7 +155,7 @@ class AdminController extends Controller
                                      ->select("couche-thematique.logo_src","couche-thematique.service_wms","couche-thematique.number","couche-thematique.wms_type","couche-thematique.url","couche-thematique.identifiant","couche-thematique.bbox","couche-thematique.projection","couche-thematique.zmax","couche-thematique.zmin","couche-thematique.type_couche","couche-thematique.remplir_couleur","couche-thematique.contour_couleur","couche-thematique.opacity","couche-thematique.id","couche-thematique.nom","couche-thematique.image_src","couche-thematique.id_couche","couche-thematique.geom")
                                      ->where("couche-thematique.id-thematique",$keythemetique->id)->get();
                 
-                $data[$i]=["id"=>$i,"id_thematique"=>$keythemetique->id,"nom"=>$keythemetique->nom,"color"=>$keythemetique->color,"img"=>$keythemetique->image_src,"shema"=>$keythemetique->shema,"sous_thematiques"=>false,"couches"=>[]];
+                $data[$i]=["ordre"=>$keythemetique->ordre,"id"=>$i,"id_thematique"=>$keythemetique->id,"nom"=>$keythemetique->nom,"color"=>$keythemetique->color,"img"=>$keythemetique->image_src,"shema"=>$keythemetique->shema,"sous_thematiques"=>false,"couches"=>[]];
                 $idcouche=0;
                 foreach ($couchethemetique as $keycouchethematique) {
 

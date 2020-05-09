@@ -6906,6 +6906,31 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             // $log.info('Modal dismissed at: ' + new Date());
         });
     };
+
+    $scope.openOrderThematiques = function () {
+
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'assets/admin/views/ordreThematique.html',
+            controller: 'ordreThematique',
+            size: 'lg',
+            scope: $scope,
+            resolve: {
+                items: function () {
+                    // console.log(10)
+                }
+            }
+        });
+
+        modalInstance.result.then(function (response) {
+            console.log(response)
+            
+        }, function () {
+            console.log('Modal dismissed at: ' + new Date())
+            // $log.info('Modal dismissed at: ' + new Date());
+        });
+    };
+
 })
 
 
