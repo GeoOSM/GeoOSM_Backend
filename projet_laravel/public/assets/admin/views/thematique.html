@@ -210,10 +210,10 @@
             <div class="sous_thematique_couche">
                 <div class="clash-card barbarian "
                     ng-repeat="couche in sous_thematique_active.couches | filter:{nom :filtre_couche}">
-                    <span style="position: absolute;top: 0px;right: 0px;padding: 2.5px;font-weight: bold;"
+                    <span style="position: absolute;top: 0px;right: 0px;padding: 2.5px;font-weight: bold;z-index: inherit;"
                         class="back_black white">
                         {{couche.type_couche}}
-                        <!--<span style="font-weight: normal;">({{couche.geom}})</span> -->
+                        <span style="font-weight: normal;">({{couche.geom}})</span>
                     </span>
                     <div class="clash-card__image clash-card__image--barbarian"
                         ng-init="couche.rang_thema=thematique_couche.id;couche.rang_sous=sous_thematique_active.id;couche.shema=thematique_couche.shema;couche.sous_thematiques=true">
@@ -398,6 +398,10 @@
 
                         <div class="user-bg" style="">
                             <div class="overlay-box">
+                                <span style="padding: 2.5px;font-weight: bold;z-index: inherit;"
+                                class="back_black white">
+                                    {{sous_thematique_couche.geom}}
+                                </span>
                                 <div class="user-content" style="margin-top: 15px;"
                                     ng-init="sous_thematique_couche.img_temp = sous_thematique_couche.img">
 
@@ -406,7 +410,7 @@
                                         style="height: 87px;width: 87px" />
 
 
-                                    <div style="display: inline-block;">
+                                    <!-- <div style="display: inline-block;">
                                         <div ng-init="getColor(sous_thematique_couche.remplir_couleur,sous_thematique_couche.opacity)"
                                             ng-if='sous_thematique_couche.geom =="Polygon"'
                                             ng-style="{'width':'40px','height': '40px','background':color,'border':'3px solid black','display': 'inline-block'}">
@@ -417,7 +421,7 @@
                                             ng-style="{'width':'40px','height': '40px','background':color,'border':'3px solid black','display': 'inline-block'}">
                                         </div>
 
-                                    </div>
+                                    </div> -->
 
 
                                     <!-- <div ng-if='sous_thematique_couche.geom=="Polygon" && sous_thematique_couche.img_temp != "" && sous_thematique_couche.img_temp!=null' ng-style="{'height': '87px','width': '87px','border':'3px solid black','display': 'inline-block','background-size': '32px','margin-bottom': '5px','background-image': 'url('+ sous_thematique_couche.img_temp + ')'}" >

@@ -1429,7 +1429,7 @@ class thematiqueController extends Controller
 				$sql = 'select ' . $select . ', ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.' . $geomColum . '::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )';
 			} else {
 				$surface = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where");
-				$sql = "select '.$select.', ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where";
+				$sql = "select ".$select.", ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where";
 			}
 			$msg = true;
 			$data = $surface[0]->count;
@@ -1437,10 +1437,10 @@ class thematiqueController extends Controller
 
 			if ($intersection) {
 				$distance = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Intersects ( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
-				$sql = 'select ' . $select . ', hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) ))) AND ( ' . $where . ' ) ';
+				$sql = 'select ' . $select . ',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) ))) AND ( ' . $where . ' ) ';
 			} else {
 				$distance = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where");
-				$sql = "select '.$select.', hstore_to_json(A.tags),ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,  $lim_adm  as B where B.id =  $id_lim_adm  AND  $where";
+				$sql = "select ".$select.",ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,  $lim_adm  as B where B.id =  $id_lim_adm  AND  $where";
 			}
 
 			$msg = true;
