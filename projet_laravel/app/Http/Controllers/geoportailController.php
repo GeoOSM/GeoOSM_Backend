@@ -1055,7 +1055,7 @@ public function updateAttribute(Request $request)
               DB::select('SAVEPOINT mon_pointdesauvegarde;');
 
 
-              $zone = DB::select("SELECT id ,st_asgeojson(st_transform(ST_SimplifyPreserveTopology(geom,0),4326)) as geometry FROM instances_gc where id =".$this->id_instance_gc);
+              $zone = DB::select("SELECT id ,st_asgeojson(st_transform(ST_SimplifyPreserveTopology(geom,".env('simplifyGeometry').",4326)) as geometry FROM instances_gc where id =".$this->id_instance_gc);
              
               $data['status'] ='ok';
               $data['data'] =$zone[0];

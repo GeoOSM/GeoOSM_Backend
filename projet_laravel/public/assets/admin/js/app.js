@@ -3394,7 +3394,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                         var extension = groupes_cartes.sous_cartes[i].couches[j].fileImg.name.split('.')[groupes_cartes.sous_cartes[i].couches[j].fileImg.name.split('.').length - 1]
                         formData.append('image_file' + i + '' + j, groupes_cartes.sous_cartes[i].couches[j].fileImg);
 
-                        groupes_cartes.sous_cartes[i].couches[j].nom_img_modife = 'assets/admin/' + space2underscore(groupes_cartes.sous_cartes[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                        groupes_cartes.sous_cartes[i].couches[j].nom_img_modife = 'assets/admin/images/' + space2underscore(groupes_cartes.sous_cartes[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
                         groupes_cartes.sous_cartes[i].couches[j].fileImg.nom = space2underscore(groupes_cartes.sous_cartes[i].couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
 
                         groupes_cartes.sous_cartes[i].couches[j].fileImg.appendId = 'image_file' + i + '' + j
@@ -3406,8 +3406,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 $('#spinner').show()
                 formData.append('nombre_images', JSON.stringify(nombre_images));
-                formData.append('path', '/../../../public/assets/admin/');
-                formData.append('pathBd', 'assets/admin/');
+                formData.append('path', '/../../../public/assets/admin/images/');
+                formData.append('pathBd', 'assets/admin/images/');
                 formData.append('largeur', 90);
                 formData.append('lomguer', 250);
                 var request = {
@@ -3476,7 +3476,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     var extension = groupes_cartes.couches[j].fileImg.name.split('.')[groupes_cartes.couches[j].fileImg.name.split('.').length - 1]
                     formData.append('image_file' + j, groupes_cartes.couches[j].fileImg);
 
-                    groupes_cartes.couches[j].nom_img_modife = 'assets/admin/' + space2underscore(groupes_cartes.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                    groupes_cartes.couches[j].nom_img_modife = 'assets/admin/images/' + space2underscore(groupes_cartes.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
                     groupes_cartes.couches[j].fileImg.nom = space2underscore(groupes_cartes.couches[j].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
 
                     groupes_cartes.couches[j].fileImg.appendId = 'image_file' + j
@@ -3486,8 +3486,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 $('#spinner').show()
                 formData.append('nombre_images', JSON.stringify(nombre_images));
-                formData.append('path', '/../../../public/assets/admin/');
-                formData.append('pathBd', 'assets/admin/');
+                formData.append('path', '/../../../public/assets/admin/images/');
+                formData.append('pathBd', 'assets/admin/images/');
                 formData.append('largeur', 90);
                 formData.append('lomguer', 250);
                 var request = {
@@ -3827,7 +3827,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 var extension = couches.couches[i].fileImg.name.split('.')[couches.couches[i].fileImg.name.split('.').length - 1]
                 formData.append('image_file' + i, couches.couches[i].fileImg);
 
-                couches.couches[i].nom_img_modife = 'assets/admin/' + space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
+                couches.couches[i].nom_img_modife = 'assets/admin/images/' + space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + '.' + extension)
                 couches.couches[i].fileImg.nom = space2underscore(couches.couches[i].nom.replace(/[^\w\s]/gi, '').toLowerCase() + "." + extension)
 
                 couches.couches[i].fileImg.appendId = 'image_file' + i
@@ -3837,8 +3837,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             $('#spinner').show()
             formData.append('nombre_images', JSON.stringify(nombre_images));
-            formData.append('path', '/../../../public/assets/admin/');
-            formData.append('pathBd', 'assets/admin/');
+            formData.append('path', '/../../../public/assets/admin/images/');
+            formData.append('pathBd', 'assets/admin/images/');
             if (type_carte == "pdf") {
                 formData.append('largeur', 44);
                 formData.append('lomguer', 32);
