@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0rc1 (09960d6f05, 2020-04-09)"
+   sodipodi:docname="noun_Suitcase_2533664.svg"
+   id="svg16"
+   version="1.1"
+   y="0px"
+   x="0px"
+   viewBox="0 0 32 40">
+  <metadata
+     id="metadata22">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs20" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg16"
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:cy="20"
+     inkscape:cx="16"
+     inkscape:zoom="6.2"
+     showgrid="false"
+     id="namedview18"
+     inkscape:window-height="988"
+     inkscape:window-width="1680"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <title
+     id="title2">Suitcase</title>
+  <g
+     transform="matrix(1.2168518,0,0,1.2168518,-3.3854785,-0.86740748)"
+     id="g10">
+    <path
+       inkscape:connector-curvature="0"
+       id="path4"
+       d="M 3,11.83 V 24.17 A 2.83,2.83 0 0 0 5.83,27 H 7 V 9 H 5.83 A 2.83,2.83 0 0 0 3,11.83 Z" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path6"
+       d="M 26.17,9 H 25 v 18 h 1.17 A 2.83,2.83 0 0 0 29,24.17 V 11.83 A 2.83,2.83 0 0 0 26.17,9 Z" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path8"
+       d="M 20,5 A 1,1 0 0 0 19,4 H 13 A 1,1 0 0 0 12,5 V 9 H 9 V 27 H 23 V 9 H 20 Z M 14,9 V 6 h 4 v 3 z" />
+  </g>
+</svg>

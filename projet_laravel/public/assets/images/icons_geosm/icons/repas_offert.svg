@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0rc1 (09960d6f05, 2020-04-09)"
+   sodipodi:docname="noun_food donation_3303873.svg"
+   id="svg12"
+   version="1.1"
+   y="0px"
+   x="0px"
+   viewBox="0 0 64 80">
+  <metadata
+     id="metadata18">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs16" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg12"
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:cy="40"
+     inkscape:cx="32"
+     inkscape:zoom="3.1"
+     showgrid="false"
+     id="namedview14"
+     inkscape:window-height="988"
+     inkscape:window-width="1680"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <title
+     id="title2">Food</title>
+  <g
+     transform="matrix(1.1152074,0,0,1.1152074,-3.3640553,3.078341)"
+     id="g6">
+    <path
+       inkscape:connector-curvature="0"
+       id="path4"
+       d="m 18,9 v 13 a 4.0056,4.0056 0 0 1 -3,3.873 V 52 A 4,4 0 0 1 7,52 V 25.873 A 4.0056,4.0056 0 0 1 4,22 V 9 A 1,1 0 0 1 6,9 V 20 H 8 V 9 a 1,1 0 0 1 2,0 v 11 h 2 V 9 a 1,1 0 0 1 2,0 v 11 h 2 V 9 a 1,1 0 0 1 2,0 z M 52,8 c -4.7012,0 -8,7.7852 -8,12 a 8.04,8.04 0 0 0 4,6.92 V 52 a 4,4 0 0 0 8,0 V 26.92 A 8.04,8.04 0 0 0 60,20 C 60,15.7852 56.7012,8 52,8 Z M 31.707,24.2471 31,24.9541 30.293,24.2471 a 6.0000485,6.0000485 0 0 0 -8.4854,8.4853 l 8.4854,8.4854 a 1,1 0 0 0 1.414,0 l 8.4854,-8.4854 A 6.0000485,6.0000485 0 0 0 31.707,24.2471 Z" />
+  </g>
+</svg>

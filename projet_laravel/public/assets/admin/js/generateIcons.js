@@ -20,6 +20,23 @@ angular.module('monapp').controller('generateIconsCtrl', ['$scope', '$http', 'my
 
 
   $scope.iconsProviders = []
+
+  $http.get('assets/images/icons_geosm/all.json').then(function (data) {
+    var icons = []
+    // console.log(data)
+    for (const key in data.data.all) {
+      if (data.data.all.hasOwnProperty(key)) {
+        const element = data.data.all[key];
+        $scope.iconsProviders.push({
+          nom_icon: element,
+          path: 'assets/images/icons_geosm/icons/' + element
+        })
+      }
+    }
+
+   
+  });
+
   $http.get('assets/maki/all.json').then(function (data) {
     var icons = []
     // console.log(data)
@@ -107,17 +124,17 @@ angular.module('monapp').controller('generateIconsCtrl', ['$scope', '$http', 'my
     $scope.draw_rect = SVG().addTo('#bloc_svg_rect').size(100, 100)
     $scope.draw_rect.rect(100, 100).radius(10).attr({ fill: $scope.color_arriere_plan })
 
-    $scope.icon = SVG('#iconOrigin svg').size(80, 80)
+    $scope.icon = SVG('#iconOrigin svg').size(60, 60)
 
 
     $scope.icon_clone = $scope.icon.clone()
 
     $scope.icon.addTo($scope.draw_circle)
-    $scope.icon.move(10, 7)
+    $scope.icon.move(20, 16)
 
 
     $scope.icon_clone.addTo($scope.draw_rect)
-    $scope.icon_clone.move(10, 7)
+    $scope.icon_clone.move(20, 16)
 
     update_color()
 
@@ -126,20 +143,40 @@ angular.module('monapp').controller('generateIconsCtrl', ['$scope', '$http', 'my
 
   function update_color() {
     $scope.draw_rect.each(function (i, children) {
-      this.fill({ color: $scope.color_arriere_plan })
+      // console.log(this,children,'draw_rect')
+      try {
+        this.fill({ color: $scope.color_arriere_plan })
+      } catch (error) {
+        
+      }
+      
     }, true)
 
     $scope.draw_circle.each(function (i, children) {
-      this.fill({ color: $scope.color_arriere_plan })
+      try {
+        this.fill({ color: $scope.color_arriere_plan })
+      } catch (error) {
+        
+      }
     }, true)
 
     $scope.icon.each(function (i, children) {
-      console.log($scope.color_icon, $scope.color_arriere_plan)
-      this.fill({ color: $scope.color_icon })
+      // console.log(this,children,'icon')
+      try {
+        this.fill({ color: $scope.color_icon })
+      } catch (error) {
+        
+      }
+      // console.log($scope.color_icon, $scope.color_arriere_plan)
+      
     }, true)
 
     $scope.icon_clone.each(function (i, children) {
-      this.fill({ color: $scope.color_icon })
+      try {
+        this.fill({ color: $scope.color_icon })
+      } catch (error) {
+        
+      }
     }, true)
 
   }
