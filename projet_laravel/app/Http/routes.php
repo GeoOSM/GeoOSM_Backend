@@ -107,6 +107,8 @@ Route::group(['prefix' => '/thematique'],function(){
 	
 	
 
+	Route::post('changeLayerSousThematique/','thematiqueController@changeLayerSousThematique');
+
 	Route::post('updateThematique/','thematiqueController@updateThematique');
 	Route::post('updateOrdreThematique/','thematiqueController@updateOrdreThematique');
 	

@@ -816,9 +816,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     $scope.getFileNode = function (couche) {
         var params_files = couche['params_files']
-        var url =$scope.urlNodejs_backend+'/var/www/geosm/'+$scope.projet_qgis_server+'/gpkg/'+params_files.nom_cat.replace(/[^a-zA-Z0-9]/g, '_') + '_' +params_files.sous_thematiques + '_' +params_files.key_couche + '_' +params_files.id_cat+'.gpkg'
-        
-        window.open(url,'_blank');
+        var url = $scope.urlNodejs_backend + '/var/www/geosm/' + $scope.projet_qgis_server + '/gpkg/' + params_files.nom_cat.replace(/[^a-zA-Z0-9]/g, '_') + '_' + params_files.sous_thematiques + '_' + params_files.key_couche + '_' + params_files.id_cat + '.gpkg'
+
+        window.open(url, '_blank');
         // myfactory.get_data($scope.urlNodejs_backend + '/get_source_file/' + $scope.projet_qgis_server + '/' + couche.identifiant).then(
         //     function (data) {
         //         if (data.status == 'ok') {
@@ -2803,11 +2803,11 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         $('div .color-picker-grid-inner').attr('id', '')
     }
 
-    function refres_style (identifiant,cb){
+    function refres_style(identifiant, cb) {
         myfactory.get_data($scope.urlNodejs_backend + '/update_style_couche_qgis/' + $scope.projet_qgis_server + '/' + identifiant).then(
             function (data) {
                 console.log(data)
-               cb(true)
+                cb(true)
             },
             function (err) {
                 cb(false)
@@ -2817,7 +2817,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     }
     $scope.refres_style = function (donne) {
         $('#spinner').show()
-        refres_style( donne.identifiant,function(res){
+        refres_style(donne.identifiant, function (res) {
             $('#spinner').hide()
         })
     }
@@ -2835,12 +2835,12 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 if (requete_reussi(data)) {
                     $('#spinner').hide()
                     // || donne.myColor == 'change'
-                    if ((donne.fileImg || donne.generateIcons ) && donne.geom == 'point' && donne.wms_type == "osm" && donne.identifiant) {
+                    if ((donne.fileImg || donne.generateIcons) && donne.geom == 'point' && donne.wms_type == "osm" && donne.identifiant) {
                         $('#spinner').show()
-                        refres_style( donne.identifiant,function(res){
+                        refres_style(donne.identifiant, function (res) {
                             $('#spinner').hide()
                         })
-                       
+
                     }
 
                     toogle_information("La couche " + donne.nom + " a ete bien modifi�")
@@ -2959,9 +2959,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                         toogle_information('Verifier votre connexion')
                     }
                 )
-        }else if (donne.generateIcons) {
+        } else if (donne.generateIcons) {
             var nom_img = space2underscore(donne.nom.replace(/[^\w\s]/gi, '').toLowerCase())
-           
+
             var images_to_save_as_svg = []
             images_to_save_as_svg.push({
                 svg: donne.generateIcons.circle,
@@ -6071,10 +6071,10 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     $scope.isCollapsedSelectClause = true
 
-    $scope.toogleDivSelectCause = function(){
+    $scope.toogleDivSelectCause = function () {
         $scope.isCollapsedSelectClause = !$scope.isCollapsedSelectClause
     }
-    
+
     $scope.save_select_clause = function (couche, new_select) {
 
         if (new_select.length < 4) {
@@ -6820,22 +6820,22 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             $scope.testCarte(sous_thematique_couche)
         } else if (option == "refres_style") {
             $scope.refres_style(sous_thematique_couche)
-        }else if(option == 'download_qml'){
+        } else if (option == 'download_qml') {
             $scope.download_qml(sous_thematique_couche)
         }
         $scope.submitSelectedItem = null
     }
 
-    
+
     $scope.download_qml = function (donne) {
         $('#spinner').show()
         myfactory.get_data($scope.urlNodejs_backend + '/save_and_download_style_qgis/' + $scope.projet_qgis_server + '/' + donne.identifiant).then(
             function (data) {
                 $('#spinner').hide()
                 if (requete_reussi(data)) {
-                    var url =$scope.urlNodejs_backend+data.data.split("//").join("/")
+                    var url = $scope.urlNodejs_backend + data.data.split("//").join("/")
                     console.log(url)
-                    window.open(url,'_blank');
+                    window.open(url, '_blank');
                 }
             },
             function (err) {
@@ -6843,7 +6843,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 toogle_information('Verifier votre connexion')
             }
         )
-        
+
     }
 
     $scope.define_service = function (service, couche) {
@@ -6924,12 +6924,66 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
         modalInstance.result.then(function (response) {
             console.log(response)
-            
+
         }, function () {
             console.log('Modal dismissed at: ' + new Date())
             // $log.info('Modal dismissed at: ' + new Date());
         });
     };
+
+    $scope.changeLayerThematique = function (sous_thematique_couche, sous_thematique) {
+        console.log(sous_thematique_couche, sous_thematique)
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'assets/admin/views/changeLayerThematique.html',
+            controller: 'changeLayerThematique',
+            size: 'lg',
+            scope: $scope,
+            resolve: {
+                couche: function () {
+                    return sous_thematique_couche
+                },
+                sous_thematique: function () {
+                    return sous_thematique
+                }
+            }
+        });
+
+        modalInstance.result.then(function (response) {
+            $window.location.reload();
+            
+            // for (var i = 0; i < $scope.thematiques.length; i++) {
+            //     if ($scope.thematiques[i].sous_thematiques) {
+            //         for (var j = 0; j < $scope.thematiques[i].sous_thematiques.length; j++) {
+            //             for (var k = 0; k < $scope.thematiques[i].sous_thematiques[j].couches.length; k++) {
+            //                 if ($scope.thematiques[i].sous_thematiques[j].couches[k].key_couche == sous_thematique_couche.key_couche) {
+            //                     console.log('response,couche')
+            //                     $scope.thematiques[i].sous_thematiques[j].couches[k].id_sous_thematique = response.id_sous_thematique
+            //                     $scope.thematiques[i].sous_thematiques[j].couches[k].rang_sous = response.rang_sous_them
+            //                     // $scope.thematiques[i].sous_thematiques[j].couches[k].nom = "B"
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+            
+            
+            // // couche.id_sous_thematique = response.id_sous_thematique
+            // // couche.rang_sous = response.rang_sous_them
+            // // $scope.page_principale_thematique = !$scope.page_principale_thematique
+            // $scope.change_onglet = response.rang_sous_them
+            // $scope.page_principale_sous_thematique = !$scope.page_principale_sous_thematique
+           
+            // var couche = $scope.get_couche_thematique(sous_thematique_couche.key_couche, true)
+           
+
+            // $scope.$apply()
+        }, function () {
+            console.log('Modal dismissed at: ' + new Date())
+            // $log.info('Modal dismissed at: ' + new Date());
+        });
+    };
+
 
 })
 
@@ -7299,6 +7353,7 @@ app.directive('thematiqueDirective', function () {
             }
 
             scope.close_modification_thematique = function () {
+
                 scope.mode_modification_thematique = false
                 scope.mode_sous_thematique = false
                 scope.mode_ajout_thematique = false
@@ -7348,6 +7403,7 @@ app.directive('thematiqueDirective', function () {
             }
 
             scope.close_modification_sous_thematique = function () {
+                console.log('close_modification_thematique')
                 scope.mode_modification_couche = false
                 scope.mode_droit_couche = false
                 scope.mode_ajout_couches = false

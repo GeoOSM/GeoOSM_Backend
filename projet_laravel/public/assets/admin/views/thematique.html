@@ -216,7 +216,7 @@
                         <span style="font-weight: normal;">({{couche.geom}})</span>
                     </span>
                     <div class="clash-card__image clash-card__image--barbarian"
-                        ng-init="couche.rang_thema=thematique_couche.id;couche.rang_sous=sous_thematique_active.id;couche.shema=thematique_couche.shema;couche.sous_thematiques=true">
+                        ng-init="couche.rang_thema=thematique_couche.id;couche.rang_sous=sous_thematique_active.id;couche.shema=thematique_couche.shema;couche.sous_thematiques=true;couche.id_sous_thematique=sous_thematique_active.key">
                         <img src="{{couche.img}}" style="height: 87px;width: 87px" />
 
                         <!-- <div ng-if='couche.geom=="Polygon" && ( couche.img == "" || couche.img == null ) '  ng-style="{'width':'87px','height': '87px','background':'{{couche.remplir_couleur}}','opacity':'{{couche.opacity}}','border':'3px solid black','display': 'inline-block'}"></div> -->
@@ -356,6 +356,7 @@
                     <img src="{{sous_thematique_couche.logo_temp}}" class="thumb-lg" style="height: 87px;width: 87px" />
                 </div>
 
+
                 <div class="col-md-12 text-center" style="margin-top:15px">
                     <input type="file" ng-files="setTheFiles($files,sous_thematique_couche)" id="logo_modifier_couche"
                         style="display: none;" accept="image/*">
@@ -365,6 +366,8 @@
                         logo</button>
                     <button class="btn btn-primary" ng-click="save_logo(sous_thematique_couche)">Sauvegarder le
                         logo</button>
+
+
                 </div>
 
             </div>
@@ -390,13 +393,17 @@
                     </div>
                 </div>
             </div>
-
+            
+           
             <div
                 ng-class="{'col-md-9 col-xs-12':sous_thematique_couche.type_couche == 'couche','col-md-12 col-xs-12':sous_thematique_couche.type_couche != 'couche'}">
+                <button class="btn btn-primary" ng-if="sous_thematique_couche.sous_thematiques" ng-click="changeLayerThematique(sous_thematique_couche,thematique_couche.sous_thematiques,sous_thematique)" > Changer son arborescence</button>
+
                 <div class="white-box" style="padding: 25px 0px;height: 190px">
                     <div class="col-md-4 col-xs-12">
 
                         <div class="user-bg" style="">
+                            
                             <div class="overlay-box">
                                 <span style="padding: 2.5px;font-weight: bold;z-index: inherit;"
                                 class="back_black white">
@@ -527,6 +534,7 @@
                                     ng-if="displayTestMap(sous_thematique_couche) && sous_thematique_couche.wms_type =='osm'"
                                     ng-click="getFileNode(sous_thematique_couche)" value="telechargez"> Telechargez la
                                     donnée</option>
+
                                 <option
                                     ng-if="displayTestMap(sous_thematique_couche) && sous_thematique_couche.wms_type =='osm'"
                                     ng-click="download_qml(sous_thematique_couche)" value="download_qml"> Telechargez le

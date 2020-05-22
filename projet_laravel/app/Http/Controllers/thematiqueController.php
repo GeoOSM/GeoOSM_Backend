@@ -1621,4 +1621,29 @@ class thematiqueController extends Controller
 			return $e;
 		}
 	}
+
+	public function changeLayerSousThematique(Request $Requests)
+	{
+		try {
+
+			DB::select('BEGIN;');
+			DB::select('SAVEPOINT mon_pointdesauvegarde;');
+
+			$key_couche = $Requests->input('key_couche');
+			$id_sous_thematique = $Requests->input('id_sous_thematique');
+
+			$querry = DB::table('couche-sous-thematique')
+						->where('id', $key_couche)
+						->update(['id-sous-thematique' => $id_sous_thematique]);
+
+			DB::select('COMMIT;');
+			$data['status'] = 'ok';
+			return $data;
+		} catch (\Exception $e) {
+
+			DB::select('ROLLBACK TO mon_pointdesauvegarde;');
+			DB::select('COMMIT;');
+		}
+		
+	}
 }
