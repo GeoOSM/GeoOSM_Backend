@@ -571,6 +571,12 @@ class AdminController extends Controller
         }
    }
 
+   public function getAllExtents(Request $Requests)
+   {
+    $zone = DB::select("SELECT id,CASE when id=2 then true else false end as active,nom,st_asgeojson(ST_SetSRID(ST_Extent(st_transform(geom,4326)),4326)) as geometry FROM instances_gc where id > 1 and id !=4 group by id,nom order by nom");
+    return $zone;     
+   }
+
    public function users()
    {
         $data=[];

@@ -224,6 +224,7 @@ Route::post('/geoportail/addCountVieuwData', 'geoportailController@addCountVieuw
 Route::get('/geoportail/getVisitiors', 'geoportailController@getVisitiors'); 
 Route::post('/geoportail/getFeatureFromLayerById', 'geoportailController@getFeatureFromLayerById'); 
 
+Route::get('/geoportail/getAllExtents', 'adminController@getAllExtents'); 
 
 Route::group(['prefix' => '/cartes'],function(){
 

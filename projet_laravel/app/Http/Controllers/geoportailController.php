@@ -995,7 +995,7 @@ public function updateAttribute(Request $request)
               $all_limites = DB::table('limite_admin')->select('nom_table','nom','sous_thematiques','key_couche','id_limite')->get();
 
               foreach ($all_limites as $one_limite) {
-                $limites = DB::select("SELECT id ,name,hstore_to_json->'ref:INSEE' as ref FROM public.$one_limite->nom_table where strpos(regexp_replace(regexp_replace(lower(name), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g'), regexp_replace(regexp_replace(lower('".$word."'), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g')) >0");
+                $limites = DB::select("SELECT id ,name,hstore_to_json->'ref:INSEE' as ref FROM public.$one_limite->nom_table where strpos(regexp_replace(regexp_replace(lower(name), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g'), regexp_replace(regexp_replace(lower('".$word."'), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g')) >0 limit 10");
                 $data[$one_limite->nom_table] =$limites;
               }
 
