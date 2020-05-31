@@ -88,7 +88,7 @@ class thematiqueController extends Controller
 			DB::select('SAVEPOINT mon_pointdesauvegarde;');
 
 			$data = $Requests->input('data', []);
-			
+
 			foreach ($data as $thematique) {
 				DB::table('thematique')
 					->where('id', $thematique['id_thematique'])
@@ -1429,7 +1429,7 @@ class thematiqueController extends Controller
 				$sql = 'select ' . $select . ', ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.' . $geomColum . '::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )';
 			} else {
 				$surface = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where");
-				$sql = "select ".$select.", ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where";
+				$sql = "select " . $select . ", ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where";
 			}
 			$msg = true;
 			$data = $surface[0]->count;
@@ -1440,7 +1440,7 @@ class thematiqueController extends Controller
 				$sql = 'select ' . $select . ',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) ))) AND ( ' . $where . ' ) ';
 			} else {
 				$distance = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where");
-				$sql = "select ".$select.",ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,  $lim_adm  as B where B.id =  $id_lim_adm  AND  $where";
+				$sql = "select " . $select . ",ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,  $lim_adm  as B where B.id =  $id_lim_adm  AND  $where";
 			}
 
 			$msg = true;
@@ -1489,28 +1489,31 @@ class thematiqueController extends Controller
 				->where("id_cat", "=", $id_cat)->get();
 
 			if (sizeof($key_val_osm) > 0) {
-				$responseSql = $this->genrateSqlForLayer($id_cat, 'instances_gc', $this->id_instance_gc, 'geom', env('intersection'));
-				if ($responseSql['status'] == 'ok') {
+				try {
+					//code...
+					$responseSql = $this->genrateSqlForLayer($id_cat, 'instances_gc', $this->id_instance_gc, 'geom', env('intersection'));
+					if ($responseSql['status'] == 'ok') {
 
-					$reponse['number'] = $responseSql['number'];
-					$reponse['sql'] = $responseSql['sql'];
-					$reponse['nom_cat'] = $responseSql['nom_cat'];
-					$reponse['surface'] = $responseSql['surface'];
-					$reponse['distance'] = $responseSql['distance'];
+						$reponse['number'] = $responseSql['number'];
+						$reponse['sql'] = $responseSql['sql'];
+						$reponse['nom_cat'] = $responseSql['nom_cat'];
+						$reponse['surface'] = $responseSql['surface'];
+						$reponse['distance'] = $responseSql['distance'];
 
-					$querry = DB::table('categorie')
-						->where('id_cat', $id_cat)
-						->update(['sql' => $reponse['sql'], 'file_json' => null, 'status' => false, 'number' => $reponse['number'], 'surface' => $reponse['surface'], 'distance' => $reponse['distance']]);
+						$querry = DB::table('categorie')
+							->where('id_cat', $id_cat)
+							->update(['sql' => $reponse['sql'], 'file_json' => null, 'status' => false, 'number' => $reponse['number'], 'surface' => $reponse['surface'], 'distance' => $reponse['distance']]);
 
-					$reponse['status'] = 'ok';
-					$reponse['statut'] = false;
+						$reponse['status'] = 'ok';
+						$reponse['statut'] = false;
+					}
+				} catch (\Throwable $th) {
+					//throw $th;
 				}
 			}
 		}
 
 		$re['status'] = 'ok';
-
-		DB::select('COMMIT;');
 
 		return $re;
 	}
@@ -1633,8 +1636,8 @@ class thematiqueController extends Controller
 			$id_sous_thematique = $Requests->input('id_sous_thematique');
 
 			$querry = DB::table('couche-sous-thematique')
-						->where('id', $key_couche)
-						->update(['id-sous-thematique' => $id_sous_thematique]);
+				->where('id', $key_couche)
+				->update(['id-sous-thematique' => $id_sous_thematique]);
 
 			DB::select('COMMIT;');
 			$data['status'] = 'ok';
@@ -1644,6 +1647,5 @@ class thematiqueController extends Controller
 			DB::select('ROLLBACK TO mon_pointdesauvegarde;');
 			DB::select('COMMIT;');
 		}
-		
 	}
 }
