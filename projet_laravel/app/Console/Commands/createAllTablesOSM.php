@@ -67,15 +67,21 @@ class createAllTablesOSM extends Command
                         ->where("sous_thematiques", "=", true)->where("key_couche", "=", $keycouchethemetique->id)->get();
                     if (sizeOf($id_cat) > 0) {
                         # code...
-                        $shema = $keythemetique->shema;
-                        $table = $keycouchethemetique->id_couche;
-                        $type = $keycouchethemetique->geom;
-                        if ($type == 'point') {
-                            $type = 'Point';
+                        if (isset($id_cat[0]->sql)) {
+                            $shema = $keythemetique->shema;
+                            $table = $keycouchethemetique->id_couche;
+                            $type = $keycouchethemetique->geom;
+                            if ($type == 'point') {
+                                $type = 'Point';
+                            } else if ($type == 'Polygon') {
+                                $type = 'MultiPolygon';
+                            } else if ($type == 'LineString') {
+                                $type = 'MultiLineString';
+                            }
+                            $sql = $id_cat[0]->sql;
+                            $res = $thematiqueController->createOSMTable($shema, $table, $sql, $type);
+                            $this->info($shema . '.' . $table . " => $res");
                         }
-                        $sql = $id_cat[0]->sql;
-                        $res = $thematiqueController->createOSMTable($shema, $table, $sql, $type);
-                        $this->info($shema . '.' . $table . " => $res");
                     }
 
                     $jj++;
@@ -103,15 +109,21 @@ class createAllTablesOSM extends Command
                     ->where("sous_thematiques", "=", false)->where("key_couche", "=", $keycouchethematique->id)->get();
                 if (sizeOf($id_cat) > 0) {
 
-                    $shema = $keythemetique->shema;
-                    $table = $keycouchethematique->id_couche;
-                    $sql = $id_cat[0]->sql;
-                    $type = $keycouchethematique->geom;
-                    if ($type == 'point') {
-                        $type = 'Point';
+                    if (isset($id_cat[0]->sql)) {
+                        $shema = $keythemetique->shema;
+                        $table = $keycouchethematique->id_couche;
+                        $sql = $id_cat[0]->sql;
+                        $type = $keycouchethematique->geom;
+                        if ($type == 'point') {
+                            $type = 'Point';
+                        } else if ($type == 'Polygon') {
+                            $type = 'MultiPolygon';
+                        } else if ($type == 'LineString') {
+                            $type = 'MultiLineString';
+                        }
+                        $res = $thematiqueController->createOSMTable($shema, $table, $sql, $type);
+                        $this->info($shema . '.' . $table . " => $res");
                     }
-                    $res = $thematiqueController->createOSMTable($shema, $table, $sql, $type);
-                    $this->info($shema . '.' . $table . " => $res");
                 }
 
                 $jj++;
