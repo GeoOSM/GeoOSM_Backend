@@ -5,6 +5,9 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Console\Commands\refreshDB;
+use App\Console\Commands\createAllTablesOSM;
+
+
 class Kernel extends ConsoleKernel
 {
     /**
@@ -14,6 +17,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         refreshDB::class,
+        createAllTablesOSM::class
     ];
 
     /**

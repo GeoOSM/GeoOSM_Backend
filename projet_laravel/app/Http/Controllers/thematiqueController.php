@@ -15,7 +15,7 @@ use phpDocumentor\Reflection\Types\Boolean;
 
 class thematiqueController extends Controller
 {
-	private $id_instance_gc = 1;
+	public $id_instance_gc = 1;
 
 	public function index()
 	{
@@ -392,6 +392,35 @@ class thematiqueController extends Controller
 		}
 	}
 
+	public function createOSMTable($shema,$table,$sql,$type)
+    {
+		// echo $sql;
+
+		try {
+			
+			DB::select('BEGIN;');
+			DB::select('SAVEPOINT mon_pointdesauvegarde;');
+
+			
+			$drop_table = DB::select('DROP TABLE IF EXISTS ' . $shema . '."' . $table . '"');
+			$create_table = DB::select('CREATE TABLE IF NOT EXISTS ' . $shema . '."' . $table . '"'.' AS '.$sql);
+			
+			DB::select('ALTER TABLE ' . $shema . '."' . $table . '"'.' RENAME COLUMN geometry TO geom');
+			DB::select('ALTER TABLE ' . $shema . '."' . $table . '"'.' ALTER COLUMN geom type geometry('.$type.', 4326)');
+
+			$nombre = DB::select('select count(*) as count from ' . $shema . '."' . $table . '"');
+			DB::select('COMMIT;');
+
+			return $nombre[0]->count;
+		} catch (\Throwable $th) {
+			throw $th;
+			DB::select('ROLLBACK TO mon_pointdesauvegarde;');
+			// return 'merde';
+		}
+		
+		
+	}
+	
 	public function addColumns(Request $Requests)
 	{
 
