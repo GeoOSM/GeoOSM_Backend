@@ -1526,7 +1526,7 @@ class thematiqueController extends Controller
 			//throw $th;
 		}
 
-		$file_name = DB::table("categorie")->select("nom_cat", "type_couche")
+		$file_name = DB::table("categorie")->select("nom_cat", "type_couche","sous_thematiques","key_couche")
 			->where("id_cat", "=", $id_cat)->get();
 
 		$completeOsm = $this->getConditionOsm($id_cat, $lim_adm);
@@ -1591,6 +1591,13 @@ class thematiqueController extends Controller
 			$msg = true;
 			$data = $distance[0]->count;
 		}
+
+		$params_table = $this->getShemaTableCategorieFromIdCouche($file_name[0]->key_couche, $file_name[0]->sous_thematiques);
+		$shema = $params_table['shema'];
+		$table = $params_table['table'];
+		$type = $params_table['type'];
+
+		$this->createOsmtable($shema,$table,$sql,$type);
 
 		if ($msg || $file_name[0]->type_couche == 'wms') {
 
