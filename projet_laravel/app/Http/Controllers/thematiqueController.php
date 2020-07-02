@@ -533,7 +533,7 @@ class thematiqueController extends Controller
 		} catch (\Throwable $th) {
 			// throw $th;
 			DB::select('ROLLBACK TO mon_pointdesauvegarde;');
-			return 'merde';
+			return false;
 		}
 	}
 

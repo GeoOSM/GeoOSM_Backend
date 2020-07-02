@@ -80,8 +80,15 @@ class createAllTablesOSM extends Command
                             }
                             $sql = $id_cat[0]->sql;
                             $res = $thematiqueController->createOSMTable($shema, $table, $sql, $type);
-                            $this->info($shema . '.' . $table . " => $res");
+                            if ($res==false) {
+                                $this->error("Impossible de creer la table $shema . '.' . $table surement un problème de sa requète OSM");
+                            }else{
+                                $this->info($shema . '.' . $table . " => $res");
+                            }
+                            
                         }
+                    }else{
+                        $this->error("$keycouchethemetique->nom Couche non definit completement");
                     }
 
                     $jj++;
@@ -122,8 +129,15 @@ class createAllTablesOSM extends Command
                             $type = 'MultiLineString';
                         }
                         $res = $thematiqueController->createOSMTable($shema, $table, $sql, $type);
-                        $this->info($shema . '.' . $table . " => $res");
+                        if ($res==false) {
+                            $this->error("Impossible de creer la table $shema . '.' . $table surement un problème de sa requète OSM");
+                        }else{
+                            $this->info($shema . '.' . $table . " => $res");
+                        }
+                       
                     }
+                }else{
+                    $this->error("$keycouchethemetique->nom Couche non definit completement");
                 }
 
                 $jj++;
