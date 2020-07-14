@@ -269,7 +269,7 @@ class AdminController extends Controller
                                      ->where("sous-cartes.id-cartes",$carte->id)->get(); 
 
 
-                $data[$i]=["id"=>$i,"id_cartes"=>$carte->id,"nom"=>$carte->nom,"color"=>$carte->color,"img"=>$carte->image_src,"sous_cartes"=>[]];
+                $data[$i]=["id"=>$i,"id_cartes"=>$carte->id,"nom"=>$carte->nom,"color"=>$carte->color,"img"=>$carte->image_src,"sous_cartes"=>[],"principal"=>false];
 
                 $k=0;
 
@@ -290,6 +290,9 @@ class AdminController extends Controller
 
               
                         array_push($data[$i]["sous_cartes"][$k]["couches"],["interrogeable"=>$couchecarte->interrogeable,"commentaire"=>$couchecarte->commentaire,"geom"=>$couchecarte->geom,"principal"=>$couchecarte->principal,"url"=>$couchecarte->url,"identifiant"=>$couchecarte->identifiant,"bbox"=>$couchecarte->bbox,"projection"=>$couchecarte->projection,"zmax"=>$couchecarte->zmax,"zmin"=>$couchecarte->zmin,"type"=>$couchecarte->type,"image_src"=>$couchecarte->image_src,"id"=>$idcouche,"nom"=>$couchecarte->nom,"check"=>false,"key_couche"=>$couchecarte->id ]);
+                        if ($couchecarte->principal) {
+                            $data[$i]["principal"]=$couchecarte->principal;
+                        }
 
                         if ($couchecarte->type =='pdf') {
                           $data[$i]["sous_cartes"][$k]["couches"][$idcouche ]['cartes_pdf'] = [];
@@ -376,7 +379,7 @@ class AdminController extends Controller
                 
 
                 
-                 $data[$i]=["id"=>$i,"id_cartes"=>$carte->id,"nom"=>$carte->nom,"color"=>$carte->color,"img"=>$carte->image_src,"sous_cartes"=>false,"couches"=>[]];
+                 $data[$i]=["id"=>$i,"id_cartes"=>$carte->id,"nom"=>$carte->nom,"color"=>$carte->color,"img"=>$carte->image_src,"sous_cartes"=>false,"couches"=>[],"principal"=>false];
 
                 
 
@@ -384,6 +387,10 @@ class AdminController extends Controller
                 foreach ($couchecartes as $couchecarte) {
 
                    array_push($data[$i]["couches"],["interrogeable"=>$couchecarte->interrogeable,"geom"=>$couchecarte->geom,"principal"=>$couchecarte->principal,"url"=>$couchecarte->url,"identifiant"=>$couchecarte->identifiant,"bbox"=>$couchecarte->bbox,"projection"=>$couchecarte->projection,"zmax"=>$couchecarte->zmax,"zmin"=>$couchecarte->zmin,"type"=>$couchecarte->type,"image_src"=>$couchecarte->image_src,"nom"=>$couchecarte->nom,"key_couche"=>$couchecarte->id,"check"=>false]);
+                   
+                   if ($couchecarte->principal) {
+                    $data[$i]["principal"]=$couchecarte->principal;
+                   }
 
                    if ($couchecarte->type =='pdf') {
                            $data[$i]["couches"][$idcouche ]['cartes_pdf'] = [ ];

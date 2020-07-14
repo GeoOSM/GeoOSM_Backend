@@ -1,11 +1,5 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| SIG - CUY  Routes
-|--------------------------------------------------------------------------
-
-*/
 Route::post('loginAdmin', ['as' => 'loginAdmin', 'uses' => 'loginController@loginAdmin']);
 
 // Route::get('/','geoportailController@index');
