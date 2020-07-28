@@ -516,7 +516,7 @@ class thematiqueController extends Controller
 			// }
 
 			// if (!$table_exist[0]->exists || $nombre == 0) {
-
+			$create_shema = DB::select("CREATE SCHEMA IF NOT EXISTS $shema");
 			$drop_table = DB::select('DROP TABLE IF EXISTS ' . $shema . '."' . $table . '"');
 			$create_table = DB::select('CREATE TABLE IF NOT EXISTS ' . $shema . '."' . $table . '"' . ' AS ' . $sql);
 

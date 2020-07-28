@@ -12,14 +12,16 @@ class CreateLimiteAdmin extends Migration
      */
     public function up()
     {
-        Schema::create('limite_admin', function (Blueprint $table) {
-            $table->bigIncrements('id_limite');
-            $table->string('nom');
-            $table->string('nom_table');
-            $table->boolean('sous_thematiques');
-            $table->integer('key_couche');
-            $table->timestamps();
-        });
+        if (Schema::hasTable('limite_admin')){}else{
+            Schema::create('limite_admin', function (Blueprint $table) {
+                $table->bigIncrements('id_limite');
+                $table->string('nom');
+                $table->string('nom_table');
+                $table->boolean('sous_thematiques');
+                $table->integer('key_couche');
+                $table->timestamps();
+            });
+        }
     }
     
     /**
