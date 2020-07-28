@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="42.333mm"
+   height="42.333mm"
+   viewBox="0 0 42.333 42.333"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="11.331339"
+     inkscape:cx="93.370048"
+     inkscape:cy="81.517422"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="3840"
+     inkscape:window-height="2109"
+     inkscape:window-x="-14"
+     inkscape:window-y="-14"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-254.667)">
+    <g
+       id="g1360"
+       transform="matrix(0.42333,0,0,0.42333,0.05681127,254.65688)"
+       style="stroke-width:0.62500489">
+      <rect
+         id="rect1339"
+         ry="6.2500491"
+         rx="6.2500491"
+         height="100"
+         width="100"
+         x="0"
+         y="0"
+         style="fill:#b23939;stroke-width:0.62500489" />
+      <svg
+         height="60"
+         width="60"
+         version="1.1"
+         x="20"
+         y="16"
+         viewBox="0 0 40 47.55375"
+         style="fill:#b23939;stroke-width:0.62500489"
+         xml:space="preserve"
+         id="SvgjsSvg1054"
+         sodipodi:docname="noun_tourist attraction_633867.svg"
+         inkscape:version="1.0rc1 (09960d6f05, 2020-04-09)"><metadata
+           id="SvgjsMetadata1053"><rdf:RDF><cc:Work
+               rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+                 rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+           fill="#ffffff"
+           id="SvgjsDefs1052" /><sodipodi:namedview
+           pagecolor="#ffffff"
+           bordercolor="#666666"
+           borderopacity="1"
+           objecttolerance="10"
+           gridtolerance="10"
+           guidetolerance="10"
+           inkscape:pageopacity="0"
+           inkscape:pageshadow="2"
+           inkscape:window-width="1680"
+           inkscape:window-height="988"
+           id="SvgjsSodipodi:namedview1051"
+           showgrid="false"
+           inkscape:zoom="5.2151514"
+           inkscape:cx="20"
+           inkscape:cy="23.776875"
+           inkscape:window-x="-8"
+           inkscape:window-y="-8"
+           inkscape:window-maximized="1"
+           inkscape:current-layer="svg8" /><polygon
+           points="14.562,13.544 0,14.53 11.2,23.889 7.639,38.043 20,30.282 32.361,38.043 28.8,23.889 40,14.53 25.439,13.544 20,0 "
+           id="SvgjsPolygon1050"
+           transform="translate(0,4)"
+           style="fill:#ffffff;stroke-width:0.62500489" /></svg>    </g>
+  </g>
+</svg>
