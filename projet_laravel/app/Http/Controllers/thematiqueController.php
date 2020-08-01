@@ -264,7 +264,7 @@ class thematiqueController extends Controller
 			foreach ($couches as $couche) {
 				$tab = $shema . '."' . $couche['id_couche'] . '"';
 				$querry2 = DB::table('droit-couche-sous-thematique')->where('id_couche_sous_thematique', $couche['key_couche'])->delete();
-				$querry3 = DB::select('DROP TABLE ' . $tab);
+				$querry3 = DB::select('DROP TABLE IF EXIST ' . $tab);
 			}
 
 			$querry0 = DB::table('couche-sous-thematique')->where('id-sous-thematique', $id_sous_thematique)->delete();
@@ -299,7 +299,7 @@ class thematiqueController extends Controller
 			$tab = $shema . '."' . $id_couche . '"';
 			if ($sous_thematiques) {
 
-				$querry2 = DB::select('DROP TABLE ' . $tab);
+				$querry2 = DB::select('DROP TABLE IF EXIST ' . $tab);
 
 				$querry1 = DB::table('droit-couche-sous-thematique')->where('id_couche_sous_thematique', $id)->delete();
 
@@ -311,7 +311,7 @@ class thematiqueController extends Controller
 				])->delete();
 			} else {
 
-				$querry2 = DB::select('DROP TABLE ' . $tab);
+				$querry2 = DB::select('DROP TABLE IF EXIST ' . $tab);
 
 				$querry1 = DB::table('droit-couche-thematique')->where('id_couche_thematique', $id)->delete();
 
