@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html data-ng-app="monapp">
+
+<head>
+
+</head>
+
+<body>
+  <div ng-controller="generateIconsCtrl">
+    <!-- <script type="text/ng-template" id="myModalContent.html"> -->
+      <div class="modal-header" style="margin-bottom: 10px;" >
+          <h3 class="modal-title">Generer une icone </h3>
+      </div>
+        
+        <div class="col-md-5" style="overflow-y: auto;" >
+            <div style="height: 40px;margin-bottom: 15px;">
+              
+               <!-- <select ng-model="index_iconsProvider"  class="custom-select custom-select-lg col-md-4" style="height: 80%;" >
+                <option ng-repeat="iconsProvider in iconsProviders" ng-value="$index"> {{iconsProvider.nom}} </option>
+              </select> -->
+
+               <input type="text" ng-model="filtre_nom_icon" class="col-md-7 col-md-offset-1" style="height: 80%;" placeholder="Rechercher une icone">
+
+            </div>
+            
+            <div style="max-height: 485px;;width: 100%;overflow-y: auto;" >
+                <img src="{{icon.path}}" ng-click="chooseIcon(icon)"  style="width: 40px; height: 30px;" data-toggle="tooltip"  title="{{icon.nom_icon}}" class="pointer"  ng-repeat="icon in iconsProviders | filter:{nom_icon :filtre_nom_icon}" alt="">
+            </div>
+        </div>
+
+        <div class="col-md-7" style="text-align: center;" >
+            <div id="iconOrigin">
+                
+            </div>
+
+            <div id="bloc_svg_circle">
+                
+            </div>
+
+            <div id="bloc_svg_rect">
+                
+            </div>
+
+            <div class="col-md-12" >
+                <div class="form-group col-md-5" >
+                    <label for="Icone">Changer la couleur de  icone</label>
+                    <input type="color" class="form-control" ng-model="color_icon"  id="Icone" name="Icone" >
+                </div>
+
+                <div class="form-group col-md-5 col-md-offset-1 ">
+                    <label for="arriere_plan">Changer la couleur de  l'arrière plan</label>
+                    <input type="color" class="form-control" ng-model="color_arriere_plan" id="arriere_plan" name="arriere_plan" >
+                </div>
+
+            </div>
+                
+            <p>
+                <!-- <a href="{{iconsProviders[index_iconsProvider].attributions}}"> ©  {{iconsProviders[index_iconsProvider].nom}} </a> -->
+            </p>
+
+        </div>
+ 
+        <div class="modal-footer" style="position: fixed;bottom: 0px;right: 0px;left: 0px;" >
+            <button class="btn btn-primary" type="button" ng-if="icon_clone && draw_rect" ng-click="ok()">Valider</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+
+  </div>
+  </body>
+
+ </html>

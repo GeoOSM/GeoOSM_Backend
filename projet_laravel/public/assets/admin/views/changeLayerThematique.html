@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html data-ng-app="monapp">
+
+<head>
+
+</head>
+
+<style>
+    * {
+        font-family: 'Roboto', sans-serif;
+    }
+
+    @keyframes click-wave {
+        0% {
+            height: 40px;
+            width: 40px;
+            opacity: 0.35;
+            position: relative;
+        }
+
+        100% {
+            height: 200px;
+            width: 200px;
+            margin-left: -80px;
+            margin-top: -80px;
+            opacity: 0;
+        }
+    }
+
+    .option-input {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -ms-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        position: relative;
+        top: 13.33333px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 30px;
+        width: 30px;
+        transition: all 0.15s ease-out 0s;
+        background: #cbd1d8;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        display: inline-block;
+        margin-right: 0.5rem;
+        outline: none;
+        position: relative;
+        z-index: 1000;
+    }
+
+    .option-input:hover {
+        background: #9faab7;
+    }
+
+    .option-input:checked {
+        background: #40e0d0;
+    }
+
+    .option-input:checked::before {
+        height: 30px;
+        width: 30px;
+        position: absolute;
+        content: '✔';
+        display: inline-block;
+        font-size: 20.66667px;
+        text-align: center;
+        line-height: 33px;
+    }
+
+    .option-input:checked::after {
+        -webkit-animation: click-wave 0.65s;
+        -moz-animation: click-wave 0.65s;
+        animation: click-wave 0.65s;
+        background: #40e0d0;
+        content: '';
+        /* display: block; */
+        position: relative;
+        z-index: 100;
+    }
+
+    .option-input.radio {
+        border-radius: 50%;
+    }
+
+    .option-input.radio::after {
+        border-radius: 50%;
+    }
+
+
+
+    label {
+        display: block;
+        line-height: 40px;
+    }
+</style>
+
+<body>
+    <div ng-controller="ordreThematique">
+        <!-- <script type="text/ng-template" id="myModalContent.html"> -->
+        <div class="modal-header" style="margin-bottom: 10px;">
+            <h3 class="modal-title">Changer la sous thematique de la couche <span
+                    style="color: turquoise;font-weight: bold;"> {{couche.nom}} </span> </h3>
+        </div>
+
+
+        <div style="padding: 0 50px;">
+            <form>
+                <div ng-repeat="sous_thematique_i in sous_thematique track by $index">
+                    <label>
+                        <input type="radio" class="option-input radio" ng-value="sous_thematique_i.key"
+                            ng-model="selectedOccurrence.id_sous_thematique" name="sous_theme" id="{{sous_thematique_i.key}}"
+                            />
+                        {{sous_thematique_i.nom}}
+                        <span ng-if="sous_thematique_i.key == couche.id_sous_thematique">(Actuelle)</span>
+                    </label>
+
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="modal-footer" style="position: fixed;bottom: 0px;right: 0px;left: 0px;">
+        <button class="btn btn-primary" type="button" ng-if="selectedOccurrence.id_sous_thematique != couche.id_sous_thematique"  ng-click="ok()">Sauvegarder  </button>
+        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+
+</body>
+
+</html>

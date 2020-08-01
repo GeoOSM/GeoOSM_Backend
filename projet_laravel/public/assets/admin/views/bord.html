@@ -1,0 +1,116 @@
+<div id="page-wrapper">
+    <div class="container-fluid">
+        </br>
+        </br>
+
+        <div class="row">
+            <div >
+                <table class="table table-striped table-dark back_white ">
+                    <thead>
+                        <tr class="text-center">
+                            <th colspan="3">Choisissez les limites administratives</th>
+                        </tr>
+                        <tr>
+                            <th>Nom de la limite</th>
+                            <th>Couche correspondante </th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="limite_adm in limites_administratives">
+                            <th>{{limite_adm.nom}}</th>
+                            <th>{{get_couche_thematique(limite_adm.key_couche,limite_adm.sous_thematiques).nom}}</th>
+                            <th>
+                                    <!-- ng-click="limites_administratives.splice($index,1)" -->
+                                <button class="btn back_red white" ng-click="toogle_confirmation('supprimer_limite_adm',limite_adm)" >Supprimer</button>
+                            </th>
+                        </tr>
+
+                        <tr ng-repeat="nvl_limite_adm in nouvelles_limites_administratives">
+                            <th>
+                                    <input type="text" ng-model="nvl_limite_adm.nom" required>
+                            </th>
+                            
+                            <th>
+                                <select class="form-control form-control-line" ng-model="nvl_limite_adm.couche">
+                                    <option value="{{couche_admin}}"  ng-repeat="couche_admin in couches_thematiques_by_type_geom('Polygon')" ng-if="couche_admin.wms_type = 'osm'" > {{couche_admin.nom}} ({{couche_admin.number}} entité(s)) </option>
+                                </select>
+                            </th>
+
+                            <th>
+                                <button class="btn back_red white " ng-click="nouvelles_limites_administratives.splice($index,1)">Supprimer</button>
+                            </th>
+                        </tr>
+
+                        <tr style="height:50px">
+                            <td colspan="3" class="text-center" style="position: relative;" >
+                                <div class="back_black white ajouter_colonne text-center pointer" ng-click="nouvelles_limites_administratives.push({})" ng-if="nouvelles_limites_administratives.length != 1">
+                                    <i class="fa fa-plus white"></i>
+                                </div>
+
+                                <div class="back_red white ajouter_colonne text-center pointer save_couche" ng-click="add_limite_administrative()" ng-if="nouvelles_limites_administratives.length">
+                                    <i class="fa fa-floppy-o white"></i> 
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+    <!-- row -->
+    <div class="row">
+        <!--col -->
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="white-box">
+                <div class="text-center">
+                    <i class="fa fa-user black" style="font-size:100px;margin:0 auto"></i>
+
+                    <h3 class="text-muted vb black text-center">{{utilisateurs.length}}</h3>
+                    <h5 class="text-muted vb  text-center" style="color:#ff6849">Nombre d'utilisateurs</h5>
+                </div>
+            </div>
+        </div>
+        <!-- /.col -->
+        <!--col -->
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="white-box">
+                <div class="text-center">
+                    <i class="fa fa-archive black" style="font-size:100px;margin:0 auto;"></i>
+                    <h3 class="text-muted vb black text-center">{{thematiques.length}}</h3>
+                    <h5 class="text-muted vb red text-center">Nombre de themes</h5>
+                </div>
+            </div>
+        </div>
+        <!-- /.col color:#a94442-->
+        <!--col color:#337ab7-->
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="white-box">
+                <div class="text-center">
+                    <i class="fa fa-database black" style="font-size:100px;margin:0 auto;"></i>
+
+                    <h3 class="text-muted vb black text-center"> {{nombre_couches(thematiques)}} </h3>
+                    <h5 class="text-muted vb  text-center" style="color:#ca0744">Nombre de couches</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="white-box">
+                <div class="text-center">
+                    <i class="fa fa-map black" style="font-size:100px;margin:0 auto;"></i>
+
+                    <h3 class="text-muted vb black text-center"> {{nombre_cartes(cartes)}} </h3>
+                    <h5 class="text-muted vb  text-center" style="color:#ff6849">Nombre de cartes</h5>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" ng-click="updateFtpOsm()" style="  position: absolute;bottom: 75px;right: 15px;"> Mettre a jour le serveur de fichier osm </button>
+    </div>
+
+</div>
+<!-- /.container-fluid -->
+
+</div>

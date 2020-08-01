@@ -1517,7 +1517,7 @@ class thematiqueController extends Controller
 	 * @param string $lim_adm nom de la table
 	 * @param int $id_lim_adm id dans la table
 	 */
-	public function genrateSqlForLayer(int $id_cat, string $lim_adm, string $id_lim_adm, string $geomColum, $intersection)
+	public function genrateSqlForLayer(int $id_cat, string $lim_adm, string $id_lim_adm, string $geomColum, $intersection,  $createTableOsm=true)
 	{
 
 		try {
@@ -1525,101 +1525,111 @@ class thematiqueController extends Controller
 		} catch (\Throwable $th) {
 			//throw $th;
 		}
+		try {
+			//code...
 
-		$file_name = DB::table("categorie")->select("nom_cat", "type_couche","sous_thematiques","key_couche")
-			->where("id_cat", "=", $id_cat)->get();
+			$file_name = DB::table("categorie")->select("nom_cat", "type_couche","sous_thematiques","key_couche")
+				->where("id_cat", "=", $id_cat)->get();
 
-		$completeOsm = $this->getConditionOsm($id_cat, $lim_adm);
+			$completeOsm = $this->getConditionOsm($id_cat, $lim_adm);
 
-		$geom = $completeOsm['geom'];
-		$where = $completeOsm['where'];
-		$select = $completeOsm['select'];
+			$geom = $completeOsm['geom'];
+			$where = $completeOsm['where'];
+			$select = $completeOsm['select'];
 
-		if (isset($select)) {
-			$select = "A.osm_id,A.name,A.amenity,hstore_to_json(A.tags)," . $select;
-		} else {
-			$select = "A.osm_id,A.name,A.amenity,hstore_to_json(A.tags)";
-		}
-
-		$msg = false;
-		$sql = '';
-
-		if ($geom == 'point') {
-
-			if ($intersection) {
-
-				$nbrePt = DB::select('select sum(count) as count , \'a\' as a from (select count(A.osm_id) from planet_osm_point  as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) )) AND ( ' . $where . ' ) union all select count(A.osm_id) from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' ) ) src group by a');
-
-				$sql = 'select ' . $select . ',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) )) AND ( ' . $where . ' ) union all select ' . $select . ',ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' ) ';
+			if (isset($select)) {
+				$select = "A.osm_id,A.name,A.amenity,hstore_to_json(A.tags)," . $select;
 			} else {
-				$nbrePt = DB::select('select sum(count) as count , \'a\' as a from (select count(A.osm_id) from planet_osm_point  as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' AND ( ' . $where . ' ) union all select count(A.osm_id) from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and  ( ' . $where . ' ) ) src group by a');
-
-				$sql = 'select ' . $select . ',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and  ( ' . $where . ' ) union all select ' . $select . ',ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and ( ' . $where . ' ) ';
+				$select = "A.osm_id,A.name,A.amenity,hstore_to_json(A.tags)";
 			}
 
-			// $nbrePt = DB::select('select count(*) from (select A.name from planet_osm_point  as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) )) AND ( ' . $where . ' ) union all select A.name from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' ) ) src');
+			$msg = false;
+			$sql = '';
 
-			// // $nbrePl = DB::select('select count(*) from (select A.name from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' )  ) src');
+			if ($geom == 'point') {
 
-			// $sql = 'select '.$select.',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) ))) AND ( ' . $where . ' ) union all select '.$select.',ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' ) ';
+				if ($intersection) {
 
-			$msg = true;
-			$data = $nbrePt[0]->count;
-			// + $nbrePl[0]->count;
-		} else if ($geom == 'Polygon') {
+					$nbrePt = DB::select('select sum(count) as count , \'a\' as a from (select count(A.osm_id) from planet_osm_point  as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) )) AND ( ' . $where . ' ) union all select count(A.osm_id) from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' ) ) src group by a');
 
-			if ($intersection) {
-				$surface = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.' . $geomColum . '::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
+					$sql = 'select ' . $select . ',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) )) AND ( ' . $where . ' ) union all select ' . $select . ',ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' ) ';
+				} else {
+					$nbrePt = DB::select('select sum(count) as count , \'a\' as a from (select count(A.osm_id) from planet_osm_point  as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' AND ( ' . $where . ' ) union all select count(A.osm_id) from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and  ( ' . $where . ' ) ) src group by a');
 
-				$sql = 'select ' . $select . ', ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.' . $geomColum . '::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )';
-			} else {
-				$surface = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where");
-				$sql = "select " . $select . ", ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where";
-			}
-			$msg = true;
-			$data = $surface[0]->count;
-		} else if ($geom == 'LineString') {
+					$sql = 'select ' . $select . ',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and  ( ' . $where . ' ) union all select ' . $select . ',ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and ( ' . $where . ' ) ';
+				}
 
-			if ($intersection) {
-				$distance = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Intersects ( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
-				$sql = 'select ' . $select . ',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) ))) AND ( ' . $where . ' ) ';
-			} else {
-				$distance = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where");
-				$sql = "select " . $select . ",ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,  $lim_adm  as B where B.id =  $id_lim_adm  AND  $where";
-			}
+				// $nbrePt = DB::select('select count(*) from (select A.name from planet_osm_point  as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) )) AND ( ' . $where . ' ) union all select A.name from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' ) ) src');
 
-			$msg = true;
-			$data = $distance[0]->count;
-		}
+				// // $nbrePl = DB::select('select count(*) from (select A.name from planet_osm_polygon as A ,' . $lim_adm . ' as B where B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) )) AND ( ' . $where . ' )  ) src');
 
-		$params_table = $this->getShemaTableCategorieFromIdCouche($file_name[0]->key_couche, $file_name[0]->sous_thematiques);
-		$shema = $params_table['shema'];
-		$table = $params_table['table'];
-		$type = $params_table['type'];
+				// $sql = 'select '.$select.',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_point as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) ))) AND ( ' . $where . ' ) union all select '.$select.',ST_Centroid(ST_TRANSFORM(A.way,4326)) as geometry from planet_osm_polygon as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Contains( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' ) ';
 
-		$this->createOsmtable($shema,$table,$sql,$type);
+				$msg = true;
+				$data = $nbrePt[0]->count;
+				// + $nbrePl[0]->count;
+			} else if ($geom == 'Polygon') {
 
-		if ($msg || $file_name[0]->type_couche == 'wms') {
+				if ($intersection) {
+					$surface = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.' . $geomColum . '::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
 
-			$reponse['surface'] = null;
-			$reponse['distance'] = null;
-			if ($geom == 'Polygon') {
-				$surface_totale = $surface[0]->surface;
-				$reponse['surface'] = $surface_totale;
+					$sql = 'select ' . $select . ', ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.' . $geomColum . '::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )';
+				} else {
+					$surface = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where");
+					$sql = "select " . $select . ", ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where";
+				}
+				$msg = true;
+				$data = $surface[0]->count;
 			} else if ($geom == 'LineString') {
-				$distance_totale = $distance[0]->distance;
-				$reponse['distance'] = $distance_totale;
+
+				if ($intersection) {
+					$distance = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A ,' . $lim_adm . ' as B where  (B.id = ' . $id_lim_adm . ' and (ST_Intersects ( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
+					$sql = 'select ' . $select . ',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,' . $lim_adm . ' as B where (B.id = ' . $id_lim_adm . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) ))) AND ( ' . $where . ' ) ';
+				} else {
+					$distance = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A , $lim_adm  as B where  B.id =  $id_lim_adm  AND  $where");
+					$sql = "select " . $select . ",ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,  $lim_adm  as B where B.id =  $id_lim_adm  AND  $where";
+				}
+
+				$msg = true;
+				$data = $distance[0]->count;
 			}
 
-			if (!is_numeric($data)) {
-				$data = sizeof($data);
-			}
+			if($createTableOsm){
+				$params_table = $this->getShemaTableCategorieFromIdCouche($file_name[0]->key_couche, $file_name[0]->sous_thematiques);
+				$shema = $params_table['shema'];
+				$table = $params_table['table'];
+				$type = $params_table['type'];
 
-			$reponse['status'] = 'ok';
-			$reponse['number'] = $data;
-			$reponse['sql'] = $sql;
-			$reponse['nom_cat'] = $file_name[0]->nom_cat;
-			$reponse['statut'] = false;
+				$this->createOsmtable($shema,$table,$sql,$type);
+			}
+			
+
+
+			if ($msg || $file_name[0]->type_couche == 'wms') {
+
+				$reponse['surface'] = null;
+				$reponse['distance'] = null;
+				if ($geom == 'Polygon') {
+					$surface_totale = $surface[0]->surface;
+					$reponse['surface'] = $surface_totale;
+				} else if ($geom == 'LineString') {
+					$distance_totale = $distance[0]->distance;
+					$reponse['distance'] = $distance_totale;
+				}
+
+				if (!is_numeric($data)) {
+					$data = sizeof($data);
+				}
+
+				$reponse['status'] = 'ok';
+				$reponse['number'] = $data;
+				$reponse['sql'] = $sql;
+				$reponse['nom_cat'] = $file_name[0]->nom_cat;
+				$reponse['statut'] = false;
+				return $reponse;
+			}
+		}catch (\Throwable $th) {
+			$reponse['status'] = 'ko';
 			return $reponse;
 		}
 	}
@@ -1639,11 +1649,16 @@ class thematiqueController extends Controller
 
 			$key_val_osm = DB::table("sous_categorie")->select("action", "type_geom", "nom", "operateur", "condition")
 				->where("id_cat", "=", $id_cat)->get();
-
 			if (sizeof($key_val_osm) > 0) {
 				try {
-					//code...
-					$responseSql = $this->genrateSqlForLayer($id_cat, 'instances_gc', $this->id_instance_gc, 'geom', env('intersection'));
+					try {
+						$responseSql = $this->genrateSqlForLayer($id_cat, 'instances_gc', $this->id_instance_gc, 'geom', env('intersection'),false);
+					} catch (\Throwable $th) {
+						// throw $th;
+
+						$responseSql['status'] = 'ko';
+					}
+					
 					if ($responseSql['status'] == 'ok') {
 
 						$reponse['number'] = $responseSql['number'];

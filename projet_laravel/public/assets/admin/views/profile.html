@@ -1,0 +1,434 @@
+<div id="page-wrapper" ng-class="{back_white_important:mode_ajout_droit_utilisateur}">
+    <div class="container-fluid">
+        <div class="row bg-title" style="border-bottom: 1px solid #e0dddd;padding-bottom: 4px;">
+            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 ">
+                <span ng-if="!mode_ajout_droit_utilisateur">
+                  <a class="page-title black pointer col-md-6" ng-if="mode_modification_utilisateur || mode_droit_utilisateur || mode_ajout_utilisateur"
+                        ng-click="close_modification_utilisateur()">
+                        <i class="fa fa-arrow-left" style="font-size:larger"></i> Utilisateurs
+                    </a>
+                </span>
+
+
+                <span ng-if="mode_modification_utilisateur || mode_droit_utilisateur || mode_ajout_utilisateur">
+                    <a class="page-title black pointer col-md-6" ng-click="close_ajout_droit_utilisateur()" ng-if="mode_ajout_droit_utilisateur">
+                        <i class="fa fa-arrow-left" style="font-size:larger"></i> Les droits
+                    </a>
+                </span>
+
+
+                <a class="page-title black" ng-hide="mode_droit_utilisateur || mode_modification_utilisateur || mode_ajout_utilisateur">
+                    Gestion des utilisateurs
+                </a>
+
+                <a class="page-title black col-md-6 text-center" ng-if="mode_droit_utilisateur">
+                    {{utilisateur_modifie.nom}}
+                </a>
+
+                <a class="page-title black col-md-6 text-center" ng-if="mode_modification_utilisateur">
+                       Modification d'utilisateur
+                </a>
+
+                <a class="page-title black col-md-6 text-center" ng-if="mode_ajout_utilisateur">
+                        Création d'utilisateur
+                </a>
+
+            </div>
+            <div class="col-lg-7 col-sm-7 col-md-7 col-xs-12">
+                <ul class="nav navbar-top-links navbar-left m-l-20 hidden-xs pull-right" ng-hide="mode_droit_utilisateur || mode_modification_utilisateur || mode_ajout_utilisateur">
+                    <li>
+                        <label class="black page-title col-lg-5 col-sm-5 col-md-5 col-xs-12" style="margin-top: 6px;">
+                            <a class="black" >Rechercher un utilisateur</a>
+                        </label>
+                        <form role="search" class="app-search hidden-xs col-lg-7 col-sm-7 col-md-7 col-xs-12">
+                            <input type="text" placeholder="Rechercher un utilisateur" ng-model="filtre_person" class="form-control black" style="margin:0px">
+                            <a href=""><i class="fa fa-search"></i></a>
+                        </form>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-top-links navbar-left m-l-20 hidden-xs pull-right" ng-show="mode_droit_utilisateur">
+                    <li>
+                        <label class="black col-lg-5 col-sm-5 col-md-5 col-xs-12" style="margin-top: 6px;">
+                            <a class="black">Rechercher un droit</a>
+                        </label>
+                        <form role="search" class="app-search hidden-xs col-lg-7 col-sm-7 col-md-7 col-xs-12">
+                            <input type="text" placeholder="Rechercher un droit" ng-model="filtre_droit" class="form-control black" style="margin:0px">
+                            <a href=""><i class="fa fa-search"></i></a>
+                        </form>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - - - - 
+                        presentation des utilisateurs  
+- - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
+       
+        <div class="row" ng-if="mode_modification_utilisateur == false && mode_droit_utilisateur == false && mode_ajout_utilisateur ==false">
+            <div class="wrapper" style="padding-left: calc(50% - 500px)">
+                <div class="clash-card barbarian"  ng-repeat="utilisateur in utilisateurs | filter:{nom :filtre_person}">
+                    <div class="clash-card__image clash-card__image--barbarian">
+                        <img src="{{utilisateur.img}}" alt="barbarian" class="img-circle" />
+                    </div>
+                    <div class="clash-card__unit-name" ng-if="utilisateur.statut == 'administrateur'">
+                        {{utilisateur.nom}}
+                        <span style="font-size: 23px;" >(adminstrateur)</span>
+                    </div>
+                    <div class="clash-card__unit-name" ng-if="utilisateur.statut == 'utilisateur'" style="padding-top: 20px;">
+                        {{utilisateur.nom}}
+                    </div>
+                    <div class="clash-card__unit-description">
+                        <table class="table table-striped table-dark">
+                            <tr>
+                                <th >Email : </th>
+                                <th style="word-break: break-all;" >{{utilisateur.email}}</th>
+                            </tr>
+                            <tr>
+                                <th>Télephone : </th>
+                                <th>{{utilisateur.numero}}</th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="clash-card__unit-stats clash-card__unit-stats--barbarian clearfix back_white pointer" ng-if="utilisateur.statut == 'utilisateur'" style="border-radius:0px">
+                        
+                         <div class="one-third border_black" style="display: none !important;" ng-click="function_utilisateur(utilisateur.id,'droit')" >
+                            <!-- fa-flash -->
+                            <i class="fa fa-flash red " style="font-size:xx-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Droits</div>
+                        </div>
+
+                        <div class="one-third border_black" style="display: none !important;" ng-click="function_utilisateur(utilisateur.id,'modification')">
+                            <i class="fa fa-pencil red " style="font-size:xx-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Modifier</div>
+                        </div>
+                        <div class="one-third no-border " type="button" style="width: 100%;"  ng-click="toogle_confirmation('utilisateur',utilisateur)">
+                            <i class="fa fa-trash-o red" style="font-size:xx-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Supprimer</div>
+                        </div>
+                    </div>
+
+                    <div class="clash-card__unit-stats clash-card__unit-stats--barbarian clearfix back_white pointer" style="border-radius:0px" ng-if="utilisateur.statut == 'administrateur'">
+                        
+
+                        <div class="one-third border_black" ng-click="function_utilisateur(utilisateur.id,'modification')" style="display: none !important;width: 50%">
+                            <i class="fa fa-pencil red " style="font-size:xx-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Modifier</div>
+                        </div>
+                        <div class="one-third no-border " type="button"  ng-click="toogle_confirmation('utilisateur',utilisateur)" style="width: 100%">
+                            <i class="fa fa-trash-o red" style="font-size:xx-large;margin:0 auto;"></i>
+                            <div class="stat-value black">Supprimer</div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="back_red white ajouter_utilisateur text-center pointer" ng-click="function_utilisateur('undefined','ajout')">
+                <i class="fa fa-plus white"></i>
+            </div>
+
+        </div>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - - - - 
+                        modification d'un utilisateur 
+- - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
+        <div class="row" ng-if="mode_modification_utilisateur">
+            <div class="col-md-3 col-xs-12">
+                <div class="white-box">
+                    <div class="user-bg">
+                        <div class="overlay-box">
+                            <div class="user-content" ng-init="modification_utilisateur.img_temp = utilisateur_modifie.img">
+                                <img src="{{modification_utilisateur.img_temp}}" class="thumb-lg img-circle" alt="img">
+                                <div class="col-sm-12" style="margin-top:15px">
+                                    <button class="btn btn-primary"  ng-click="file('img_modi_profile',modification_utilisateur,'img_temp')" >Changer la photo</button>
+                                    <input type="file" ng-files="setTheFiles($files,modification_utilisateur)" id="img_modi_profile" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9 col-xs-12">
+                <div class="white-box">
+                    <form class="form-horizontal form-material" ng-submit="modifier_utilisateur(utilisateur_modifie)" >
+                        <div class="form-group">
+                            <label class="col-md-12">Nom complet</label>
+                            <div class="col-md-12">
+                                <input type="text" placeholder="Nom d'utilisateur" class="form-control form-control-line" ng-value="utilisateur_modifie.nom" ng-model="modification_utilisateur.nom">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="example-email" class="col-md-12">Email</label>
+                            <div class="col-md-12">
+                                <input type="email" placeholder="email de l'utilisateur" class="form-control form-control-line" ng-value="utilisateur_modifie.email"  ng-model="modification_utilisateur.email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12">Telephone</label>
+                            <div class="col-md-12">
+                                <input type="number" placeholder="Numero de telephone" class="form-control form-control-line" ng-value="utilisateur_modifie.numero" ng-model="modification_utilisateur.numero">                                
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12">Mot de passe</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control form-control-line" ng-value="utilisateur_modifie.mot_passe" ng-model="modification_utilisateur.mot_passe">  
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-12 text-center">
+                                <button class="btn border_red back_red white" type="submit" >Mettre à jour le profil</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - - - - 
+                        Droits d'un utilisateur 
+- - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
+        <div class="row" ng-if="mode_droit_utilisateur">
+        <!-- - - - - - - - - - - - -presentation des Droits des sous thematiques couches- - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
+            <div class="col-md-2 col-xs-12" ng-repeat="droit in utilisateur_modifie.droits_sous_thematique | filter:{nom:filtre_droit}" ng-if="!mode_ajout_droit_utilisateur" ng-init="droit.id_utilisateur = utilisateur_modifie.id_utilisateur;droit.type ='sous_thematique_couches';droit.index = utilisateur_modifie.id " >
+                <div class="white-box">
+                    <div class="user-bg">
+                        <div class="overlay-box">
+                            <div class="user-content" style="margin-top:10px">
+                                     <img src="{{droit.img}}" ng-if='droit.geom=="point"' style="height: 87px;width: 87px"/>
+                        
+                                    <div ng-if='droit.geom=="Polygon" && droit.img==null'  ng-style="{'width':'87px','height': '87px','background':'{{droit.remplir_couleur}}','opacity':'{{droit.opacity}}','border':'3px solid black','display': 'inline-block'}">
+                                        
+                                    </div>
+
+                                   <div ng-if='droit.geom=="Polygon" && droit.img!=null' ng-style="{'height': '87px','width': '87px','border':'3px solid black','display': 'inline-block','margin-bottom': '5px','background-image': 'url('+ droit.img + ')'}" >
+                                         <!-- <img  ng-src="{{droit.img}}" style="width: 25px;height: 25px;" /> -->
+                                   </div>
+
+                                   <hr ng-if='droit.geom=="LineString"' ng-style="{'border':'2px solid {{droit.contour_couleur}}','margin-left': '10px','margin-right': '10px','margin-top': '60px'}">
+
+                                <h4 class="black">{{droit.nom}}</h4>
+                                <div class="col-sm-12" style="position: absolute;bottom: 15px;right: 0px;">
+                                    <button class="btn btn-primary back_black white" ng-click="toogle_confirmation('droit',droit)" >Supprimer</button>
+                                </div>
+                                <!-- <h4 class="text-white">Anas Lagrhissi</h4> -->
+                                <!-- <h5 class="text-white">al@sogefi.cm</h5> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="utilisateur_modifie.droits_sous_thematique.length == 0 && !mode_ajout_droit_utilisateur" class="text-center" style="margin-top: 20%;">
+                <h1 style="color: #888484;"> Cet utilisateur ne possede encore aucun droit</h1>
+            </div>
+        <!-- - - - - - - - - - - - -presentation des Droits des  thematiques couches- - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
+            <div class="col-md-2 col-xs-12" ng-repeat="droit in utilisateur_modifie.droits_thematique | filter:{nom:filtre_droit}" ng-if="!mode_ajout_droit_utilisateur" ng-init="droit.id_utilisateur = utilisateur_modifie.id_utilisateur;droit.type ='thematique_couches';droit.index = utilisateur_modifie.id " >
+                <div class="white-box">
+                    <div class="user-bg">
+                        <div class="overlay-box">
+                            <div class="user-content" style="margin-top:10px">
+                                  <img src="{{droit.img}}" ng-if='droit.geom=="point"' style="height: 87px;width: 87px"/>
+                        
+                                    <div ng-if='droit.geom=="Polygon" && droit.img==null'  ng-style="{'width':'87px','height': '87px','background':'{{droit.remplir_couleur}}','opacity':'{{droit.opacity}}','border':'3px solid black','display': 'inline-block'}">
+                                        
+                                    </div>
+
+                                   <div ng-if='droit.geom=="Polygon" && droit.img!=null' ng-style="{'height': '87px','width': '87px','border':'3px solid black','display': 'inline-block','margin-bottom': '5px','background-image': 'url('+ droit.img + ')'}" >
+                                         <!-- <img  ng-src="{{droit.img}}" style="width: 25px;height: 25px;" /> -->
+                                   </div>
+
+                                   <hr ng-if='droit.geom=="LineString"' ng-style="{'border':'2px solid','margin-left': '10px','margin-right': '10px','margin-top': '60px','border-color':droit.contour_couleur}">
+                                <h4 class="black">{{droit.nom}}</h4>
+                                <div class="col-sm-12" style="position: absolute;bottom: 15px;right: 0px;">
+                                    <button class="btn btn-primary back_black white" ng-click="toogle_confirmation('droit',droit)">Supprimer</button>
+                                </div>
+                                <!-- <h4 class="text-white">Anas Lagrhissi</h4> -->
+                                <!-- <h5 class="text-white">al@sogefi.cm</h5> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="back_red white ajouter_droit text-center pointer" ng-click="function_droit(utilisateur_modifie.id)" ng-if="!mode_ajout_droit_utilisateur">
+                <i class="fa fa-plus white"></i>
+            </div>
+
+            <div class="row" ng-if="mode_ajout_droit_utilisateur">
+                <div class="white-box">
+                    <div style="display: -webkit-inline-box;">
+                        <h3 class="" style="display: -webkit-inline-box;">
+                            <div class="checkbox " style="font-size: 7px;margin-top: 9px; margin-right: 7px;">
+                                <label style="font-size: 1em" class="lab">
+                                                   <input type="checkbox" disabled>
+                                                   <span class="border_black_gray cr "><i class="cr-icon fa fa-check black"></i></span>
+                                                </label>
+                            </div>
+                            <span style="font-size:15px"> : Droit de consulation</span>
+
+                        </h3>
+                        <h3 class="" style="display: -webkit-inline-box;">
+                            <div class="checkbox " style="font-size: 7px;margin-top: 9px; margin-right: 7px;">
+                                <label style="font-size: 1em" class="lab">
+                                                       <input type="checkbox" checked="true" disabled>
+                                                       <span class="border_black_gray cr "><i class="cr-icon fa fa-check black"></i></span>
+                                                    </label>
+                            </div>
+                            <span style="font-size:15px"> : Droit de Modification et supression</span>
+
+                        </h3>
+                        
+                    </div>
+                    <div class="pull-right" style="padding-right: 50px;margin-top: 10px">
+                        <button class="btn btn-secondary back_red white " style="padding-right: 50px;padding-left: 50px" ng-click="ajouter_droit(utilisateur_modifie,utilisateur_modifie.les_id_droits_sous)"> Ajouter</button>
+                    </div>
+
+                    <!-- <p class="text-muted">Add class <code>.table</code></p> -->
+                    <div class="table-responsive ">
+                        <table class="table" ng-repeat="thematique in thematiques" style="margin-bottom:50px">
+
+                            <tr  class="white back_black pointer" ng-click="thematique.open = !thematique.open">
+                                <td style="font-weight:bold;font-size:14px">{{thematique.nom}}</td>
+                                <!-- colspan="2" -->
+                                <td style="padding-right:20px" >
+                                    <i class="fa fa-angle-down pull-right " style="font-size:x-large" ng-if="thematique.open"></i>
+                                    <i class="fa fa-angle-right pull-right " style="font-size:x-large" ng-if="!thematique.open"></i>
+                                </td>
+                            </tr>
+
+                            <tbody ng-repeat="sous_thematique in thematique.sous_thematiques" ng-if="thematique.sous_thematiques && thematique.open && tri_droit_sous_thematiques(sous_thematique.les_id_couches,utilisateur_modifie.les_id_droits_sous)">
+
+                                <tr style="background:rgba(0,0,0,.4)" class="white">
+                                    <td>{{sous_thematique.nom}}</td>
+                                    <td style="padding-right:20px">
+                                        <div class="checkbox  pull-right" style="font-size: 8px;">
+                                            <label style="font-size: 1em" class="lab">
+                                                   <input type="checkbox" ng-model="sous_thematique.active" ng-click="checkbox(sous_thematique,'sous_thematique')">
+                                                   <span class="border_black_gray cr "><i class="cr-icon fa fa-check black"></i></span>
+                                                </label>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr ng-repeat="couche in sous_thematique.couches | filter:{nom:filtre_droit}" ng-if="tri_droit(utilisateur_modifie.les_id_droits_sous,couche.key_couche)">
+                                    <td >{{couche.nom}}</td>
+                                    <td style="padding-right:20px">
+                                        <div class="checkbox  pull-right" style="font-size: 7px;">
+                                            <label style="font-size: 1em" class="lab">
+                                                <input type="checkbox"  ng-model="couche.check"  ng-click="checkbox(sous_thematique,'couches')" >
+                                                <span class="border_black_gray cr "><i class="cr-icon fa fa-check black"></i></span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                            <tr ng-repeat="couche in thematique.couches | filter:{nom:filtre_droit}" ng-if="!thematique.sous_thematiques && thematique.open && tri_droit(utilisateur_modifie.les_id_droits_thematiques,couche.key_couche)">
+                                <td>{{couche.nom}}</td>
+                                <td style="padding-right:20px">
+                                    <div class="checkbox  pull-right" style="font-size: 7px;">
+                                        <label style="font-size: 1em" class="lab">
+                                            <input type="checkbox" ng-model="couche.check"  >
+                                            <span class="border_black_gray cr "><i class="cr-icon fa fa-check black"></i></span>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -  - - - -  - - - -  - - - - 
+                        Ajout d'un utilisateur 
+- - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -  - - - -  - - - - - -->
+        <div class="row" ng-if="mode_ajout_utilisateur">
+            <div class="col-md-3 col-xs-12">
+                <div class="white-box">
+                    <div class="user-bg">
+                        <div class="overlay-box">
+                            <div class="user-content">
+                                <img src="{{nouveau_utilisateur.img_temp}}" class="thumb-lg img-circle" alt="img">
+                                <div class="col-sm-12" style="margin-top:15px">
+                                    <button class="btn btn-primary" ng-click="file('image_file',nouveau_utilisateur,'img_temp')">Chargez une photo</button>
+                                    <input type="file" ng-files="setTheFiles($files,nouveau_utilisateur)" id="image_file"  style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9 col-xs-12">
+                <div class="white-box">
+                    <form class="form-horizontal form-material" ng-submit="add_user()">
+                        <div class="form-group">
+                            <label class="col-md-12">Nom complet</label>
+                            <div class="col-md-12">
+                                <input type="text" placeholder="Nom d'utilisateur" class="form-control form-control-line" ng-model="nouveau_utilisateur.nom" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="example-email" class="col-md-12">Email</label>
+                            <div class="col-md-12">
+                                <input type="email" placeholder="email de l'utilisateur" class="form-control form-control-line" ng-model="nouveau_utilisateur.email" >    
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12">Telephone</label>
+                            <div class="col-md-12">
+                                <input type="number" placeholder="Numero de telephone" class="form-control form-control-line" ng-model="nouveau_utilisateur.numero" required>  
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12">Statut</label>
+                            <div class="col-md-12">
+                                <select class="form-control form-control-line" ng-model="nouveau_utilisateur.statut">
+                                    <option value="utilisateur">Utilisateur</option>
+                                    <option  value="administrateur">Super utilisateur</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12">Mot de passe</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control form-control-line" ng-model="nouveau_utilisateur.mot_passe" required>    
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-12 text-center">
+                                <button class="btn back_red border_red white" type="submit">Ajouter l'utilisateur</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal_supprimer" tabindex="-1" role="dialog" aria-labelledby="modal_suppression" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header back_white black" style="text-align: center;padding: 5px;">
+                        <h5 class="modal-title " id="exampleModalLongTitle" style="font-weight: bold;font-size: 19px;">Voulez vous vraiment Supprimer ce compte ?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -28px;">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                    </div>
+                    <div class="modal-body" style="padding: 0px;">
+
+
+                    </div>
+                    <div class="modal-footer text-center">
+                        <button type="button" class="btn btn-secondary back_red white" data-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary back_gray white" id="btn_partenaire">Oui </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
