@@ -448,7 +448,7 @@ class cartesController extends Controller
 
 		   		}
 
-		   		$querry1 = DB::table('couches-sequence')->where('id_couche', $id)->delete();
+		   		// $querry1 = DB::table('couches-sequence')->where('id_couche', $id)->delete();
 
 		   		DB::select('COMMIT;');
 	    		$data['status'] ='ok';
@@ -526,12 +526,12 @@ class cartesController extends Controller
 					['name' => $nom,'id_referent' => $key]
 				);
 
-		   		foreach ($couches as $couche ) {
+		   		// foreach ($couches as $couche ) {
 
-		   			$querry=DB::table('couches-sequence')->insertGetId(
-						['id_couche' => $couche['key_couche'],'id_sequence' => $querry1]
-					);
-		   		}
+		   		// 	$querry=DB::table('couches-sequence')->insertGetId(
+				// 		['id_couche' => $couche['key_couche'],'id_sequence' => $querry1]
+				// 	);
+		   		// }
 				
 
 		   	}else if ($id_cartes){
@@ -540,14 +540,14 @@ class cartesController extends Controller
 					['name' => $nom,'id_referent' => $id_cartes]
 				);
 
-				foreach ($couches as $couche ) {
+				// foreach ($couches as $couche ) {
 
-		   			$querry=DB::table('couches-sequence')->insertGetId(
-						['id_couche' => $couche['key_couche'],'id_sequence' => $querry1]
-					);
+		   		// 	$querry=DB::table('couches-sequence')->insertGetId(
+				// 		['id_couche' => $couche['key_couche'],'id_sequence' => $querry1]
+				// 	);
 
 
-		   		}
+		   		// }
 
 		   	}
 
