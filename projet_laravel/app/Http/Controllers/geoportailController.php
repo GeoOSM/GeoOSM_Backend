@@ -973,13 +973,28 @@ public function updateAttribute(Request $request)
           }
   }
 
+  public function searchCouche(Request $Requests)
+  {
+    $word = $Requests->input('word',null);
+    $couches = DB::select('SELECT id, nom FROM public."couche-sous-thematique" where strpos(unaccent(lower(nom)),unaccent(lower(\''.$word.'\')))>0 
+    union all 
+    SELECT id, nom FROM public."couche-thematique" where strpos(unaccent(lower(nom)),unaccent(lower(\''.$word.'\')))>0');
+
+    $cartes = DB::select('SELECT id, nom FROM public."couche-sous-cartes" where strpos(unaccent(lower(nom)),unaccent(lower(\''.$word.'\')))>0 
+    union all 
+    SELECT id, nom FROM public."couche-cartes" where strpos(unaccent(lower(nom)),unaccent(lower(\''.$word.'\')))>0');
+
+    return ["couches"=>$couches,"cartes"=>$cartes] ;
+
+  }
+
   public function searchLimiteInTable(Request $Requests)
   {
     $word = $Requests->input('word',null);
     $table = $Requests->input('table',null);
     $limitResults = 10;
     
-    $limites = DB::select("SELECT id ,name,hstore_to_json->'ref:INSEE' as ref FROM public.$table where strpos(regexp_replace(regexp_replace(lower(name), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g'), regexp_replace(regexp_replace(lower('".$word."'), '[é,è]', 'e', 'g'), '[".' '.",-]', '', 'g')) >0 LIMIT $limitResults " );
+    $limites = DB::select("SELECT id ,name,hstore_to_json->'ref:INSEE' as ref FROM public.$table where strpos(unaccent(lower(name)), unaccent(lower('".$word."'))) >0 LIMIT $limitResults " );
    
     return $limites;
   }

@@ -34,6 +34,7 @@ Route::post('getLimite', 'geoportailController@getLimite');
 Route::post('getListLimit', 'geoportailController@getListLimit'); 
 Route::post('getLimitById', 'geoportailController@getLimitById'); 
 
+Route::post('searchCouche', 'geoportailController@searchCouche'); 
 Route::post('searchLimite', 'geoportailController@searchLimite'); 
 Route::post('searchLimiteInTable', 'geoportailController@searchLimiteInTable'); 
 Route::post('getLimiteById', 'geoportailController@getLimiteById'); 
