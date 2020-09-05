@@ -217,6 +217,7 @@ Route::post('/geoportail/getJsonFIle', 'geoportailController@getJsonFIle');
 
 Route::post('/geoportail/addCountVieuwData', 'geoportailController@addCountVieuwData'); 
 Route::get('/geoportail/getVisitiors', 'geoportailController@getVisitiors'); 
+Route::get('/geoportail/getVisitiorsLiban', 'geoportailController@getVisitiorsLiban');
 Route::post('/geoportail/getFeatureFromLayerById', 'geoportailController@getFeatureFromLayerById'); 
 
 Route::get('/geoportail/getAllExtents', 'adminController@getAllExtents'); 
