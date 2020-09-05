@@ -1194,10 +1194,19 @@ public function updateAttribute(Request $request)
   public function getVisitiors(Request $Requests)
 	{
 		$couche = DB::table('couche-sous-cartes')->select('vues','nom')
-        ->where('id',82)
+        ->where('id',39)
         ->get();
 
         return $couche;
+  }
+	
+	public function getVisitiorsLiban(Request $Requests)
+  {
+    $couche = DB::table('couche-sous-cartes')->select('vues', 'nom')
+      ->where('id', 40)
+      ->get();
+
+    return $couche;
   }
   
   public function getFeatureFromLayerById(Request $Requests)
