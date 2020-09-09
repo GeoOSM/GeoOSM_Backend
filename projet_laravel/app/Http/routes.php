@@ -27,6 +27,7 @@ Route::post('updateEntite', ['as' => 'updateEntite', 'uses' => 'geoportailContro
 
 Route::post('share', ['as' => 'share', 'uses' => 'geoportailController@share']);
 
+Route::post('getFeatureByOSMId', 'featureOsmController@getFeatureByOSMId');
 
 
 

@@ -4,7 +4,10 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Http\Controllers\thematiqueController;
-use DB;
+use App\Http\Controllers\featureOsmController;
+use Illuminate\Support\Facades\DB;
+
+ini_set('max_execution_time', '-1'); 
 
 class createAllTablesOSM extends Command
 {
@@ -145,6 +148,10 @@ class createAllTablesOSM extends Command
             $i++;
         }
 
-        //genrateAutomaticJsonFileByCat
+        $featureOsmController = new featureOsmController();
+        $this->info("start creating layer osmid - id_couche");
+        $featureOsmController->createLayerOsmId();
+        $this->info("finish creating layer osmid - id_couche");
+
     }
 }
