@@ -1,5 +1,3 @@
-
-
 var app = angular.module('monapp', ['ui.bootstrap', 'ngRoute', 'color.picker', 'openlayers-directive', 'ngAnimate', 'ngSanitize', 'textAngular'], ['$httpProvider', function ($httpProvider) {
     $httpProvider.defaults.headers.post['X-CSRF-TOKEN'] = $('meta[name=csrf-token]').attr('content');
 }]);
@@ -8,9 +6,15 @@ var app = angular.module('monapp', ['ui.bootstrap', 'ngRoute', 'color.picker', '
 
 app.config(function ($routeProvider) {
     $routeProvider
-        .when('/admin', { templateUrl: 'assets/admin/views/main.html' })
-        .when('/login', { templateUrl: 'assets/admin/views/login.html' })
-        .otherwise({ redirectTo: '/login' })
+        .when('/admin', {
+            templateUrl: 'assets/admin/views/main.html'
+        })
+        .when('/login', {
+            templateUrl: 'assets/admin/views/login.html'
+        })
+        .otherwise({
+            redirectTo: '/login'
+        })
 })
 
 // app.controller('mainCtrl', function ($scope, $uibModal,myfactory,$rootScope,fileUpload,$http,$window) {
@@ -71,8 +75,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         }, function (msg) {
             alert('une erreur : Verifier toutes les requetes osm pour chercher l erreur ou contacter Appo ')
             $('#spinner').hide()
-        }
-        )
+        })
     }
 
     var view = new ol.View({
@@ -111,7 +114,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         layer = new ol.layer.VectorTile({
             source: new ol.source.VectorTile({
                 format: new ol.format.MVT(),
-                tileGrid: ol.tilegrid.createXYZ({ maxZoom: 22 }),
+                tileGrid: ol.tilegrid.createXYZ({
+                    maxZoom: 22
+                }),
                 tilePixelRatio: 16,
                 opacity: 0.7,
                 url: 'https://d25uarhxywzl1j.cloudfront.net/v0.1/{z}/{x}/{y}.mvt'
@@ -134,7 +139,10 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     $scope.login = function (user) {
         $('#spinner').show()
 
-        myfactory.post_data("loginAdmin", { "email": user.email, "mdp": user.password }).then(function (resp) {
+        myfactory.post_data("loginAdmin", {
+            "email": user.email,
+            "mdp": user.password
+        }).then(function (resp) {
             console.log(resp)
             if (resp.status == "ok") {
                 if (resp.data[0].droit == "utilisateur") {
@@ -321,7 +329,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     $scope.toogle_confirmation('false')
                     $('#spinner').hide()
 
-                }, function (msg) {
+                },
+                function (msg) {
                     toogle_information("Verifier votre connexion")
                     $scope.toogle_confirmation('false')
                     $('#spinner').hide()
@@ -538,52 +547,129 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
         }, 5000);
     }
 
-    $scope.confirmation = { 'active': false }
+    $scope.confirmation = {
+        'active': false
+    }
 
     $scope.toogle_confirmation = function (texte, data, data1) {
 
         if (texte == 'utilisateur') {
             msg = "supprimer l'utilisateur : " + data.nom + ' ?'
-            $scope.confirmation = { 'msg': msg, 'data': data, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'active': true,
+                'type': texte
+            }
         } else if (texte == 'droit') {
             msg = "supprimer le droit : " + data.nom + ' ?'
-            $scope.confirmation = { 'msg': msg, 'data': data, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'active': true,
+                'type': texte
+            }
         } else if (texte == 'thematique') {
             msg = "supprimer la thematique : " + data.nom + ' ?'
-            $scope.confirmation = { 'msg': msg, 'data': data, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'active': true,
+                'type': texte
+            }
         } else if (texte == 'couche_supprimer') {
             msg = "supprimer la couche : " + data.nom + ' ?'
-            $scope.confirmation = { 'msg': msg, 'data': data, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'active': true,
+                'type': texte
+            }
         } else if (texte == 'supprimer_colomne') {
             msg = "supprimer le champ : " + data.nom + ' ?'
-            $scope.confirmation = { 'msg': msg, 'data': data, 'data1': data1, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'data1': data1,
+                'active': true,
+                'type': texte
+            }
         } else if (texte == 'supprimer_sous_thematique') {
             msg = "supprimer la sous thematique : " + data.nom + ' ?'
-            $scope.confirmation = { 'msg': msg, 'data': data, 'data1': data1, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'data1': data1,
+                'active': true,
+                'type': texte
+            }
         } else if (texte == 'utilisateur_droits_sur_couche_supprimer') {
             msg = "supprimer le droit de : " + data.nom + ' ?'
-            $scope.confirmation = { 'msg': msg, 'data': data, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'active': true,
+                'type': texte
+            }
         } else if (texte == 'cartes') {
             msg = "supprimer la carte : " + data.nom + ' ?'
-            $scope.confirmation = { 'msg': msg, 'data': data, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'active': true,
+                'type': texte
+            }
         } else if (texte == 'supprimer_sous_cartes') {
             msg = "supprimer le sous groupe : " + data.nom + ' ?'
-            $scope.confirmation = { 'msg': msg, 'data': data, 'data1': data1, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'data1': data1,
+                'active': true,
+                'type': texte
+            }
         } else if (texte == 'couche_supprimer_cartes') {
             msg = "supprimer la carte : " + data.nom + ' ?'
-            $scope.confirmation = { 'msg': msg, 'data': data, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'active': true,
+                'type': texte
+            }
         } else if (texte == 'sequence_supprimer') {
             msg = "supprimer la sequence : " + data.nom + ' ?'
-            $scope.confirmation = { 'msg': msg, 'data': data, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'active': true,
+                'type': texte
+            }
         } else if (texte == 'delete_cles_vals_osm') {
             msg = "supprimer cette clause ?"
-            $scope.confirmation = { 'msg': msg, 'data': data, 'data1': data1, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'data1': data1,
+                'active': true,
+                'type': texte
+            }
         } else if (texte == 'delete_pdf_carte') {
             msg = "Supprimer la carte " + data.name + " ?"
-            $scope.confirmation = { 'msg': msg, 'data': data, 'data1': data1, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'data1': data1,
+                'active': true,
+                'type': texte
+            }
         } else if (texte == 'supprimer_limite_adm') {
             msg = "Supprimer la limite administrative " + data.nom + " ?"
-            $scope.confirmation = { 'msg': msg, 'data': data, 'active': true, 'type': texte }
+            $scope.confirmation = {
+                'msg': msg,
+                'data': data,
+                'active': true,
+                'type': texte
+            }
         } else if (texte === 'false') {
             $scope.confirmation.active = false
         }
@@ -660,6 +746,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             user[i].les_id_droits_thematiques = b
         }
     }
+
     function getUser() {
         myfactory.get_data('/api/v1/RestFull/getUsers').then(
             function (data) {
@@ -986,8 +1073,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                     }
 
                                     //if (extension.toLowerCase() != 'geojson' && extension.toLowerCase() != 'json') {
-                                    console.log($scope.urlNodejs + extension + $scope.rootApp + 'public/assets/admin/uploadcouche/' + $scope.donne_en_importation.nom)
-                                    myfactory.get_data($scope.urlNodejs + extension + $scope.rootApp + 'public/assets/admin/uploadcouche/' + $scope.donne_en_importation.nom).then(
+                                    console.log($scope.urlBackend + '/assets/admin/uploadcouche/' + $scope.donne_en_importation.nom)
+                                    myfactory.get_data($scope.urlBackend + '/assets/admin/uploadcouche/' + $scope.donne_en_importation.nom).then(
                                         function (data) {
                                             if (data.features.length > 0) {
 
@@ -1027,7 +1114,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                                             $('#spinner').hide()
 
-                                        }, function (err) {
+                                        },
+                                        function (err) {
                                             $('#spinner').hide()
                                             toogle_information('Verifier votre connexion et recommencer')
                                         }
@@ -1307,11 +1395,11 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             $http(request)
                 .then(function success(e) {
 
-                    if (e.data.status) {
-                        $scope.function_modifier_utilisateur(utilisateur, extension)
-                    }
+                        if (e.data.status) {
+                            $scope.function_modifier_utilisateur(utilisateur, extension)
+                        }
 
-                },
+                    },
                     function (e) {
                         $('#spinner').hide()
                         toogle_information('Verifier votre connexion')
@@ -1331,7 +1419,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     $scope.supprimerUtilisateur = function (utilisateur) {
         $('#spinner').show()
 
-        data = { 'id_utilisateur': utilisateur.id_utilisateur }
+        data = {
+            'id_utilisateur': utilisateur.id_utilisateur
+        }
         myfactory.post_data('/user/deleteUser/', data).then(
             function (data) {
                 if (requete_reussi(data)) {
@@ -1586,7 +1676,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
     $scope.tri_droit_sous_thematiques = function (ids_couches, droits) {
 
-        var res = ids_couches.filter(function (n) { return !this.has(n) }, new Set(droits));
+        var res = ids_couches.filter(function (n) {
+            return !this.has(n)
+        }, new Set(droits));
 
         if (res.length == 0) {
             return false
@@ -1683,7 +1775,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     toogle_information("La thematique " + nouvelle_thematique.nom + " a ete bien ajout�")
                 }
                 $('#spinner').hide()
-            }, function (err) {
+            },
+            function (err) {
                 $('#spinner').hide()
                 toogle_information('Verifier votre connexion')
             }
@@ -2290,7 +2383,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     toogle_information("La sous thematique " + sous_thematique.nom + " a ete bien supprim�")
                 }
                 $('#spinner').hide()
-            }, function (err) {
+            },
+            function (err) {
                 $('#spinner').hide()
                 toogle_information('Verifier votre connexion')
             }
@@ -2554,7 +2648,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     )
 
             } else if (images_to_save_as_svg.length > 0) {
-                myfactory.post_data("whriteMultipleSvg", { "data": images_to_save_as_svg }).then(function (e) {
+                myfactory.post_data("whriteMultipleSvg", {
+                    "data": images_to_save_as_svg
+                }).then(function (e) {
                     // console.log(e)
                     if (e.status) {
                         function_ajouter_couches(couches)
@@ -2974,7 +3070,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 path: '/assets/images/logo-couches-modification/'
             })
 
-            myfactory.post_data("whriteMultipleSvg", { "data": images_to_save_as_svg }).then(function (e) {
+            myfactory.post_data("whriteMultipleSvg", {
+                "data": images_to_save_as_svg
+            }).then(function (e) {
                 // console.log(e)
                 if (e.status) {
                     donne.nom_img_modife = 'assets/images/icones-couches-modification/' + nom_img + '.' + 'svg'
@@ -2990,8 +3088,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             }, function (msg) {
                 toogle_information("Verifier votre connexion")
             })
-        }
-        else {
+        } else {
 
             if (donne.myColor == 'change') {
                 if (donne.nom_modifier == undefined || donne.nom_modifier == donne.nom) {
@@ -3226,7 +3323,13 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             for (var i = 0; i < $scope.utilisateurs.length; i++) {
                 for (var j = 0; j < $scope.utilisateurs[i].les_id_droits_sous.length; j++) {
                     if ($scope.utilisateurs[i].les_id_droits_sous[j] == key_couche) {
-                        $scope.utilisateur_droits_sur_couche.push({ 'nom': $scope.utilisateurs[i].nom, 'index': i, 'id_utilisateur': $scope.utilisateurs[i].id_utilisateur, 'key_couche': key_couche, 'sous_thematiques': true })
+                        $scope.utilisateur_droits_sur_couche.push({
+                            'nom': $scope.utilisateurs[i].nom,
+                            'index': i,
+                            'id_utilisateur': $scope.utilisateurs[i].id_utilisateur,
+                            'key_couche': key_couche,
+                            'sous_thematiques': true
+                        })
                     }
                 }
 
@@ -3236,7 +3339,13 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 for (var k = 0; k < $scope.utilisateurs[i].les_id_droits_thematiques.length; k++) {
                     if ($scope.utilisateurs[i].les_id_droits_thematiques[k] == key_couche) {
-                        $scope.utilisateur_droits_sur_couche.push({ 'nom': $scope.utilisateurs[i].nom, 'index': i, 'id_utilisateur': $scope.utilisateurs[i].id_utilisateur, 'key_couche': key_couche, 'sous_thematiques': false })
+                        $scope.utilisateur_droits_sur_couche.push({
+                            'nom': $scope.utilisateurs[i].nom,
+                            'index': i,
+                            'id_utilisateur': $scope.utilisateurs[i].id_utilisateur,
+                            'key_couche': key_couche,
+                            'sous_thematiques': false
+                        })
                     }
                 }
             }
@@ -3582,7 +3691,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 }
 
                 $('#spinner').hide()
-            }, function (err) {
+            },
+            function (err) {
 
                 $('#spinner').hide()
                 toogle_information('Verifier votre connexion')
@@ -3790,7 +3900,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     toogle_information("Le sous groupe " + sous_cartes.nom + " a ete bien supprim�")
                 }
                 $('#spinner').hide()
-            }, function (err) {
+            },
+            function (err) {
                 $('#spinner').hide()
                 toogle_information('Verifier votre connexion')
             }
@@ -4190,7 +4301,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                 }
 
                 $('#spinner').hide()
-            }, function (err) {
+            },
+            function (err) {
                 $('#spinner').hide()
                 toogle_information('Verifier votre connexion')
             }
@@ -4326,7 +4438,10 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             if (data.service_wms == null || data.service_wms == true) {
                 var wms = new ol.source.TileWMS({
                     url: url,
-                    params: { 'LAYERS': data.identifiant, 'TILED': true },
+                    params: {
+                        'LAYERS': data.identifiant,
+                        'TILED': true
+                    },
                     serverType: 'mapserver',
                     crossOrigin: 'anonymous'
                 });
@@ -4423,7 +4538,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             var extent = markerSource.getExtent();
 
-            $scope.map.getView().fit(extent, $scope.map.getSize(), { maxZoom: 12 });
+            $scope.map.getView().fit(extent, $scope.map.getSize(), {
+                maxZoom: 12
+            });
             $('#test_cartes').show()
             $('#test_cartes').css('z-index', '999999999')
             $('#test_cartes').css('opacity', '1')
@@ -4450,7 +4567,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
 
                     $('#spinner').hide()
-                }, function (err) {
+                },
+                function (err) {
                     $('#spinner').hide()
                     toogle_information('Verifier votre connexion')
                 }
@@ -4466,7 +4584,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
 
                     $('#spinner').hide()
-                }, function (err) {
+                },
+                function (err) {
                     $('#spinner').hide()
                     toogle_information('Verifier votre connexion')
                 }
@@ -4480,7 +4599,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     $scope.gestionCarto(data, donne)
 
                     $('#spinner').hide()
-                }, function (err) {
+                },
+                function (err) {
                     $('#spinner').hide()
                     toogle_information('Verifier votre connexion')
                 }
@@ -4622,7 +4742,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
             $scope.map.addLayer(LayThe);
             var extent = markerSource.getExtent();
-            $scope.map.getView().fit(extent, $scope.map.getSize(), { maxZoom: 17 });
+            $scope.map.getView().fit(extent, $scope.map.getSize(), {
+                maxZoom: 17
+            });
 
         } else if (type_geometry == "Polygon") {
 
@@ -4665,7 +4787,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                         var newMarker = new ol.Feature({
                             geometry: new ol.geom.Polygon([a]),
-                            data: { 'img_temp': ctx.createPattern(img, 'repeat') },
+                            data: {
+                                'img_temp': ctx.createPattern(img, 'repeat')
+                            },
                         });
 
                         markerSource.addFeature(newMarker);
@@ -4689,7 +4813,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
 
                     var extent = markerSource.getExtent();
-                    $scope.map.getView().fit(extent, $scope.map.getSize(), { maxZoom: 17 });
+                    $scope.map.getView().fit(extent, $scope.map.getSize(), {
+                        maxZoom: 17
+                    });
 
 
                 }
@@ -4724,7 +4850,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     var a = convertepolygon(coord)
                     var newMarker = new ol.Feature({
                         geometry: new ol.geom.Polygon([a]),
-                        data: { 'remplir_couleur': couche.remplir_couleur }
+                        data: {
+                            'remplir_couleur': couche.remplir_couleur
+                        }
                     });
 
 
@@ -4777,7 +4905,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                 var newMarker = new ol.Feature({
                     geometry: new ol.geom.LineString(converteline(coord)),
-                    data: { 'contour_couleur': couche.contour_couleur }
+                    data: {
+                        'contour_couleur': couche.contour_couleur
+                    }
                 });
 
                 markerSource.addFeature(newMarker);
@@ -4819,7 +4949,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             LayThe.set('name', space2underscore(couche.nom));
 
             var extent = markerSource.getExtent();
-            $scope.map.getView().fit(extent, $scope.map.getSize(), { maxZoom: 17 });
+            $scope.map.getView().fit(extent, $scope.map.getSize(), {
+                maxZoom: 17
+            });
 
         }
 
@@ -4999,7 +5131,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
                         var couches = []
                         for (var i = 0; i < compteur.length; i++) {
-                            couches.push({ 'id_couche': compteur[i].key_couche })
+                            couches.push({
+                                'id_couche': compteur[i].key_couche
+                            })
                         }
 
                         for (var i = 0; i < $scope.cartes.length; i++) {
@@ -5009,7 +5143,11 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                         if (!$scope.cartes[i].sous_cartes[j].sequence) {
                                             $scope.cartes[i].sous_cartes[j].sequence = []
                                         }
-                                        $scope.cartes[i].sous_cartes[j].sequence.push({ 'id_sequence': data.id_sequence, 'nom': $scope.nouvelleSequence.nom, 'couches': couches })
+                                        $scope.cartes[i].sous_cartes[j].sequence.push({
+                                            'id_sequence': data.id_sequence,
+                                            'nom': $scope.nouvelleSequence.nom,
+                                            'couches': couches
+                                        })
                                     }
                                 }
                             } else {
@@ -5017,7 +5155,11 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                     if (!$scope.cartes[i].sequence) {
                                         $scope.cartes[i].sequence = []
                                     }
-                                    $scope.cartes[i].sequence.push({ 'id_sequence': data.id_sequence, 'nom': $scope.nouvelleSequence.nom, 'couches': couches })
+                                    $scope.cartes[i].sequence.push({
+                                        'id_sequence': data.id_sequence,
+                                        'nom': $scope.nouvelleSequence.nom,
+                                        'couches': couches
+                                    })
                                 }
                             }
                         }
@@ -5027,7 +5169,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     }
 
                     $('#spinner').hide()
-                }, function (err) {
+                },
+                function (err) {
                     $('#spinner').hide()
                     toogle_information('Verifier votre connexion')
                 }
@@ -6188,7 +6331,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     }
 
     $scope.generateSqlByCat = function (id_cat, couche) {
-        myfactory.post_data('/thematique/genrateJsonFileByCat/', JSON.stringify({ 'id_cat': id_cat })).then(
+        myfactory.post_data('/thematique/genrateJsonFileByCat/', JSON.stringify({
+            'id_cat': id_cat
+        })).then(
             function (data) {
                 if (requete_reussi(data)) {
                     couche.number = data.number
@@ -6227,7 +6372,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                     toogle_information('un problème est survenu, contacter administrateur')
                                     $('#spinner').hide()
                                 }
-                            }, function (err) {
+                            },
+                            function (err) {
                                 alert('un problème est survenu, contacter administrateur')
                                 $('#spinner').hide()
                             }
@@ -6243,7 +6389,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     $('#spinner').hide()
                 }
 
-            }, function (err) {
+            },
+            function (err) {
                 alert('Verifier votre requete, et supprimer vos modifications avant de quitter svp ')
                 $('#spinner').hide()
 
@@ -6273,7 +6420,9 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     $scope.toogle_confirmation('false')
 
 
-                    myfactory.post_data('/thematique/genrateJsonFileByCat/', JSON.stringify({ 'id_cat': id_cat })).then(
+                    myfactory.post_data('/thematique/genrateJsonFileByCat/', JSON.stringify({
+                        'id_cat': id_cat
+                    })).then(
                         function (data) {
                             if (requete_reussi(data)) {
                                 couche.number = data.number
@@ -6295,7 +6444,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                                 toogle_information('un problème est survenu, contacter administrateur')
                                                 $('#spinner').hide()
                                             }
-                                        }, function (err) {
+                                        },
+                                        function (err) {
                                             alert('un problème est survenu, contacter administrateur')
                                             $('#spinner').hide()
                                         }
@@ -6310,7 +6460,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                                 alert('Verifier votre requete, et supprimer vos modifications avant de quitter svp ')
                             }
                             $('#spinner').hide()
-                        }, function (err) {
+                        },
+                        function (err) {
                             alert('Verifier votre requete, et supprimer vos modifications avant de quitter svp ')
                             $('#spinner').hide()
 
@@ -6375,6 +6526,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
     };
 
     $scope.dt = new Date()
+
     function getDayClass(data) {
         var date = data.date,
             mode = data.mode;
@@ -6567,7 +6719,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     }
                 }
                 $('#spinner').hide()
-            }, function (err) {
+            },
+            function (err) {
                 $('#spinner').hide()
                 toogle_information('Verifier votre connexion')
             }
@@ -6639,7 +6792,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     }
                 }
                 $('#spinner').hide()
-            }, function (err) {
+            },
+            function (err) {
                 $('#spinner').hide()
                 toogle_information('Verifier votre connexion')
             }
@@ -6747,7 +6901,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     }
                 }
                 $('#spinner').hide()
-            }, function (err) {
+            },
+            function (err) {
                 $('#spinner').hide()
                 toogle_information('Verifier votre connexion')
             }
@@ -6801,7 +6956,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     }
                 }
                 $('#spinner').hide()
-            }, function (err) {
+            },
+            function (err) {
                 $('#spinner').hide()
                 toogle_information('Verifier votre connexion')
             }
@@ -6870,7 +7026,8 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
                     couche.service_wms = service_wms
                 }
                 // $('#spinner').hide()
-            }, function (err) {
+            },
+            function (err) {
                 // $('#spinner').hide()
                 toogle_information('Verifier votre connexion')
             }
@@ -6951,7 +7108,7 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
 
         modalInstance.result.then(function (response) {
             $window.location.reload();
-            
+
             // for (var i = 0; i < $scope.thematiques.length; i++) {
             //     if ($scope.thematiques[i].sous_thematiques) {
             //         for (var j = 0; j < $scope.thematiques[i].sous_thematiques.length; j++) {
@@ -6966,16 +7123,16 @@ app.controller('mainCtrl', function ($location, $scope, $uibModal, myfactory, $r
             //         }
             //     }
             // }
-            
-            
+
+
             // // couche.id_sous_thematique = response.id_sous_thematique
             // // couche.rang_sous = response.rang_sous_them
             // // $scope.page_principale_thematique = !$scope.page_principale_thematique
             // $scope.change_onglet = response.rang_sous_them
             // $scope.page_principale_sous_thematique = !$scope.page_principale_sous_thematique
-           
+
             // var couche = $scope.get_couche_thematique(sous_thematique_couche.key_couche, true)
-           
+
 
             // $scope.$apply()
         }, function () {
@@ -7014,15 +7171,22 @@ var adaptiveInput = app.directive('tagListInput', [function () {
                     list[i] = list[i].trim();
                 }
 
-                list = list.reduce(function (a, b) { if (a.indexOf(b) < 0) a.push(b); return a; }, []);
+                list = list.reduce(function (a, b) {
+                    if (a.indexOf(b) < 0) a.push(b);
+                    return a;
+                }, []);
 
                 $scope.inputModel = list.join(',');
-                list = list.filter(function (e) { return e });
+                list = list.filter(function (e) {
+                    return e
+                });
                 $scope.model = list;
             };
             $scope.cleanList = function () {
                 var list = angular.copy($scope.inputModel).split(',');
-                list = list.filter(function (e) { return e });
+                list = list.filter(function (e) {
+                    return e
+                });
 
                 $scope.model = list;
                 $scope.inputModel = list.join(',');
@@ -7117,9 +7281,12 @@ app.service('fileUpload', ['$http', function ($http) {
         fd.append('file', file);
         //fd.append('name', name);
         $http.post("/user/uploads/", file, {
-            transformRequest: angular.identity,
-            headers: { 'Content-Type': undefined, 'Process-Data': false }
-        })
+                transformRequest: angular.identity,
+                headers: {
+                    'Content-Type': undefined,
+                    'Process-Data': false
+                }
+            })
             .success(function () {
                 console.log("Success");
             })
@@ -7233,49 +7400,33 @@ app.directive('thematiqueDirective', function () {
                 scope.nouvelle_thematique = {
                     'nom': '',
                     'img': '',
-                    'sous_thematiques': [
-                        {
-                            'couches': [
-                                {
-                                    'colonnes': [
-                                        {
+                    'sous_thematiques': [{
+                        'couches': [{
+                            'colonnes': [{
 
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
+                            }]
+                        }]
+                    }]
                 }
                 scope.nouvelles_sous_thematique = {
                     'nom': scope.nouvelle_thematique.nom,
                     'img': scope.nouvelle_thematique.img,
-                    'couches': [
-                        {
-                            'colonnes': [
-                                {
+                    'couches': [{
+                        'colonnes': [{
 
-                                }
-                            ]
-                        }
-                    ]
+                        }]
+                    }]
                 }
                 scope.nouvelle_thematique = {
                     'nom': '',
                     'img': '',
-                    'sous_thematiques': [
-                        {
-                            'couches': [
-                                {
-                                    'colonnes': [
-                                        {
+                    'sous_thematiques': [{
+                        'couches': [{
+                            'colonnes': [{
 
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
+                            }]
+                        }]
+                    }]
                 }
 
             });
@@ -7298,33 +7449,23 @@ app.directive('thematiqueDirective', function () {
             scope.nouvelle_thematique = {
                 'nom': '',
                 'img': '',
-                'sous_thematiques': [
-                    {
-                        'couches': [
-                            {
-                                'colonnes': [
-                                    {
+                'sous_thematiques': [{
+                    'couches': [{
+                        'colonnes': [{
 
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
+                        }]
+                    }]
+                }]
             }
 
             scope.nouvelles_sous_thematique = {
                 'nom': scope.nouvelle_thematique.nom,
                 'img': scope.nouvelle_thematique.img,
-                'couches': [
-                    {
-                        'colonnes': [
-                            {
+                'couches': [{
+                    'colonnes': [{
 
-                            }
-                        ]
-                    }
-                ]
+                    }]
+                }]
             }
 
 
@@ -7436,41 +7577,29 @@ app.directive('cartesDirective', function () {
                 scope.nouvelle_cartes = {
                     'nom': '',
                     'img': '',
-                    'sous_cartes': [
-                        {
-                            'couches': [
-                                {
-                                    'colonnes': [
-                                        {
+                    'sous_cartes': [{
+                        'couches': [{
+                            'colonnes': [{
 
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
+                            }]
+                        }]
+                    }]
                 }
                 scope.nouvelles_sous_cartes = {
                     'nom': scope.nouvelle_cartes.nom,
                     'color': scope.nouvelle_cartes.color,
-                    'couches': [
-                        {
+                    'couches': [{
 
-                        }
-                    ]
+                    }]
                 }
                 scope.nouvelle_cartes = {
                     'nom': '',
                     'color': '',
-                    'sous_cartes': [
-                        {
-                            'couches': [
-                                {
+                    'sous_cartes': [{
+                        'couches': [{
 
-                                }
-                            ]
-                        }
-                    ]
+                        }]
+                    }]
                 }
 
             });
@@ -7493,25 +7622,19 @@ app.directive('cartesDirective', function () {
             scope.nouvelle_cartes = {
                 'nom': '',
                 'color': '',
-                'sous_cartes': [
-                    {
-                        'couches': [
-                            {
+                'sous_cartes': [{
+                    'couches': [{
 
-                            }
-                        ]
-                    }
-                ]
+                    }]
+                }]
             }
 
             scope.nouvelles_sous_cartes = {
                 'nom': scope.nouvelle_cartes.nom,
                 'color': scope.nouvelle_cartes.color,
-                'couches': [
-                    {
+                'couches': [{
 
-                    }
-                ]
+                }]
             }
 
 
@@ -7631,7 +7754,9 @@ app.directive('ngFiles', ['$parse', function ($parse) {
     function file_links(scope, element, attrs) {
         var onChange = $parse(attrs.ngFiles);
         element.on('change', function (event) {
-            onChange(scope, { $files: event.target.files });
+            onChange(scope, {
+                $files: event.target.files
+            });
         });
     }
 
